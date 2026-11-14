@@ -7,8 +7,8 @@
 window.BaseLunar = window.BaseLunar || {};
 
 window.BaseLunar.config = Object.freeze({
-  /** Clave personal de api.nasa.gov. PENDIENTE: la aporta el equipo (DECISIONES.md, D-10). No reutilizarla en otros servicios. */
-  NASA_CLAVE: '',
+  /** Clave personal de api.nasa.gov (DECISIONES.md, D-10). Es visible en el navegador: no reutilizarla en otros servicios. */
+  NASA_CLAVE: 'gCcCt7wbkbQJNb6PLrqFPNttPwgwjRFGdWkjNDQj',
   /** Último recurso. Documentación: 30/h y 50/día por IP; el 14-11-2026 respondió 429 a la primera llamada. */
   NASA_CLAVE_RESERVA: 'DEMO_KEY',
   /** Endpoint de llamaradas solares (FLR) de NASA DONKI. */

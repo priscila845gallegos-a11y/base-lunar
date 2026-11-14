@@ -23,8 +23,8 @@ Leyenda:
 | F-09 | Una capa de regolito sobre la base sirve de escudo | Nivel 3 | ✔ · texto a corregir · «3 a 5 m» ⚠ |
 | F-10 | OSDR RadLab reúne mediciones de radiación, también de Artemis I | Nivel 3 (etiqueta) | ✔ |
 | F-11 | Refugio de Orión con bolsas de provisiones, hasta 24 h dentro | Nivel 4 | ✔ · texto a corregir |
-| F-12 | Llamarada X8.7 del 14-05-2024 (respaldo histórico) | Nivel 4 | ✔ clase, fecha y pico · copia literal de DONKI ⚠ |
-| F-13 | 5 llamaradas de clase X en 2 días (14 y 15-05-2024) | Nivel 4 (respaldo) | ⚠ |
+| F-12 | Llamarada X8.7 del 14-05-2024 (respaldo histórico) | Nivel 4 | ✔ |
+| F-13 | 5 llamaradas de clase X en 2 días (14 y 15-05-2024) | Nivel 4 (respaldo) | ✔ |
 | F-14 | Las llamaradas pueden interrumpir las comunicaciones por radio | Nivel 5 | ✔ |
 | F-15 | Una señal tarda más de 1 s en ir de la Luna a la Tierra | Nivel 5 | ✔ |
 | F-16 | Límites y CORS de api.nasa.gov | Nivel 4 (técnico) | ✔ |
@@ -98,18 +98,26 @@ Leyenda:
 - Corrección: es un plan («would»), no un procedimiento ya usado en una tormenta real. Por eso el texto pasa de «arman» a «pueden armar» (propuesta T-08). La página «Crew Systems (Orion)» actualizada el 8-09-2026 que citaba el documento no se localizó; esta fuente de la NASA cubre todo lo que dice el juego.
 - Contexto (no se usa en el juego): Artemis II amerizó el 10-04-2026 a las 20:07 EDT ([blog de la NASA](https://www.nasa.gov/blogs/missions/2026/04/10/artemis-ii-flight-day-10-crew-sets-for-final-burn-splashdown/)). Que la demostración del refugio se recortara en esa misión no se verificó, y el juego no lo afirma.
 
-### F-12 · Llamarada X8.7 del 14-05-2024 — ✔ clase, fecha y pico · copia literal ⚠
+### F-12 · Llamarada X8.7 del 14-05-2024 — ✔
 
-- Fuentes: [NASA Scientific Visualization Studio, «Largest Flare yet from Solar Cycle 25»](https://svs.gsfc.nasa.gov/14592) y [NOAA NESDIS, «Sun Releases Strong X9.0 Solar Flare»](https://www.nesdis.noaa.gov/news/sun-releases-strong-x90-solar-flare) (04-10-2024).
-- Qué dicen: la del 14-05-2024 fue «the largest of Solar Cycle 25», clase X8.7, con pico a las 12:51 p. m. EDT (16:51 UTC). El 03-10-2024 una X9.0 la superó; por eso la sección 7 dice «la más intensa del ciclo solar 25 hasta esa fecha», y está bien dicho.
-- ⚠ Pendiente: la copia literal del registro DONKI (ID `2024-05-14T16:46:00-FLR-001`, horas de inicio y fin, S19W90, región 13664, GOES-P EXIS, CME asociada y `link`). El 14-11-2026 no se pudo obtener:
-  - `kauai.ccmc.gsfc.nasa.gov` y `webtools.ccmc.gsfc.nasa.gov` (servicio DONKI original, sin clave): el nombre resuelve, pero la conexión al puerto 443 se agota desde esta red.
-  - `api.nasa.gov` con `DEMO_KEY`: `429 Too Many Requests` en la primera llamada y otra vez en un segundo intento, minutos después (`X-Ratelimit-Limit: 10`, `X-Ratelimit-Remaining: 0`).
-  - Se completa en cuanto haya una clave personal de api.nasa.gov (DECISIONES.md, D-10).
+- Fuentes: [NASA DONKI, registro de la llamarada](https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/30849/-1), con copia literal en `js/nasaData.js` descargada el 14-11-2026 del [servicio web de DONKI](https://ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR?startDate=2024-05-14&endDate=2024-05-15); [NASA Scientific Visualization Studio, «Largest Flare yet from Solar Cycle 25»](https://svs.gsfc.nasa.gov/14592); y [NOAA NESDIS, «Sun Releases Strong X9.0 Solar Flare»](https://www.nesdis.noaa.gov/news/sun-releases-strong-x90-solar-flare) (04-10-2024).
+- Qué dice el registro: `2024-05-14T16:46:00-FLR-001`, clase X8.7, inicio 16:46Z, pico 16:51Z, fin 17:02Z, ubicación S19W90, región activa 13664, instrumento «GOES-P: EXIS 1.0-8.0» y CME asociada `2024-05-14T17:00:00-CME-001`. Todo coincide con la sección 7 del Prompt 0.
+- La NASA la llamó «the largest of Solar Cycle 25». El 03-10-2024 una X9.0 la superó; por eso la sección 7 dice «la más intensa del ciclo solar 25 hasta esa fecha», y está bien dicho.
+- Nota técnica del 14-11-2026, que afecta a F3:
+  - Con la clave personal, `api.nasa.gov/DONKI/FLR` responde `404`. La pasarela reenvía a `/DONKI-API/get/FLR/` y el servidor de origen contesta 404. Los endpoints CME y notifications sí funcionan.
+  - DONKI se mudó a `ccmc.gsfc.nasa.gov/DONKI`; el servidor antiguo, kauai, no responde. El servicio nuevo entrega el mismo JSON sin clave y con `Access-Control-Allow-Origin: *`.
+  - Ver DECISIONES.md, D-18 y D-19.
 
-### F-13 · 5 llamaradas de clase X en 2 días — ⚠ PENDIENTE DE VERIFICAR
+### F-13 · 5 llamaradas de clase X en 2 días — ✔
 
-- Los 5 IDs (X1.7, X1.2, X8.7, X3.4 y X2.9) los aportó el equipo. Se confirman con la misma copia literal de DONKI que F-12. Hasta entonces, la línea «¡En solo 2 días, el Sol lanzó 5 llamaradas de clase X!» no se muestra.
+- Fuente: el mismo registro de DONKI que F-12. El 14 y 15-05-2024 hubo 11 llamaradas: 5 de clase X, 5 de clase M y 1 de clase C.
+- Las 5 de clase X coinciden con los IDs del Prompt 0:
+  - X1.7 · `2024-05-14T02:03:00-FLR-001`
+  - X1.2 · `2024-05-14T12:40:00-FLR-001`
+  - X8.7 · `2024-05-14T16:46:00-FLR-001`
+  - X3.4 · `2024-05-15T08:18:00-FLR-001`
+  - X2.9 · `2024-05-15T14:20:00-FLR-001`
+- La línea «¡En solo 2 días, el Sol lanzó 5 llamaradas de clase X!» es correcta y se puede mostrar en modo respaldo.
 
 ### F-14 · Las llamaradas pueden interrumpir las comunicaciones por radio — ✔ (antes 🔍)
 
@@ -149,7 +157,7 @@ Leyenda:
 | NASA Weather on the Moon | Basta con «Solar Wind on the Moon». |
 | Blog de Kennedy (11-08-2015) | Se usa el blog de la Estación del 10-08-2015, que tiene la frase exacta. |
 | NASA Crew Systems (Orion), 8-09-2026 | No se localizó; la fuente de la NASA de F-11 cubre el dato. |
-| SpaceWeatherLive (X8.7) | Se usan la NASA y la NOAA; los IDs se confirmarán con DONKI. |
+| SpaceWeatherLive (X8.7) | Se usan el registro de DONKI, la NASA y la NOAA. |
 
 ## Textos del guion que se corrigen en F2
 

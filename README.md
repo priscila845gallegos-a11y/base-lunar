@@ -34,7 +34,7 @@ baseLunar/
 ├── js/
 │   ├── config.js     # Clave NASA, tiempos (timeout 3 s, caché 6 h), banderas de demo      (F0 ✔)
 │   ├── levels.js     # Guion: 5 niveles, mensajes de respaldo, fuentes (solo datos)        (F2)
-│   ├── nasaData.js   # DONKI: consulta con timeout, validación, caché y respaldo histórico (F3)
+│   ├── nasaData.js   # DONKI: consulta con timeout, validación, caché y respaldo histórico (F0 ✔ datos · F3)
 │   ├── game.js       # Motor puro: estado, reglas, respaldos, antibloqueo (sin DOM)        (F2)
 │   └── ui.js         # Render, eventos, accesibilidad, voz y arranque (único con DOM)      (F2)
 ├── tests/
