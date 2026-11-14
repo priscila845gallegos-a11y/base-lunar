@@ -121,15 +121,16 @@ Leyenda:
 
 ### F-14 · Las llamaradas pueden interrumpir las comunicaciones por radio — ✔ (antes 🔍)
 
-- Fuente: [NOAA SWPC, «Solar Flares (Radio Blackouts)»](https://www.swpc.noaa.gov/phenomena/solar-flares-radio-blackouts).
-- Qué dice: la página de la NOAA trata los apagones de radio causados por llamaradas y su efecto en las comunicaciones de radio de alta frecuencia (HF). Ocurre en el lado de la Tierra iluminado por el Sol.
+- Fuentes: [NASA, «Strong Solar Flare»](https://www.nasa.gov/image-article/strong-solar-flare/), que es la que enlaza el juego, y [NOAA SWPC, «Solar Flares (Radio Blackouts)»](https://www.swpc.noaa.gov/phenomena/solar-flares-radio-blackouts).
+- Qué dicen: la NASA, «Solar flares are powerful bursts of energy that can, along with other types of solar eruptions, can impact radio communications». La NOAA trata los apagones de radio de alta frecuencia (HF) que causan las llamaradas en el lado de la Tierra iluminado por el Sol.
 - Nota: en el juego, la «estática» de la radio en la Luna es licencia narrativa inspirada en este efecto. El dato real solo dice que las llamaradas pueden interrumpir la radio.
 
 ### F-15 · Una señal tarda más de 1 s en ir de la Luna a la Tierra — ✔ (antes 🔍)
 
-- Fuente: [ESA, «Ten things you didn't know about the Moon – Moon calling Earth»](https://www.esa.int/ESA_Multimedia/Images/2021/09/Ten_things_you_didn_t_know_about_the_Moon_-_Moon_calling_Earth).
-- Qué dice: «It takes on average 1.27 seconds for a radio signal to travel from Moon to Earth».
-- Apoyo: el [Apollo Lunar Surface Journal de la NASA (Apolo 12)](https://www.nasa.gov/history/alsj/a12/A12Audio_Moon_Houston.html) usa un retraso de unos 1,3 s (✔ᵢ). La ESA no es la NASA ni la NOAA, como pedía el documento, pero es una agencia espacial y da la cifra exacta.
+- Fuentes: [NASA, «Voyager 1: What Is a Light-Day»](https://science.nasa.gov/mission/voyager/voyager-1/voyager-1-what-is-a-light-day/), que es la que enlaza el juego, y [NASA, «How Does Webb See Back in Time?»](https://science.nasa.gov/mission/webb/science-overview/science-explainers/how-does-webb-see-back-in-time/).
+- Qué dicen: la luz recorre la distancia Luna–Tierra «in 1.3 seconds»; la luz de la Luna llega «1.3 seconds old».
+- Apoyo: [ESA, «Moon calling Earth»](https://www.esa.int/ESA_Multimedia/Images/2021/09/Ten_things_you_didn_t_know_about_the_Moon_-_Moon_calling_Earth): «It takes on average 1.27 seconds for a radio signal to travel from Moon to Earth».
+- Nota: con las dos fuentes de la NASA (F-14 y F-15), la etiqueta «📡 Dato NASA: Comunicaciones» del Nivel 5 es correcta.
 
 ### F-16 · api.nasa.gov — ✔
 
@@ -159,9 +160,9 @@ Leyenda:
 | NASA Crew Systems (Orion), 8-09-2026 | No se localizó; la fuente de la NASA de F-11 cubre el dato. |
 | SpaceWeatherLive (X8.7) | Se usan el registro de DONKI, la NASA y la NOAA. |
 
-## Textos del guion que se corrigen en F2
+## Textos del guion corregidos en F2
 
-Propuesta para revisar en la puerta P2. Se corrige lo que rompe las reglas de texto del guion (frases de 15 palabras o menos) o dice más que su fuente. Las cuentas de palabras incluyen los paréntesis.
+Aplicados en `js/levels.js` en F2, pendientes de revisión en la puerta P2. Se corrige lo que rompe las reglas de texto del guion (frases de 15 palabras o menos) o dice más que su fuente. Las cuentas de palabras incluyen los paréntesis. `tests/tests.html` comprueba en cada ejecución que todos los textos del juego cumplen las reglas.
 
 | # | Dónde | Texto actual | Problema | Propuesta |
 |---|---|---|---|---|

@@ -2,7 +2,7 @@
 
 Juego web educativo de decisiones para niñas y niños de 7 a 12 años. Quien juega comanda una base en la superficie de la Luna durante 5 situaciones reales del espacio y aprende que cada recurso tiene un costo: energía, agua y oxígeno, y protección contra la radiación.
 
-> **Estado: fase F1 (Maquetación) en revisión.** `index.html` muestra la maqueta con datos de ejemplo; todavía no se puede jugar. Ver [Plan y estado](#plan-y-estado).
+> **Estado: fase F2 (Motor y pruebas) en revisión.** El juego ya se puede jugar de principio a fin. El Nivel 4 usa el dato histórico real hasta F3, y la voz y el modo demo llegan en F4. Ver [Plan y estado](#plan-y-estado).
 
 ## Cómo se juega
 
@@ -11,6 +11,7 @@ Juego web educativo de decisiones para niñas y niños de 7 a 12 años. Quien ju
 - Si un medidor llega a 0, se usa un Protocolo de Respaldo (hay 3) y se reintenta el nivel.
 - En el Nivel 5 gana quien sabe leer los medidores.
 - Después de cada nivel superado aparece un 💡 Dato real con su fuente.
+- Con teclado: A/B o 1/2 para elegir, y Enter para continuar.
 
 ## Cómo ejecutarlo
 
@@ -19,7 +20,7 @@ Juego web educativo de decisiones para niñas y niños de 7 a 12 años. Quien ju
 - Pruebas del motor y simulador de balance: abre `tests/tests.html` en el navegador.
 - Parámetros de demostración: `?nivel=4` (empezar en un nivel), `?offline=1` (forzar el respaldo histórico) y `?debug=1` (ver el estado interno).
 
-Desde F1, `index.html` muestra la maqueta. El juego completo funciona desde F2, cuando también llega `tests/tests.html`.
+Los parámetros de demostración llegan en F4.
 
 ## Arquitectura
 
@@ -29,16 +30,16 @@ HTML5 + CSS3 (variables, Grid y Flexbox) + JavaScript ES6+ puro. Sin frameworks,
 
 ```
 baseLunar/
-├── index.html        # Pantalla única: 3 bloques + Inicio, Respaldo, Abortada y Victoria   (F1 ✔ maqueta · F4)
-├── style.css         # Tokens, layout responsivo, estados, animaciones, impresión          (F1 ✔ · F4)
+├── index.html        # Pantalla única: 3 bloques + Inicio, Respaldo, Abortada y Victoria   (F2 ✔ · F4)
+├── style.css         # Tokens, layout responsivo, estados, animaciones, impresión          (F2 ✔ · F4)
 ├── js/
-│   ├── config.js     # Clave NASA, tiempos, banderas de demo y reglas del juego            (F0 ✔ · F1 ✔)
-│   ├── levels.js     # Guion: 5 niveles, mensajes de respaldo, fuentes (solo datos)        (F2)
-│   ├── nasaData.js   # DONKI: consulta con timeout, validación, caché y respaldo histórico (F0 ✔ datos · F3)
-│   ├── game.js       # Motor puro: estado, reglas, respaldos, antibloqueo (sin DOM)        (F2)
-│   └── ui.js         # Render, eventos, accesibilidad, voz y arranque (único con DOM)      (F1 medidores · F2)
+│   ├── config.js     # Clave NASA, tiempos, banderas de demo y reglas del juego            (F2 ✔)
+│   ├── levels.js     # Guion: 5 niveles, textos y fuentes (solo datos)                     (F2 ✔)
+│   ├── nasaData.js   # DONKI: consulta con timeout, validación, caché y respaldo histórico (F2 respaldo · F3)
+│   ├── game.js       # Motor puro: estado, reglas, respaldos, antibloqueo (sin DOM)        (F2 ✔)
+│   └── ui.js         # Render, eventos, accesibilidad, voz y arranque (único con DOM)      (F2 ✔ · F4 voz)
 ├── tests/
-│   └── tests.html    # Pruebas del motor + simulador de balance                            (F2)
+│   └── tests.html    # Pruebas del motor + simulador de balance                            (F2 ✔)
 ├── assets/
 │   ├── favicon.svg                                                                         (F1 ✔)
 │   └── fonts/        # Atkinson Hyperlegible 400 y 700 (subconjunto latino) + OFL.txt      (F1 ✔)
@@ -100,8 +101,8 @@ Sin cuentas, sin cookies y sin analítica. El nombre del certificado solo se mue
 | Fase | Tiempo | Resultado | Estado |
 |---|---|---|---|
 | F0 · Preparación | 0:30 | Repositorio, documentación, fuentes verificadas o marcadas | Hecha (P0 aprobada) |
-| F1 · Maquetación | 1:30 | index.html y style.css con datos de ejemplo | En revisión (P1) |
-| F2 · Motor y pruebas | 2:00 | levels.js, game.js, ui.js y tests.html en verde | Pendiente |
+| F1 · Maquetación | 1:30 | index.html y style.css con datos de ejemplo | Hecha (P1 aprobada) |
+| F2 · Motor y pruebas | 2:00 | levels.js, game.js, ui.js y tests.html en verde | En revisión (P2) |
 | F3 · NASA DONKI | 1:00 | nasaData.js con timeout, validación, caché y respaldo | Pendiente |
 | F4 · Pulido y finales | 1:00 | Inicio, certificado, Misión Abortada, voz, demo | Pendiente |
 | F5 · Validación | 1:00 | Matriz de pruebas, Lighthouse, prueba con usuarios | Pendiente |
