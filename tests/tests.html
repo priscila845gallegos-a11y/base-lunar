@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pruebas · Base Lunar</title>
+  <style>
+    body { margin: 0; padding: 16px; background: #0F172A; color: #F8FAFC; font: 16px/1.5 system-ui, sans-serif; }
+    main { max-width: 960px; margin: 0 auto; }
+    h1 { font-size: 1.5rem; }
+    h2 { margin-top: 28px; font-size: 1.2rem; }
+    #resumen { padding: 10px 14px; border-radius: 10px; background: #1E293B; font-weight: 700; }
+    #resumen.ok { border-left: 6px solid #3B82F6; }
+    #resumen.fallo { border-left: 6px solid #F97316; }
+    ol { padding-left: 1.6em; }
+    li { margin: 4px 0; }
+    li.fallo { color: #FDBA74; }
+    table { width: 100%; border-collapse: collapse; background: #1E293B; }
+    th, td { padding: 8px 10px; border: 1px solid #334155; text-align: left; }
+    td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    p.nota { color: #CBD5E1; }
+  </style>
+  <script src="../js/config.js"></script>
+  <script src="../js/levels.js"></script>
+  <script src="../js/nasaData.js"></script>
+  <script src="../js/game.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Pruebas del motor y simulador de balance · Base Lunar</h1>
+    <p id="resumen" role="status">Ejecutando las pruebas…</p>
+
+    <h2>Simulador de balance</h2>
+    <p class="nota">Recorre todas las rutas (con fallos y reintentos) usando la API pública del motor, con y sin la penalización de clase X.</p>
+    <table>
+      <thead>
+        <tr><th scope="col">Escenario</th><th scope="col">Rutas</th><th scope="col">Victorias con 3 / 2 / 1 respaldos</th><th scope="col">Misiones Abortadas</th><th scope="col">Estados de nivel visitados</th><th scope="col">Estados sin salida</th><th scope="col">Ayudas de Control</th></tr>
+      </thead>
+      <tbody id="tabla-simulador"></tbody>
+    </table>
+
+    <h2>Pruebas</h2>
+    <ol id="lista"></ol>
+  </main>
+
+  <script>
+    'use strict';
+    (function () {
+      const BL = window.BaseLunar;
+      const M = BL.motor;
+      const F = M.FASES;
+      const R = BL.config.REGLAS;
+      const resultados = [];
+
+      // ---------- Utilidades de prueba ----------
+      function prueba(nombre, fn) {
+        try {
+          fn();
+          resultados.push({ nombre, ok: true });
+        } catch (error) {
+          resultados.push({ nombre, ok: false, error: error.message });
+        }
+      }
+
+      function igual(real, esperado, mensaje) {
+        const a = JSON.stringify(real);
+        const b = JSON.stringify(esperado);
+        if (a !== b) throw new Error((mensaje ? mensaje + ': ' : '') + 'se esperaba ' + b + ' y se obtuvo ' + a);
+      }
+
+      function verdadero(condicion, mensaje) {
+        if (!condicion) throw new Error(mensaje || 'se esperaba verdadero');
+      }
+
+      const m = (p, s, b) => ({ proteccion: p, soporte: s, bateria: b });
+      const hay = (eventos, tipo, extra = {}) => eventos.some((e) => e.tipo === tipo && Object.keys(extra).every((k) => e[k] === extra[k]));
+
+      /** Estado en la fase NIVEL con los medidores dados. */
+      function enNivel(nivel, medidores) {
+        return { ...M.crearEstadoInicial(), fase: F.NIVEL, nivel, medidores: { ...medidores }, foto: { ...medidores } };
+      }
+
+      /** Juega una ruta de decisiones desde el Inicio y devuelve el último resultado del motor. */
+      function jugar(ruta, claseX = false) {
+        let r = M.empezar(M.crearEstadoInicial(), { claseX });
+        ruta.forEach((opcion) => {
+          if (r.estado.fase === F.RESULTADO) r = M.continuar(r.estado, { claseX });
+          r = M.aplicarDecision(r.estado, opcion);
+        });
+        return r;
+      }
+
+      // ---------- Motor (sección 10 del Prompt 0) ----------
+      prueba('Aplicar efectos suma y resta bien', () => {
+        const r = M.aplicarEfectos(m(80, 80, 80), { bateria: 20, soporte: -35 });
+        igual(r.medidores, m(80, 45, 100));
+        igual(r.fallidos, []);
+      });
+
+      prueba('Una ganancia que pasa de 100 se recorta y se marca «al máximo»', () => {
+        const r = M.aplicarEfectos(m(80, 45, 100), { proteccion: 25, soporte: -35 });
+        igual(r.medidores, m(100, 10, 100));
+        igual(r.crudos.proteccion, 105);
+        igual(r.alMaximo, ['proteccion']);
+      });
+
+      prueba('Los valores se recortan a 0 y el medidor falla', () => {
+        const r = M.aplicarEfectos(m(100, 10, 70), { proteccion: 35, soporte: -30 });
+        igual(r.medidores.soporte, 0);
+        igual(r.crudos.soporte, -20);
+        igual(r.fallidos, ['soporte']);
+      });
+
+      prueba('Quedar exactamente en 0 también es un fallo', () => {
+        igual(M.aplicarEfectos(m(100, 30, 70), { proteccion: 35, soporte: -30 }).fallidos, ['soporte']);
+      });
+
+      prueba('Un medidor en 0 o menos activa el respaldo y resta 1', () => {
+        const r = jugar(['B', 'A', 'B']);
+        igual(r.estado.fase, F.RESPALDO);
+        igual(r.estado.respaldos, 2);
+        igual(r.estado.fallidos, ['bateria']);
+        verdadero(hay(r.eventos, 'respaldoActivado', { motivo: 'bateria' }), 'evento respaldoActivado');
+      });
+
+      prueba('Reintento: restaura la foto y sube a 30 o más el medidor que falló', () => {
+        igual(M.reintentar(jugar(['B', 'A', 'B']).estado).estado.medidores, m(100, 60, 40), '⚡ = máx(40, 30)');
+        const r = M.reintentar(jugar(['A', 'A', 'A', 'A']).estado);
+        igual(r.estado.fase, F.NIVEL);
+        igual(r.estado.medidores, m(100, 30, 70), '💧 = máx(10, 30); el resto, como en la foto');
+      });
+
+      prueba('Reintento: el estado restaurado pasa a ser la foto (D-01)', () => {
+        const r = M.reintentar(jugar(['A', 'A', 'A', 'A']).estado);
+        igual(r.estado.foto, r.estado.medidores);
+      });
+
+      prueba('Con 0 respaldos se llega a Misión Abortada', () => {
+        let r = jugar(['A', 'A', 'A', 'A']);
+        r = M.aplicarDecision(M.reintentar(r.estado).estado, 'A');
+        igual(r.estado.respaldos, 1, '💧 30 − 30 = 0 vuelve a fallar');
+        r = M.aplicarDecision(M.reintentar(r.estado).estado, 'A');
+        igual(r.estado.fase, F.MISION_ABORTADA);
+        igual(r.estado.respaldos, 0);
+        verdadero(hay(r.eventos, 'misionAbortada'), 'evento misionAbortada');
+      });
+
+      prueba('Nivel 5: las condiciones son estrictas (>, no ≥)', () => {
+        const { A, B } = BL.niveles[4].opciones;
+        igual(M.cumpleRequisito(m(0, 0, 35), A.requisito), false, '⚡ 35');
+        igual(M.cumpleRequisito(m(0, 0, 36), A.requisito), true, '⚡ 36');
+        igual(M.cumpleRequisito(m(40, 0, 0), B.requisito), false, '🛡️ 40');
+        igual(M.cumpleRequisito(m(41, 0, 0), B.requisito), true, '🛡️ 41');
+      });
+
+      prueba('Nivel 5: elegir mal resta 1 respaldo y no cambia los medidores', () => {
+        const r = M.aplicarDecision(enNivel(5, m(40, 70, 100)), 'B');
+        igual([r.estado.fase, r.estado.respaldos], [F.RESPALDO, 2]);
+        igual(r.estado.medidores, m(40, 70, 100));
+        const reintento = M.reintentar(r.estado);
+        igual(reintento.estado.medidores, m(40, 70, 100));
+        igual(M.aplicarDecision(reintento.estado, 'A').estado.fase, F.RESULTADO);
+      });
+
+      prueba('Clase X: −5 🛡️ una sola vez, también si el nivel se reintenta', () => {
+        const n4 = M.continuar(jugar(['A', 'A', 'A'], true).estado, { claseX: true });
+        igual(n4.estado.medidores.proteccion, 95);
+        verdadero(hay(n4.eventos, 'penalizacionX'), 'evento penalizacionX');
+        const reintento = M.reintentar(M.aplicarDecision(n4.estado, 'A').estado);
+        igual(reintento.estado.medidores.proteccion, 95);
+        verdadero(!hay(reintento.eventos, 'penalizacionX'), 'sin penalización al reintentar');
+      });
+
+      prueba('Sin clase X no hay penalización', () => {
+        igual(M.continuar(jugar(['A', 'A', 'A']).estado, { claseX: false }).estado.medidores.proteccion, 100);
+      });
+
+      prueba('Reiniciar devuelve exactamente el estado inicial', () => {
+        const inicial = M.crearEstadoInicial();
+        igual(M.reiniciar(), inicial);
+        igual(inicial, { fase: F.INICIO, nivel: 0, medidores: m(80, 80, 80), foto: m(80, 80, 80), respaldos: 3, claseX: false, fallidos: [], ultimaOpcion: null });
+      });
+
+      // ---------- Robustez y antibloqueo ----------
+      prueba('Doble clic: una segunda decisión no se aplica', () => {
+        const r1 = M.aplicarDecision(M.empezar(M.crearEstadoInicial()).estado, 'A');
+        const r2 = M.aplicarDecision(r1.estado, 'A');
+        verdadero(r2.estado === r1.estado, 'mismo estado');
+        igual(r2.eventos, []);
+        igual(r1.estado.medidores, m(80, 45, 100));
+      });
+
+      prueba('Las acciones fuera de su fase no hacen nada', () => {
+        const inicial = M.crearEstadoInicial();
+        verdadero(M.aplicarDecision(inicial, 'A').estado === inicial, 'decidir en Inicio');
+        verdadero(M.reintentar(inicial).estado === inicial, 'reintentar en Inicio');
+        verdadero(M.continuar(inicial).estado === inicial, 'continuar en Inicio');
+      });
+
+      prueba('Dos medidores a la vez: un solo mensaje (💧 → 🛡️ → ⚡) y se restauran ambos', () => {
+        const nivel = { id: 9, tipo: 'decision', opciones: { A: { efectos: { proteccion: -90, soporte: -90, bateria: 5 } }, B: { efectos: { bateria: -10, soporte: 5 } } } };
+        const r = M.aplicarDecision(enNivel(1, m(50, 20, 50)), 'A', [nivel]);
+        igual(r.estado.fallidos, ['soporte', 'proteccion']);
+        verdadero(hay(r.eventos, 'respaldoActivado', { motivo: 'soporte' }), 'mensaje de 💧');
+        igual(M.reintentar(r.estado, [nivel]).estado.medidores, m(50, 30, 50));
+      });
+
+      prueba('Antibloqueo: sube lo justo para que alguna opción sea viable', () => {
+        const nivel = { id: 9, tipo: 'decision', opciones: { A: { efectos: { proteccion: 30, bateria: -30 } }, B: { efectos: { proteccion: 40, bateria: -45 } } } };
+        const ayuda = M.calcularAyuda(m(100, 60, 20), nivel);
+        igual(ayuda.ajustes, { bateria: 11 });
+        verdadero(M.esSobrevivible(ayuda.medidores, nivel), 'sobrevivible tras la ayuda');
+        igual(M.calcularAyuda(m(100, 60, 40), nivel), null, 'sin ayuda si hay salida');
+      });
+
+      prueba('Antibloqueo en el Nivel 5: sube lo justo para superar un requisito', () => {
+        igual(M.calcularAyuda(m(30, 50, 30), BL.niveles[4]).ajustes, { bateria: 6 });
+      });
+
+      prueba('Antibloqueo: se activa al entrar en un nivel sin salida', () => {
+        const imposible = [{ id: 1, tipo: 'decision', opciones: { A: { efectos: { bateria: -90, soporte: 5 } }, B: { efectos: { bateria: -95, proteccion: 5 } } } }];
+        const r = M.empezar(M.crearEstadoInicial(), {}, imposible);
+        verdadero(hay(r.eventos, 'ayudaActivada'), 'evento ayudaActivada');
+        igual(r.estado.medidores.bateria, 91);
+        igual(r.estado.foto, r.estado.medidores);
+      });
+
+      prueba('Continuar: del resultado al siguiente nivel, y del Nivel 5 a la Victoria', () => {
+        igual(M.continuar(jugar(['A']).estado).estado.nivel, 2);
+        const n5 = M.continuar(jugar(['A', 'B', 'A', 'A']).estado, { claseX: true });
+        const ganada = M.aplicarDecision(n5.estado, 'A');
+        igual(ganada.estado.fase, F.RESULTADO);
+        const victoria = M.continuar(ganada.estado);
+        igual(victoria.estado.fase, F.VICTORIA);
+        verdadero(hay(victoria.eventos, 'victoria'), 'evento victoria');
+      });
+
+      prueba('Empezar en un nivel concreto (D-08) con el estado inicial', () => {
+        const r = M.empezar(M.crearEstadoInicial(), { nivel: 4, claseX: true });
+        igual([r.estado.nivel, r.estado.medidores], [4, m(75, 80, 80)]);
+        igual(M.empezar(M.crearEstadoInicial(), { nivel: 9 }).estado.nivel, 1, 'nivel fuera de rango');
+      });
+
+      // ---------- Datos y textos ----------
+      const VALORES_LARGOS = { clase: 'X8.7', fecha: '14 de septiembre de 2024', n: '5', recurso: 'agua y oxígeno y energía' };
+      const expandir = (texto) => texto.replace(/\{(\w+)\}/g, (_, k) => VALORES_LARGOS[k] || 'Los sensores del guiado necesitaban más protección.');
+      const frases = (texto) => texto.split(/(?<=[.!?…])\s+/).filter(Boolean);
+      const palabras = (frase) => frase.split(/\s+/).filter((p) => /[\p{L}\p{N}]/u.test(p)).length;
+
+      function textosDelJuego() {
+        const t = [];
+        BL.niveles.forEach((n) => {
+          t.push(n.historia, n.dato.texto, ...(n.dato.extra || []));
+          Object.values(n.opciones).forEach((o) => t.push(o.texto, o.resultado, ...(o.fallo ? [o.fallo] : [])));
+        });
+        const x = BL.textos;
+        t.push(...Object.values(x.respaldo), x.ayuda, x.penalizacionX, x.llamarada.linea, x.llamarada.serieX);
+        return t.map(expandir);
+      }
+
+      prueba('Historias de 150 caracteres como máximo', () => {
+        BL.niveles.forEach((n) => verdadero(n.historia.length <= 150, `Nivel ${n.id}: ${n.historia.length} caracteres`));
+      });
+
+      prueba('Frases de 15 palabras o menos (guion y mensajes)', () => {
+        igual(textosDelJuego().flatMap(frases).filter((f) => palabras(f) > 15), []);
+      });
+
+      prueba('Cada dato tiene al menos una fuente https y está verificado', () => {
+        BL.niveles.forEach((n) => {
+          verdadero(n.dato.verificado === true, `Nivel ${n.id}: verificado`);
+          verdadero(n.dato.fuentes.length > 0 && n.dato.fuentes.every((f) => f.nombre && /^https:\/\//.test(f.url)), `Nivel ${n.id}: fuentes`);
+        });
+      });
+
+      prueba('Niveles 1 a 4: ninguna opción es gratis (una ganancia y un costo)', () => {
+        BL.niveles.filter((n) => n.tipo === 'decision').forEach((n) => Object.entries(n.opciones).forEach(([id, o]) => {
+          const v = Object.values(o.efectos);
+          verdadero(v.some((x) => x > 0) && v.some((x) => x < 0), `Nivel ${n.id}-${id}`);
+        }));
+      });
+
+      prueba('Ninguna opción está dominada (en sus cifras)', () => {
+        const claves = ['proteccion', 'soporte', 'bateria'];
+        const peorOIgual = (a, b) => claves.every((k) => (a[k] || 0) <= (b[k] || 0)) && claves.some((k) => (a[k] || 0) < (b[k] || 0));
+        BL.niveles.filter((n) => n.tipo === 'decision').forEach((n) => {
+          const { A, B } = n.opciones;
+          verdadero(!peorOIgual(A.efectos, B.efectos) && !peorOIgual(B.efectos, A.efectos), `Nivel ${n.id}`);
+        });
+      });
+
+      prueba('Respaldo histórico: la X8.7 del 14-05-2024 y 5 llamaradas X', () => {
+        const t = BL.nasaData.respaldoHistorico();
+        igual([t.clase, t.fecha, t.enVivo, t.llamaradasX], ['X8.7', '2024-05-14T16:51Z', false, 5]);
+        verdadero(/^https:\/\/ccmc\.gsfc\.nasa\.gov\/DONKI\/view\/FLR\//.test(t.url), 'enlace a DONKI');
+      });
+
+      // ---------- Simulador de balance ----------
+      function simular(claseX) {
+        const s = { rutas: 0, victorias: { 3: 0, 2: 0, 1: 0 }, abortadas: 0, estados: 0, sinSalida: 0, n5SinGanadora: 0, ayudas: 0, perfecta: false, conPerdida: false };
+        const seguir = (r) => {
+          if (hay(r.eventos, 'ayudaActivada')) s.ayudas += 1;
+          const e = r.estado;
+          if (e.fase === F.RESULTADO) return seguir(M.continuar(e, { claseX }));
+          if (e.fase === F.RESPALDO) return seguir(M.reintentar(e));
+          if (e.fase === F.VICTORIA || e.fase === F.MISION_ABORTADA) return terminar(s, e);
+          s.estados += 1;
+          const nivel = BL.niveles[e.nivel - 1];
+          if (!M.esSobrevivible(e.medidores, nivel)) {
+            s.sinSalida += 1;
+            if (nivel.tipo === 'condicion') s.n5SinGanadora += 1;
+          }
+          ['A', 'B'].forEach((opcion) => seguir(M.aplicarDecision(e, opcion)));
+        };
+        seguir(M.empezar(M.crearEstadoInicial(), { claseX }));
+        return s;
+      }
+
+      function terminar(s, estado) {
+        s.rutas += 1;
+        if (estado.fase === F.MISION_ABORTADA) {
+          s.abortadas += 1;
+          s.conPerdida = true;
+          return;
+        }
+        s.victorias[estado.respaldos] += 1;
+        if (estado.respaldos === R.RESPALDOS_INICIALES) s.perfecta = true;
+        else s.conPerdida = true;
+      }
+
+      const simulaciones = { 'Sin clase X': simular(false), 'Con clase X': simular(true) };
+      Object.entries(simulaciones).forEach(([nombre, s]) => {
+        prueba(`Simulador (${nombre}): ningún estado sin salida`, () => igual(s.sinSalida, 0));
+        prueba(`Simulador (${nombre}): el Nivel 5 siempre tiene una opción ganadora`, () => igual(s.n5SinGanadora, 0));
+        prueba(`Simulador (${nombre}): el antibloqueo nunca se activa`, () => igual(s.ayudas, 0));
+        prueba(`Simulador (${nombre}): existe una ruta sin perder respaldos`, () => verdadero(s.perfecta));
+        prueba(`Simulador (${nombre}): existe una ruta que pierde respaldos`, () => verdadero(s.conPerdida));
+        prueba(`Simulador (${nombre}): reproduce las cifras de referencia (59 · 16/13/16 · 14)`, () =>
+          igual([s.rutas, s.victorias[3], s.victorias[2], s.victorias[1], s.abortadas], [59, 16, 13, 16, 14]));
+      });
+
+      // ---------- Informe ----------
+      function celda(fila, texto, numerica) {
+        const td = document.createElement('td');
+        td.textContent = texto;
+        if (numerica) td.className = 'num';
+        fila.append(td);
+      }
+
+      function pintarSimulador() {
+        const cuerpo = document.getElementById('tabla-simulador');
+        Object.entries(simulaciones).forEach(([nombre, s]) => {
+          const fila = document.createElement('tr');
+          celda(fila, nombre);
+          [s.rutas, `${s.victorias[3]} / ${s.victorias[2]} / ${s.victorias[1]}`, s.abortadas, s.estados, s.sinSalida, s.ayudas].forEach((v) => celda(fila, String(v), true));
+          cuerpo.append(fila);
+        });
+        console.table(Object.fromEntries(Object.entries(simulaciones).map(([n, s]) => [n, { rutas: s.rutas, 'victorias 3/2/1': `${s.victorias[3]}/${s.victorias[2]}/${s.victorias[1]}`, abortadas: s.abortadas, 'sin salida': s.sinSalida }])));
+      }
+
+      function pintarPruebas() {
+        const lista = document.getElementById('lista');
+        resultados.forEach((r) => {
+          const li = document.createElement('li');
+          li.className = r.ok ? 'ok' : 'fallo';
+          li.textContent = (r.ok ? '✔ ' : '✖ ') + r.nombre + (r.ok ? '' : ' — ' + r.error);
+          lista.append(li);
+        });
+        const ok = resultados.filter((r) => r.ok).length;
+        const resumen = document.getElementById('resumen');
+        resumen.textContent = `${ok} de ${resultados.length} pruebas en verde` + (ok === resultados.length ? ' ✔' : ' ✖');
+        resumen.className = ok === resultados.length ? 'ok' : 'fallo';
+      }
+
+      pintarSimulador();
+      pintarPruebas();
+      window.resultadosPruebas = {
+        total: resultados.length,
+        ok: resultados.filter((r) => r.ok).length,
+        fallos: resultados.filter((r) => !r.ok),
+        simulador: simulaciones,
+      };
+    })();
+  </script>
+</body>
+</html>
