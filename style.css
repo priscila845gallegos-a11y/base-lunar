@@ -151,6 +151,7 @@ a:hover {
 
 /* ---------- Panel de estado (HUD) ---------- */
 .hud {
+  position: relative;
   grid-area: hud;
   display: grid;
   align-content: start;
@@ -384,7 +385,10 @@ a:hover {
 }
 
 /* ---------- Tarjeta de misión ---------- */
+/* position: relative contiene los textos .sr-only (absolutos) dentro de la tarjeta;
+   sin ella, con contenido largo, alargaban la página y el scroll movía todo. */
 .tarjeta {
+  position: relative;
   grid-area: tarjeta;
   min-height: 0;
   overflow-y: auto;
@@ -495,8 +499,105 @@ a:hover {
   color: var(--color-texto-suave);
 }
 
+.dato__extra {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 8px;
+}
+
+.dato__linea {
+  margin: 0;
+}
+
+/* ---------- Vistas de la tarjeta: Inicio, avisos, Abortada y Victoria ---------- */
+/* El foco llega al título por programa al cambiar de vista; el lector lo anuncia. */
+.tarjeta__titulo:focus {
+  outline: none;
+}
+
+.instrucciones {
+  display: grid;
+  gap: 6px;
+  margin: 12px 0 0;
+  padding-left: 1.2em;
+}
+
+.nota {
+  margin: 14px 0 0;
+  font-size: var(--texto-pequeno);
+  color: var(--color-texto-suave);
+}
+
+.aviso {
+  margin: 12px 0 0;
+  padding: 10px 14px;
+  background: var(--color-fondo);
+  border-left: 4px solid var(--color-borde-control);
+  border-radius: 10px;
+}
+
+.aviso--tormenta,
+.aviso--respaldo {
+  border-left-color: var(--color-acento);
+}
+
+.aviso--ayuda {
+  border-left-color: var(--color-primario);
+}
+
+.aviso__mensaje {
+  margin: 0;
+  font-weight: 700;
+}
+
+.aviso__pista {
+  margin: 6px 0 0;
+  color: var(--color-texto-suave);
+}
+
+.certificado__linea {
+  margin: 10px 0 0;
+}
+
+.certificado__estrellas {
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+}
+
+.certificado__medidores {
+  display: grid;
+  gap: 4px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.certificado__subtitulo {
+  margin: 18px 0 8px;
+  font-size: 1.25rem;
+}
+
+.certificado__datos {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding-left: 1.4em;
+}
+
+.certificado__dato-titulo {
+  display: block;
+  font-weight: 700;
+}
+
+.certificado__dato-fuentes {
+  display: block;
+  font-size: var(--texto-pequeno);
+  color: var(--color-texto-suave);
+}
+
 /* ---------- Panel de decisiones ---------- */
 .decisiones {
+  position: relative;
   grid-area: decisiones;
   container: decisiones / inline-size;
 }
@@ -600,6 +701,19 @@ a:hover {
   .efecto + .efecto::before {
     content: none;
   }
+
+  /* Nivel 5: el requisito va debajo del texto, no en columna. */
+  .opcion--condicion {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .opcion--condicion .opcion__cuerpo {
+    display: grid;
+  }
+
+  .opcion--condicion .opcion__efectos {
+    flex-direction: row;
+  }
 }
 
 @container decisiones (min-width: 34rem) {
@@ -628,6 +742,11 @@ a:hover {
 
 .boton-principal:hover {
   filter: brightness(1.08);
+}
+
+.boton-principal:disabled {
+  cursor: default;
+  opacity: 0.7;
 }
 
 /* ---------- Pantallas estrechas (menos de 360 px) ---------- */
@@ -729,9 +848,11 @@ a:hover {
   .app {
     grid-template-columns: minmax(15rem, 19rem) minmax(0, 1fr);
     grid-template-rows: minmax(0, auto) auto;
+    /* El HUD ocupa solo la primera fila: si abarcara las dos, el grid cargaría su altura
+       mínima en la fila de decisiones y le quitaría espacio a la tarjeta. */
     grid-template-areas:
       "hud tarjeta"
-      "hud decisiones";
+      ". decisiones";
     align-content: start;
     padding-top: clamp(16px, 6vh, 64px);
   }
