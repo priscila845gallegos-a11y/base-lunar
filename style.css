@@ -1,0 +1,879 @@
+/*
+ * Base Lunar · style.css
+ * Tokens, layout responsivo (mobile-first), estados, animaciones y movimiento reducido.
+ * Paleta y reglas: sección 5 del Prompt 0. Decisiones: DECISIONES.md.
+ */
+
+/* ---------- Tipografía autoalojada (D-12) ---------- */
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src: url("assets/fonts/atkinson-hyperlegible-latin-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src: url("assets/fonts/atkinson-hyperlegible-latin-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---------- Tokens ---------- */
+:root {
+  /* Paleta (5.3) */
+  --color-fondo: #0F172A;
+  --color-superficie: #1E293B;
+  --color-primario: #3B82F6;
+  --color-acento: #F97316;
+  --color-alerta: #450A0A;
+
+  /* Neutros y apoyo (contrastes calculados en DECISIONES.md, D-20) */
+  --color-texto: #F8FAFC;
+  --color-texto-suave: #CBD5E1;
+  --color-texto-oscuro: #0F172A;
+  --color-enlace: #93C5FD;
+  --color-borde: #334155;
+  --color-borde-control: #64748B;
+
+  /* Tipografía fluida (5.2): base de 18 px o más e historia de 20 px o más */
+  --fuente: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --texto-base: clamp(1.125rem, 1.05rem + 0.35vw, 1.25rem);
+  --texto-historia: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
+  --texto-titulo: clamp(1.375rem, 1.2rem + 0.8vw, 1.75rem);
+  --texto-pequeno: 1rem;
+
+  /* Espacios y movimiento */
+  --radio: 14px;
+  --hueco: clamp(8px, 1.5vw, 16px);
+  --margen-lateral: 16px;
+  --duracion-barra: 0.4s;
+
+  color-scheme: dark;
+}
+
+/* ---------- Base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: var(--color-fondo);
+  background-image:
+    radial-gradient(circle at 20% 30%, rgb(248 250 252 / 0.5) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 70% 80%, rgb(248 250 252 / 0.35) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 40% 60%, rgb(203 213 225 / 0.3) 0 0.8px, transparent 1.4px);
+  background-size: 173px 173px, 251px 251px, 97px 97px;
+  color: var(--color-texto);
+  font-family: var(--fuente);
+  font-size: var(--texto-base);
+  line-height: 1.45;
+  transition: background-color 0.6s ease;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: var(--color-enlace);
+  text-underline-offset: 0.15em;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-texto);
+  outline-offset: 3px;
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.icono {
+  flex: none;
+  width: 24px;
+  height: 24px;
+}
+
+/* ---------- Layout base: móvil vertical (5.2) ---------- */
+/* HUD arriba, tarjeta al centro (con scroll interno si hace falta) y decisiones fijas abajo. */
+.app {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "hud"
+    "tarjeta"
+    "decisiones";
+  gap: var(--hueco);
+  width: 100%;
+  max-width: 1100px;
+  height: 100vh;
+  height: 100dvh;
+  margin: 0 auto;
+  padding:
+    max(8px, env(safe-area-inset-top))
+    max(var(--margen-lateral), env(safe-area-inset-right))
+    max(8px, env(safe-area-inset-bottom))
+    max(var(--margen-lateral), env(safe-area-inset-left));
+  overflow-x: clip;
+}
+
+/* ---------- Panel de estado (HUD) ---------- */
+.hud {
+  grid-area: hud;
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  padding: 8px 10px;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+}
+
+/* El título solo se ve en escritorio; en móvil queda para el lector de pantalla. */
+.hud__titulo {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.hud__subtitulo {
+  display: block;
+  font-size: var(--texto-pequeno);
+  font-weight: 400;
+  color: var(--color-texto-suave);
+}
+
+.hud__barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+}
+
+.progreso {
+  display: grid;
+  flex: 1 1 auto;
+  gap: 4px;
+  min-width: 0;
+}
+
+.progreso__texto {
+  margin: 0;
+  font-size: var(--texto-pequeno);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.progreso__puntos {
+  display: flex;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.progreso__punto {
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--color-texto-suave);
+  border-radius: 50%;
+}
+
+.progreso__punto--hecho {
+  background: var(--color-texto-suave);
+}
+
+.progreso__punto--actual {
+  background: var(--color-primario);
+  border-color: var(--color-texto);
+  outline: 2px solid var(--color-primario);
+  outline-offset: 1px;
+}
+
+.respaldos {
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+
+.respaldos__iconos {
+  display: inline-flex;
+  gap: 4px;
+  color: var(--color-texto);
+}
+
+.respaldo {
+  width: clamp(18px, 5.5vw, 24px);
+  height: clamp(18px, 5.5vw, 24px);
+}
+
+.respaldo--usado {
+  opacity: 0.3;
+}
+
+.hud__botones {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.boton-icono {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 2px solid var(--color-borde-control);
+  border-radius: 12px;
+  background: var(--color-fondo);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.boton-icono:hover {
+  border-color: var(--color-texto-suave);
+}
+
+.boton-icono[aria-pressed="true"] .icono--sonido-silencio,
+.boton-icono[aria-pressed="false"] .icono--sonido-activo {
+  display: none;
+}
+
+/* Medidores: icono, nombre, barra y número (3.1, 5.1). Una fila por medidor;
+   subgrid alinea las columnas de los tres medidores. */
+.medidores {
+  display: grid;
+  grid-template-columns: 1.6em max-content minmax(2.5rem, 1fr) max-content;
+  gap: 6px 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--texto-pequeno);
+}
+
+.medidor {
+  position: relative;
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: center;
+}
+
+@supports not (grid-template-columns: subgrid) {
+  .medidor {
+    grid-template-columns: 1.6em 7.5em minmax(2.5rem, 1fr) 4em;
+    column-gap: 8px;
+  }
+}
+
+.medidor__icono {
+  grid-column: 1;
+  font-size: 1.15em;
+  line-height: 1;
+  text-align: center;
+}
+
+.medidor__nombre {
+  grid-column: 2;
+}
+
+.medidor__barra {
+  grid-column: 3;
+  display: block;
+  height: 12px;
+  overflow: hidden;
+  background: var(--color-fondo);
+  border-radius: 999px;
+}
+
+.medidor__relleno {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: var(--color-primario);
+  border-radius: inherit;
+  transition: width var(--duracion-barra) ease, background-color 0.3s ease;
+}
+
+.medidor__valor {
+  grid-column: 4;
+  justify-self: end;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.medidor__aviso {
+  display: none;
+  margin-left: 4px;
+  color: var(--color-acento);
+}
+
+.medidor--bajo .medidor__relleno {
+  background: var(--color-acento);
+  animation: pulso-bajo 1.6s ease-in-out infinite;
+}
+
+.medidor--bajo .medidor__valor {
+  color: var(--color-acento);
+}
+
+.medidor--bajo .medidor__aviso {
+  display: inline;
+}
+
+/* Números flotantes («+20 ⚡», «−35 💧») junto a cada barra (5.4) */
+.medidor__flotante {
+  position: absolute;
+  top: -0.9em;
+  right: 0;
+  font-weight: 700;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.medidor__flotante--gana {
+  color: var(--color-enlace);
+}
+
+.medidor__flotante--pierde {
+  color: var(--color-acento);
+}
+
+.medidor__flotante--activo {
+  animation: flotar 1.2s ease-out forwards;
+}
+
+/* ---------- Tarjeta de misión ---------- */
+.tarjeta {
+  grid-area: tarjeta;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: clamp(12px, 3vw, 28px);
+  background: var(--color-superficie);
+  border: 2px solid var(--color-borde);
+  border-radius: var(--radio);
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-borde-control) transparent;
+}
+
+.tarjeta__superior {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.etiqueta {
+  flex: 0 1 auto;
+  min-width: 0;
+  margin: 0;
+  padding: 4px 12px;
+  font-size: var(--texto-pequeno);
+  line-height: 1.3;
+  color: var(--color-texto-suave);
+  background: var(--color-fondo);
+  border-radius: 14px;
+}
+
+.boton-escuchar {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 2px solid var(--color-borde-control);
+  border-radius: 999px;
+  background: transparent;
+  font-size: var(--texto-pequeno);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.boton-escuchar:hover {
+  border-color: var(--color-texto-suave);
+}
+
+.tarjeta__cabecera {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0 6px;
+}
+
+.tarjeta__avatar {
+  flex: none;
+  font-size: clamp(2.25rem, 2rem + 2vw, 3.75rem);
+  line-height: 1;
+}
+
+.tarjeta__titulo {
+  margin: 0;
+  font-size: var(--texto-titulo);
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.tarjeta__historia {
+  max-width: 60ch;
+  margin: 0;
+  font-size: var(--texto-historia);
+  line-height: 1.45;
+}
+
+.resultado {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.resultado__texto {
+  margin: 0;
+  font-weight: 700;
+}
+
+.dato {
+  padding: 12px 16px;
+  background: var(--color-fondo);
+  border-left: 4px solid var(--color-primario);
+  border-radius: 10px;
+}
+
+.dato__titulo {
+  margin: 0 0 6px;
+  font-size: 1.125rem;
+}
+
+.dato__texto {
+  margin: 0 0 8px;
+}
+
+.dato__fuente {
+  margin: 0;
+  font-size: var(--texto-pequeno);
+  color: var(--color-texto-suave);
+}
+
+/* ---------- Panel de decisiones ---------- */
+.decisiones {
+  grid-area: decisiones;
+  container: decisiones / inline-size;
+}
+
+.decisiones__opciones {
+  display: grid;
+  gap: 8px;
+}
+
+/* Texto oscuro sobre azul (4,9:1) y sobre naranja (6,4:1): AA para cualquier tamaño (5.3) */
+.opcion {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: 10px;
+  width: 100%;
+  min-height: 64px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: var(--radio);
+  color: var(--color-texto-oscuro);
+  text-align: left;
+  box-shadow: 0 3px 0 rgb(0 0 0 / 0.4);
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.1s ease;
+}
+
+.opcion--a {
+  background: var(--color-primario);
+}
+
+.opcion--b {
+  background: var(--color-acento);
+}
+
+.opcion:hover {
+  filter: brightness(1.08);
+}
+
+.opcion:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 rgb(0 0 0 / 0.4);
+}
+
+.opcion:disabled {
+  cursor: default;
+  filter: grayscale(0.6);
+  opacity: 0.7;
+}
+
+.opcion__letra {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: var(--color-texto-oscuro);
+  color: var(--color-texto);
+  font-weight: 700;
+}
+
+.opcion__cuerpo {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.opcion__titulo {
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* Ganancia y costo: en línea («+30 🛡️ · −30 ⚡») o en columna a la derecha */
+.opcion__efectos {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.35em;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.efecto + .efecto::before {
+  content: "· ";
+}
+
+@container decisiones (min-width: 20rem) and (max-width: 34rem) {
+  .opcion {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .opcion__cuerpo {
+    display: contents;
+  }
+
+  .opcion__efectos {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .efecto + .efecto::before {
+    content: none;
+  }
+}
+
+@container decisiones (min-width: 34rem) {
+  .decisiones__opciones {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.boton-principal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 56px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: var(--radio);
+  background: var(--color-primario);
+  color: var(--color-texto-oscuro);
+  font-size: 1.125em;
+  font-weight: 700;
+  box-shadow: 0 3px 0 rgb(0 0 0 / 0.4);
+  cursor: pointer;
+}
+
+.boton-principal:hover {
+  filter: brightness(1.08);
+}
+
+/* ---------- Pantallas estrechas (menos de 360 px) ---------- */
+@media (max-width: 359px) {
+  :root {
+    --margen-lateral: 12px;
+  }
+
+  .hud__barra {
+    column-gap: 6px;
+  }
+
+  .progreso__texto,
+  .medidores {
+    font-size: 0.9375rem;
+  }
+
+  /* «Escuchar» queda solo con el ícono; el texto sigue siendo su nombre accesible. */
+  .boton-escuchar {
+    justify-content: center;
+    width: 48px;
+    padding: 0;
+  }
+
+  .boton-escuchar__texto {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/* ---------- Tabletas en vertical: la tarjeta mide lo que su contenido ---------- */
+@media (min-width: 600px) and (orientation: portrait) {
+  .app {
+    grid-template-rows: auto minmax(0, auto) auto;
+    align-content: start;
+  }
+}
+
+/* ---------- Medidores en dos líneas (HUD estrecho o en columna) ---------- */
+@media (orientation: landscape) and (max-height: 560px), (min-width: 900px) and (min-height: 561px) {
+  .medidor {
+    grid-column: auto;
+    grid-template-columns: 1.6em minmax(0, 1fr) auto;
+    column-gap: 6px;
+    row-gap: 4px;
+  }
+
+  .medidor__icono,
+  .medidor__nombre,
+  .medidor__valor {
+    grid-row: 1;
+  }
+
+  .medidor__valor {
+    grid-column: 3;
+  }
+
+  .medidor__barra {
+    grid-row: 2;
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---------- Móvil horizontal: HUD arriba; tarjeta y decisiones en dos columnas ---------- */
+@media (orientation: landscape) and (max-height: 560px) {
+  .app {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+      "hud hud"
+      "tarjeta decisiones";
+  }
+
+  .medidores {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 14px;
+  }
+
+  /* Las barras quedan alineadas aunque un nombre ocupe dos líneas. */
+  .medidor {
+    grid-template-rows: 1fr auto;
+    align-items: end;
+  }
+
+  .decisiones {
+    min-height: 0;
+    overflow-y: auto;
+  }
+}
+
+/* ---------- Escritorio (900 px o más): HUD como columna izquierda ---------- */
+@media (min-width: 900px) and (min-height: 561px) {
+  .app {
+    grid-template-columns: minmax(15rem, 19rem) minmax(0, 1fr);
+    grid-template-rows: minmax(0, auto) auto;
+    grid-template-areas:
+      "hud tarjeta"
+      "hud decisiones";
+    align-content: start;
+    padding-top: clamp(16px, 6vh, 64px);
+  }
+
+  .hud {
+    align-self: start;
+    gap: 16px;
+    padding: 20px;
+  }
+
+  .hud__titulo {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    clip-path: none;
+    white-space: normal;
+    font-size: 1.5rem;
+    line-height: 1.2;
+  }
+
+  .hud__barra {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "progreso botones"
+      "respaldos respaldos";
+  }
+
+  .progreso {
+    grid-area: progreso;
+  }
+
+  .hud__botones {
+    grid-area: botones;
+  }
+
+  .respaldos {
+    grid-area: respaldos;
+  }
+
+  .medidores {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .tarjeta {
+    padding: 28px 32px;
+  }
+}
+
+/* ---------- Estados ---------- */
+/* Nivel 4: tormenta solar (5.4) */
+.alert-storm {
+  background-color: var(--color-alerta);
+}
+
+.alert-storm .tarjeta {
+  border-color: var(--color-acento);
+  animation: pulso-borde 2.4s ease-in-out infinite;
+}
+
+/* Al perder un respaldo (3.3). Va después de .alert-storm para ganarle. */
+.tarjeta.tarjeta--temblor {
+  animation: temblor 0.4s ease-in-out 1;
+}
+
+@keyframes temblor {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
+}
+
+@keyframes pulso-borde {
+  0%, 100% { box-shadow: 0 0 0 0 rgb(249 115 22 / 0); }
+  50% { box-shadow: 0 0 0 6px rgb(249 115 22 / 0.35); }
+}
+
+@keyframes pulso-bajo {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+@keyframes flotar {
+  0% { opacity: 0; transform: translateY(6px); }
+  15% { opacity: 1; }
+  80% { opacity: 1; transform: translateY(-10px); }
+  100% { opacity: 0; transform: translateY(-14px); }
+}
+
+@keyframes destello {
+  0% { border-color: var(--color-acento); box-shadow: 0 0 0 6px rgb(249 115 22 / 0.6); }
+  100% { border-color: var(--color-borde); box-shadow: 0 0 0 0 rgb(249 115 22 / 0); }
+}
+
+@keyframes aparecer {
+  0% { opacity: 0; }
+  15%, 80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ---------- Movimiento reducido: sin temblor ni pulsos (5.4) ---------- */
+@media (prefers-reduced-motion: reduce) {
+  body,
+  .medidor__relleno,
+  .opcion {
+    transition: none;
+  }
+
+  .medidor--bajo .medidor__relleno {
+    animation: none;
+  }
+
+  .alert-storm .tarjeta {
+    animation: none;
+    box-shadow: 0 0 0 4px rgb(249 115 22 / 0.45);
+  }
+
+  .tarjeta.tarjeta--temblor {
+    animation: destello 0.6s ease-out 1;
+  }
+
+  .medidor__flotante--activo {
+    animation: aparecer 1.2s ease-out forwards;
+  }
+
+  .opcion:active {
+    transform: none;
+  }
+}
+
+/* ---------- Sin JavaScript ---------- */
+.aviso-noscript {
+  max-width: 40rem;
+  margin: 16px auto;
+  padding: 16px 20px;
+  background: var(--color-superficie);
+  border: 2px solid var(--color-acento);
+  border-radius: var(--radio);
+  font-size: 1.25rem;
+}

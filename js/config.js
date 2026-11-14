@@ -25,4 +25,17 @@ window.BaseLunar.config = Object.freeze({
   FLR_RESPALDO_ID: '2024-05-14T16:46:00-FLR-001',
   /** Nombres de los parámetros de demostración en la URL. */
   PARAMETROS_DEMO: Object.freeze({ NIVEL: 'nivel', OFFLINE: 'offline', DEBUG: 'debug' }),
+  /** Reglas del juego (sección 3 del Prompt 0). */
+  REGLAS: Object.freeze({
+    VALOR_INICIAL: 80,
+    VALOR_MINIMO: 0,
+    VALOR_MAXIMO: 100,
+    /** Por debajo de este valor, el medidor se muestra en estado «bajo». */
+    UMBRAL_BAJO: 30,
+    /** Valor mínimo de un medidor que falló, al reintentar el nivel. */
+    MINIMO_REINTENTO: 30,
+    RESPALDOS_INICIALES: 3,
+    /** Protección que resta una llamarada de clase X al empezar el Nivel 4. */
+    PENALIZACION_X: 5,
+  }),
 });
