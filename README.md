@@ -2,7 +2,7 @@
 
 Juego web educativo de decisiones para niñas y niños de 7 a 12 años. Quien juega comanda una base en la superficie de la Luna durante 5 situaciones reales del espacio y aprende que cada recurso tiene un costo: energía, agua y oxígeno, y protección contra la radiación.
 
-> **Estado: fase F0 (Preparación).** Todavía no se puede jugar. Ver [Plan y estado](#plan-y-estado).
+> **Estado: fase F1 (Maquetación) en revisión.** `index.html` muestra la maqueta con datos de ejemplo; todavía no se puede jugar. Ver [Plan y estado](#plan-y-estado).
 
 ## Cómo se juega
 
@@ -19,7 +19,7 @@ Juego web educativo de decisiones para niñas y niños de 7 a 12 años. Quien ju
 - Pruebas del motor y simulador de balance: abre `tests/tests.html` en el navegador.
 - Parámetros de demostración: `?nivel=4` (empezar en un nivel), `?offline=1` (forzar el respaldo histórico) y `?debug=1` (ver el estado interno).
 
-`index.html` llega en F1 y `tests/tests.html` en F2.
+Desde F1, `index.html` muestra la maqueta. El juego completo funciona desde F2, cuando también llega `tests/tests.html`.
 
 ## Arquitectura
 
@@ -29,18 +29,19 @@ HTML5 + CSS3 (variables, Grid y Flexbox) + JavaScript ES6+ puro. Sin frameworks,
 
 ```
 baseLunar/
-├── index.html        # Pantalla única: 3 bloques + Inicio, Respaldo, Abortada y Victoria   (F1)
-├── style.css         # Tokens, layout responsivo, estados, animaciones, impresión          (F1)
+├── index.html        # Pantalla única: 3 bloques + Inicio, Respaldo, Abortada y Victoria   (F1 ✔ maqueta · F4)
+├── style.css         # Tokens, layout responsivo, estados, animaciones, impresión          (F1 ✔ · F4)
 ├── js/
-│   ├── config.js     # Clave NASA, tiempos (timeout 3 s, caché 6 h), banderas de demo      (F0 ✔)
+│   ├── config.js     # Clave NASA, tiempos, banderas de demo y reglas del juego            (F0 ✔ · F1 ✔)
 │   ├── levels.js     # Guion: 5 niveles, mensajes de respaldo, fuentes (solo datos)        (F2)
 │   ├── nasaData.js   # DONKI: consulta con timeout, validación, caché y respaldo histórico (F0 ✔ datos · F3)
 │   ├── game.js       # Motor puro: estado, reglas, respaldos, antibloqueo (sin DOM)        (F2)
-│   └── ui.js         # Render, eventos, accesibilidad, voz y arranque (único con DOM)      (F2)
+│   └── ui.js         # Render, eventos, accesibilidad, voz y arranque (único con DOM)      (F1 medidores · F2)
 ├── tests/
 │   └── tests.html    # Pruebas del motor + simulador de balance                            (F2)
 ├── assets/
-│   └── favicon.svg                                                                         (F1)
+│   ├── favicon.svg                                                                         (F1 ✔)
+│   └── fonts/        # Atkinson Hyperlegible 400 y 700 (subconjunto latino) + OFL.txt      (F1 ✔)
 ├── docs/
 │   ├── PROMPT-0.md   # Especificación completa                                             (F0 ✔)
 │   └── FUENTES.md    # Verificación de cada dato científico                                (F0 ✔)
@@ -98,8 +99,8 @@ Sin cuentas, sin cookies y sin analítica. El nombre del certificado solo se mue
 
 | Fase | Tiempo | Resultado | Estado |
 |---|---|---|---|
-| F0 · Preparación | 0:30 | Repositorio, documentación, fuentes verificadas o marcadas | En revisión (P0) |
-| F1 · Maquetación | 1:30 | index.html y style.css con datos de ejemplo | Pendiente |
+| F0 · Preparación | 0:30 | Repositorio, documentación, fuentes verificadas o marcadas | Hecha (P0 aprobada) |
+| F1 · Maquetación | 1:30 | index.html y style.css con datos de ejemplo | En revisión (P1) |
 | F2 · Motor y pruebas | 2:00 | levels.js, game.js, ui.js y tests.html en verde | Pendiente |
 | F3 · NASA DONKI | 1:00 | nasaData.js con timeout, validación, caché y respaldo | Pendiente |
 | F4 · Pulido y finales | 1:00 | Inicio, certificado, Misión Abortada, voz, demo | Pendiente |
