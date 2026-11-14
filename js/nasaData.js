@@ -1,7 +1,8 @@
 /*
  * Base Lunar · js/nasaData.js
  * Datos de NASA DONKI para el Nivel 4.
- * F0: respaldo histórico (copia literal). F3: consulta en vivo con timeout, validación y caché.
+ * F0: respaldo histórico (copia literal). F2: dato de tormenta a partir del respaldo.
+ * F3: consulta en vivo con timeout, validación y caché.
  */
 'use strict';
 
@@ -197,3 +198,26 @@ window.BaseLunar.nasaData = {
     }
   ],
 };
+
+(function (BL) {
+  const datos = BL.nasaData;
+
+  /**
+   * Dato de tormenta del respaldo histórico: la llamarada configurada en FLR_RESPALDO_ID.
+   * @returns {{clase: string, fecha: string, fuente: string, url: string, enVivo: boolean, llamaradasX: number}}
+   */
+  function respaldoHistorico() {
+    const lista = datos.LLAMARADAS_X_MAYO_2024;
+    const principal = lista.find((f) => f.flrID === BL.config.FLR_RESPALDO_ID);
+    return Object.freeze({
+      clase: principal.classType,
+      fecha: principal.peakTime || principal.beginTime,
+      fuente: 'NASA DONKI',
+      url: principal.link,
+      enVivo: false,
+      llamaradasX: lista.length,
+    });
+  }
+
+  datos.respaldoHistorico = respaldoHistorico;
+})(window.BaseLunar);

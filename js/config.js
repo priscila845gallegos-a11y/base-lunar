@@ -37,5 +37,15 @@ window.BaseLunar.config = Object.freeze({
     RESPALDOS_INICIALES: 3,
     /** Protección que resta una llamarada de clase X al empezar el Nivel 4. */
     PENALIZACION_X: 5,
+    /** Si fallan varios medidores a la vez, se muestra el mensaje del primero de esta lista (3.6). */
+    PRIORIDAD_FALLO: Object.freeze(['soporte', 'proteccion', 'bateria']),
+  }),
+  /** Tiempos de la interfaz, en milisegundos. */
+  TIEMPOS: Object.freeze({
+    /** Controles bloqueados tras cada acción (dura lo mismo que la animación de las barras). */
+    TRANSICION_MS: 450,
+    TEMBLOR_MS: 700,
+    /** Pausa antes de escribir en una región live, para que el lector de pantalla la anuncie. */
+    ANUNCIO_MS: 60,
   }),
 });
