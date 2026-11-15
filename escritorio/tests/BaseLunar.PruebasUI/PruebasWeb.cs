@@ -26,7 +26,13 @@ public sealed class PruebasWeb
     [ClassCleanup]
     public static void Cerrar() => servidor?.Dispose();
 
-    private static string Url(string ruta) => servidor!.Origen + ruta;
+    /// <summary>
+    /// La web servida en localhost o, con la variable BASELUNAR_WEB, la publicada (por ejemplo, la de GitHub Pages,
+    /// terminada en «/»): así las mismas pruebas validan el enlace público (P6).
+    /// </summary>
+    private static string Origen => Environment.GetEnvironmentVariable("BASELUNAR_WEB") is { Length: > 0 } publicada ? publicada : servidor!.Origen;
+
+    private static string Url(string ruta) => Origen + ruta;
 
     public TestContext TestContext { get; set; } = null!;
 
@@ -336,7 +342,8 @@ public sealed class PruebasWeb
     {
         var errores = navegador.Errores.Where(e => permitido is null || !e.EndsWith("/" + permitido, StringComparison.Ordinal)).ToArray();
         Assert.IsEmpty(errores, $"{navegador.Nombre}: {string.Join(Environment.NewLine, errores)}");
-        var fuera = navegador.Pedidos.Where(p => !p.StartsWith(servidor!.Origen, StringComparison.Ordinal) && !p.StartsWith("data:", StringComparison.Ordinal) && p != "about:blank").ToArray();
+        var fuera = navegador.Pedidos.Where(p => !p.StartsWith(Origen, StringComparison.Ordinal) && !p.StartsWith("data:", StringComparison.Ordinal) && p != "about:blank"
+            && (permitido is null || !p.EndsWith("/" + permitido, StringComparison.Ordinal))).ToArray();
         Assert.IsEmpty(fuera, $"{navegador.Nombre}: pedidos fuera de la web: {string.Join(", ", fuera)}");
         Assert.IsNotEmpty(navegador.Pedidos, "Se registraron los pedidos");
     }

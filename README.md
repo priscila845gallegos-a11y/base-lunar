@@ -48,6 +48,9 @@ Es la misma partida con una interfaz nueva de videojuego, hecha en C# con WPF (.
     - 13 de la web en Edge, Chrome y Firefox.
 - Las pruebas con UI Automation abren la ventana del juego unos segundos. Para omitirlas: `--filter "TestCategory!=UIAutomation"`.
 - Las de la web abren los navegadores sin ventana (D-61), y si falta alguno quedan como «Inconclusive». Para omitirlas: `--filter "TestCategory!=Navegador"`.
+- Para probar lo publicado:
+  - `BASELUNAR_WEB=https://priscila845gallegos-a11y.github.io/base-lunar/` hace que las pruebas de la web usen el enlace público;
+  - `BASELUNAR_EXE=<ruta>\BaseLunar.exe` hace que las partidas de UI Automation usen el .exe portable.
 - Las capturas de las pruebas quedan en `escritorio/capturas/`:
   - 8 pantallas a 4 tamaños y con zoom;
   - con el prefijo `f33-`, el estado final y un fotograma a mitad de cada animación;

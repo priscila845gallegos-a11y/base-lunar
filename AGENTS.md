@@ -78,6 +78,7 @@ Este archivo es para cualquier agente de IA que trabaje en este repositorio. Lé
 - El nombre del certificado (D-58) vive solo en memoria: no lo guardes, no lo envíes, no lo leas en voz alta ni lo anuncies.
 - Un error inesperado nunca se enseña al niño: lo recoge `App.ManejarError` y aparece «Control de Misión» (D-57).
 - Validación (F5): [docs/VALIDACION.md](docs/VALIDACION.md) es la matriz de P5. Si un cambio toca un criterio, actualiza su evidencia. `PruebasValidacion` vigila la duración, los errores de enlace, la privacidad (disco y código) y las fuentes. `PruebasWeb` maneja Edge, Chrome y Firefox sin ventana (D-61) y nunca modifica la web.
+- Publicación (D-63, D-64): la web se publica sola en cada push a `main` (GitHub Pages). Antes de una versión nueva, ejecuta `escritorio/publicar.ps1` y pasa las pruebas con `BASELUNAR_WEB` (el enlace público) y `BASELUNAR_EXE` (el .exe publicado). Nunca hagas push sin permiso del equipo.
 - Ventana y zoom (D-59): la pantalla tiene que caber a 960×485 DIP (zoom al 200 % en 1920×1080). Por debajo de 560 DIP de alto, la escena se oculta.
 - Compila con `dotnet build escritorio/BaseLunar.sln -m:1`: en la carpeta de OneDrive, la compilación en paralelo de WPF a veces pierde los `.g.cs` y tapa errores reales.
 - Las 3 pruebas de UI Automation abren la ventana del juego unos segundos. Para omitirlas: `--filter "TestCategory!=UIAutomation"`. Las capturas quedan en `escritorio/capturas/` (ignorada por git).
