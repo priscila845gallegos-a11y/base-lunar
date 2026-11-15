@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <RootNamespace>BaseLunar.Nucleo</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Copia literal de NASA DONKI: el mismo JSON que js/nasaData.js (PruebasParidad lo comprueba). -->
+    <EmbeddedResource Include="Donki\respaldo-mayo-2024.json" LogicalName="BaseLunar.Nucleo.Donki.respaldo-mayo-2024.json" />
+  </ItemGroup>
+
+</Project>

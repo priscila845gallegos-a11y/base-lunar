@@ -10,3 +10,10 @@ desktop.ini
 # Entregables generados (el ZIP offline se adjunta a la versión, no se versiona)
 dist/
 *.zip
+
+# .NET (escritorio/)
+bin/
+obj/
+.vs/
+TestResults/
+*.user
