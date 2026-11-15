@@ -14,8 +14,8 @@
         </Style>
     </UserControl.Resources>
     <!-- Mapa de la misión: el camino de la base al relevo, con las 5 estaciones (una por nivel) -->
-    <Grid Background="{StaticResource Pincel.CieloNormal}">
-        <Rectangle Fill="{StaticResource Pincel.Estrellas}" />
+    <Grid Background="{DynamicResource Pincel.CieloNormal}">
+        <Rectangle Fill="{DynamicResource Pincel.Estrellas}" />
         <Viewbox Stretch="Uniform" Margin="16,10">
             <Grid Width="1300">
                 <Grid.RowDefinitions>
@@ -26,7 +26,7 @@
                            AutomationProperties.HeadingLevel="Level2" Style="{StaticResource EtiquetaMapa}" />
                 <Grid x:Name="Camino" Grid.Row="1" HorizontalAlignment="Center">
                     <!-- El camino pasa por el centro de los círculos (fila de la ficha: 50; círculo: 120) -->
-                    <Rectangle Height="10" VerticalAlignment="Top" Margin="90,105,90,0" RadiusX="5" RadiusY="5" Fill="{StaticResource Pincel.BordeControl}" />
+                    <Rectangle Height="10" VerticalAlignment="Top" Margin="90,105,90,0" RadiusX="5" RadiusY="5" Fill="{DynamicResource Pincel.BordeControl}" />
                     <StackPanel Orientation="Horizontal">
                         <!-- Salida: la base -->
                         <Grid Width="180">
@@ -36,7 +36,7 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <Border Grid.Row="1" Width="120" Height="120" CornerRadius="60" BorderThickness="5"
-                                    Background="{StaticResource Pincel.Superficie}" BorderBrush="{StaticResource Pincel.Primario}">
+                                    Background="{DynamicResource Pincel.Superficie}" BorderBrush="{DynamicResource Pincel.Primario}">
                                 <Canvas Width="80" Height="60">
                                     <Path Data="M8,44 A32,30 0 0 1 72,44 Z" Fill="#FFE2E8F0" />
                                     <Rectangle Canvas.Top="40" Width="80" Height="18" RadiusX="9" RadiusY="9" Fill="#FFCBD5E1" />
@@ -60,31 +60,31 @@
                                             <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
                                         <Border x:Name="Circulo" Grid.Row="1" Width="120" Height="120" CornerRadius="60" BorderThickness="5"
-                                                Background="{StaticResource Pincel.Superficie}" BorderBrush="{StaticResource Pincel.BordeControl}"
+                                                Background="{DynamicResource Pincel.Superficie}" BorderBrush="{DynamicResource Pincel.BordeControl}"
                                                 c:Animaciones.Pulso="{Binding EsActual}">
                                             <c:Icono x:Name="Simbolo" Width="60" Height="60" Opacity="0.75"
-                                                     Geometria="{Binding Avatar, Converter={StaticResource IconoDeEmoji}}" Foreground="{StaticResource Pincel.TextoSuave}" />
+                                                     Geometria="{Binding Avatar, Converter={StaticResource IconoDeEmoji}}" Foreground="{DynamicResource Pincel.TextoSuave}" />
                                         </Border>
                                         <!-- Sello de superado: la estación gana una estrella -->
                                         <Border x:Name="Sello" Grid.Row="1" Width="50" Height="50" CornerRadius="25" Margin="0,-6,6,0"
                                                 HorizontalAlignment="Right" VerticalAlignment="Top" Visibility="Collapsed"
-                                                Background="{StaticResource Pincel.Fondo}" BorderBrush="{StaticResource Pincel.Estrella}" BorderThickness="3">
-                                            <c:Icono Width="30" Height="30" Geometria="{StaticResource Icono.Estrella}" Foreground="{StaticResource Pincel.Estrella}" Relleno="{StaticResource Pincel.Estrella}" />
+                                                Background="{DynamicResource Pincel.Fondo}" BorderBrush="{DynamicResource Pincel.Estrella}" BorderThickness="3">
+                                            <c:Icono Width="30" Height="30" Geometria="{StaticResource Icono.Estrella}" Foreground="{DynamicResource Pincel.Estrella}" Relleno="{DynamicResource Pincel.Estrella}" />
                                         </Border>
                                         <c:TextoDecorativo Grid.Row="2" Text="{Binding Titulo}" FontSize="24" TextWrapping="Wrap" TextAlignment="Center"
-                                                           Margin="6,8,6,0" Foreground="{StaticResource Pincel.TextoSuave}" Style="{StaticResource EtiquetaMapa}" />
+                                                           Margin="6,8,6,0" Foreground="{DynamicResource Pincel.TextoSuave}" Style="{StaticResource EtiquetaMapa}" />
                                     </Grid>
                                     <DataTemplate.Triggers>
                                         <DataTrigger Binding="{Binding EsHecha}" Value="True">
-                                            <Setter TargetName="Circulo" Property="BorderBrush" Value="{StaticResource Pincel.Exito}" />
-                                            <Setter TargetName="Simbolo" Property="Foreground" Value="{StaticResource Pincel.Texto}" />
+                                            <Setter TargetName="Circulo" Property="BorderBrush" Value="{DynamicResource Pincel.Exito}" />
+                                            <Setter TargetName="Simbolo" Property="Foreground" Value="{DynamicResource Pincel.Texto}" />
                                             <Setter TargetName="Simbolo" Property="Opacity" Value="1" />
                                             <Setter TargetName="Sello" Property="Visibility" Value="Visible" />
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding EsActual}" Value="True">
-                                            <Setter TargetName="Circulo" Property="Background" Value="{StaticResource Pincel.Acento}" />
-                                            <Setter TargetName="Circulo" Property="BorderBrush" Value="{StaticResource Pincel.Texto}" />
-                                            <Setter TargetName="Simbolo" Property="Foreground" Value="{StaticResource Pincel.TextoOscuro}" />
+                                            <Setter TargetName="Circulo" Property="Background" Value="{DynamicResource Pincel.Acento}" />
+                                            <Setter TargetName="Circulo" Property="BorderBrush" Value="{DynamicResource Pincel.Texto}" />
+                                            <Setter TargetName="Simbolo" Property="Foreground" Value="{DynamicResource Pincel.TextoOscuro}" />
                                             <Setter TargetName="Simbolo" Property="Opacity" Value="1" />
                                         </DataTrigger>
                                     </DataTemplate.Triggers>
@@ -100,8 +100,8 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <Border Grid.Row="1" Width="120" Height="120" CornerRadius="60" BorderThickness="5"
-                                    Background="{StaticResource Pincel.Superficie}" BorderBrush="{StaticResource Pincel.Estrella}">
-                                <c:Icono Width="60" Height="60" Geometria="{StaticResource Icono.Bandera}" Foreground="{StaticResource Pincel.Estrella}" />
+                                    Background="{DynamicResource Pincel.Superficie}" BorderBrush="{DynamicResource Pincel.Estrella}">
+                                <c:Icono Width="60" Height="60" Geometria="{StaticResource Icono.Bandera}" Foreground="{DynamicResource Pincel.Estrella}" />
                             </Border>
                             <TextBlock Grid.Row="2" Text="{x:Static vm:TextosApp+Mapa.Meta}" FontSize="28" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,8,0,0" Style="{StaticResource EtiquetaMapa}" />
                         </Grid>

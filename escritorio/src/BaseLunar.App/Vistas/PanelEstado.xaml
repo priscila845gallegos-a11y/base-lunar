@@ -4,8 +4,8 @@
              xmlns:c="clr-namespace:BaseLunar.App.Controles"
              xmlns:vm="clr-namespace:BaseLunar.App.VistaModelos">
     <!-- Barra superior: nombre del juego, minimapa de progreso y respaldos -->
-    <Border CornerRadius="18" Background="{StaticResource Pincel.SuperficieTranslucida}"
-            BorderBrush="{StaticResource Pincel.Borde}" BorderThickness="1" Padding="12,8">
+    <Border CornerRadius="18" Background="{DynamicResource Pincel.SuperficieTranslucida}"
+            BorderBrush="{DynamicResource Pincel.Borde}" BorderThickness="1" Padding="12,8">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -22,18 +22,18 @@
                             <GradientStop Color="#FBBF24" Offset="1" />
                         </RadialGradientBrush>
                     </Border.Background>
-                    <c:Icono Width="26" Height="26" Geometria="{StaticResource Icono.Luna}" Foreground="{StaticResource Pincel.TextoOscuro}" />
+                    <c:Icono Width="26" Height="26" Geometria="{StaticResource Icono.Luna}" Foreground="{DynamicResource Pincel.TextoOscuro}" />
                 </Border>
                 <StackPanel x:Name="Nombre" Margin="10,0,0,0" VerticalAlignment="Center">
                     <TextBlock Text="{x:Static vm:TextosApp.Titulo}" FontSize="20" FontWeight="Bold" AutomationProperties.HeadingLevel="Level1" />
-                    <TextBlock x:Name="Subtitulo" Text="{x:Static vm:TextosApp.Subtitulo}" FontSize="{StaticResource Tamano.Pequeno}" Foreground="{StaticResource Pincel.TextoSuave}" />
+                    <TextBlock x:Name="Subtitulo" Text="{x:Static vm:TextosApp.Subtitulo}" FontSize="{StaticResource Tamano.Pequeno}" Foreground="{DynamicResource Pincel.TextoSuave}" />
                 </StackPanel>
             </StackPanel>
 
             <!-- Minimapa: las 5 estaciones, unidas por el camino -->
             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="12,0">
                 <Grid VerticalAlignment="Center">
-                    <Rectangle Height="4" Margin="18,0" RadiusX="2" RadiusY="2" Fill="{StaticResource Pincel.BordeControl}" VerticalAlignment="Center" />
+                    <Rectangle Height="4" Margin="18,0" RadiusX="2" RadiusY="2" Fill="{DynamicResource Pincel.BordeControl}" VerticalAlignment="Center" />
                     <ItemsControl ItemsSource="{Binding Estaciones}" Focusable="False" AutomationProperties.Name="{x:Static vm:TextosApp+Mapa.Nombre}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -43,28 +43,28 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="{x:Type vm:EstacionVM}">
                                 <Border x:Name="Punto" Width="32" Height="32" Margin="5,0" CornerRadius="16" BorderThickness="2"
-                                        Background="{StaticResource Pincel.Superficie}" BorderBrush="{StaticResource Pincel.BordeControl}"
+                                        Background="{DynamicResource Pincel.Superficie}" BorderBrush="{DynamicResource Pincel.BordeControl}"
                                         AutomationProperties.Name="{Binding TextoAccesible}" c:Animaciones.Pulso="{Binding EsActual}">
                                     <c:Icono x:Name="IconoPunto" Width="18" Height="18" Opacity="0.7"
                                              Geometria="{Binding Avatar, Converter={StaticResource IconoDeEmoji}}"
-                                             Foreground="{StaticResource Pincel.TextoSuave}" />
+                                             Foreground="{DynamicResource Pincel.TextoSuave}" />
                                 </Border>
                                 <DataTemplate.Triggers>
                                     <DataTrigger Binding="{Binding EsHecha}" Value="True">
-                                        <Setter TargetName="Punto" Property="Background" Value="{StaticResource Pincel.Fondo}" />
-                                        <Setter TargetName="Punto" Property="BorderBrush" Value="{StaticResource Pincel.Estrella}" />
+                                        <Setter TargetName="Punto" Property="Background" Value="{DynamicResource Pincel.Fondo}" />
+                                        <Setter TargetName="Punto" Property="BorderBrush" Value="{DynamicResource Pincel.Estrella}" />
                                         <Setter TargetName="IconoPunto" Property="Geometria" Value="{StaticResource Icono.Estrella}" />
-                                        <Setter TargetName="IconoPunto" Property="Foreground" Value="{StaticResource Pincel.Estrella}" />
-                                        <Setter TargetName="IconoPunto" Property="Relleno" Value="{StaticResource Pincel.Estrella}" />
+                                        <Setter TargetName="IconoPunto" Property="Foreground" Value="{DynamicResource Pincel.Estrella}" />
+                                        <Setter TargetName="IconoPunto" Property="Relleno" Value="{DynamicResource Pincel.Estrella}" />
                                         <Setter TargetName="IconoPunto" Property="Opacity" Value="1" />
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding EsActual}" Value="True">
-                                        <Setter TargetName="Punto" Property="Background" Value="{StaticResource Pincel.Acento}" />
-                                        <Setter TargetName="Punto" Property="BorderBrush" Value="{StaticResource Pincel.Texto}" />
+                                        <Setter TargetName="Punto" Property="Background" Value="{DynamicResource Pincel.Acento}" />
+                                        <Setter TargetName="Punto" Property="BorderBrush" Value="{DynamicResource Pincel.Texto}" />
                                         <Setter TargetName="Punto" Property="Width" Value="40" />
                                         <Setter TargetName="Punto" Property="Height" Value="40" />
                                         <Setter TargetName="Punto" Property="CornerRadius" Value="20" />
-                                        <Setter TargetName="IconoPunto" Property="Foreground" Value="{StaticResource Pincel.TextoOscuro}" />
+                                        <Setter TargetName="IconoPunto" Property="Foreground" Value="{DynamicResource Pincel.TextoOscuro}" />
                                         <Setter TargetName="IconoPunto" Property="Width" Value="22" />
                                         <Setter TargetName="IconoPunto" Property="Height" Value="22" />
                                         <Setter TargetName="IconoPunto" Property="Opacity" Value="1" />
@@ -93,7 +93,7 @@
                 <Grid>
                     <c:Icono Width="22" Height="22" Geometria="{StaticResource Icono.Sonido}"
                              Visibility="{Binding SonidoActivo, Converter={StaticResource Visible}}" />
-                    <c:Icono Width="22" Height="22" Geometria="{StaticResource Icono.Silencio}" Foreground="{StaticResource Pincel.TextoSuave}"
+                    <c:Icono Width="22" Height="22" Geometria="{StaticResource Icono.Silencio}" Foreground="{DynamicResource Pincel.TextoSuave}"
                              Visibility="{Binding SonidoActivo, Converter={StaticResource Oculto}}" />
                 </Grid>
             </ToggleButton>
@@ -109,17 +109,17 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <c:Icono x:Name="Salvavidas" Width="28" Height="28" Margin="2,0"
-                                     Geometria="{StaticResource Icono.Salvavidas}" Foreground="{StaticResource Pincel.Acento}" Grosor="2.4" />
+                                     Geometria="{StaticResource Icono.Salvavidas}" Foreground="{DynamicResource Pincel.Acento}" Grosor="2.4" />
                             <DataTemplate.Triggers>
                                 <DataTrigger Binding="{Binding}" Value="False">
-                                    <Setter TargetName="Salvavidas" Property="Foreground" Value="{StaticResource Pincel.BordeControl}" />
+                                    <Setter TargetName="Salvavidas" Property="Foreground" Value="{DynamicResource Pincel.BordeControl}" />
                                     <Setter TargetName="Salvavidas" Property="Opacity" Value="0.55" />
                                 </DataTrigger>
                             </DataTemplate.Triggers>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                <TextBlock Text="{x:Static vm:TextosApp.Respaldos}" FontSize="{StaticResource Tamano.Pequeno}" Foreground="{StaticResource Pincel.TextoSuave}"
+                <TextBlock Text="{x:Static vm:TextosApp.Respaldos}" FontSize="{StaticResource Tamano.Pequeno}" Foreground="{DynamicResource Pincel.TextoSuave}"
                            HorizontalAlignment="Center" AutomationProperties.Name="{Binding TextoRespaldos}"
                            AutomationProperties.AutomationId="RespaldosTexto" />
             </StackPanel>

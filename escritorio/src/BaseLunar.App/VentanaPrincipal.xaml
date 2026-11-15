@@ -6,7 +6,7 @@
         Title="{x:Static vm:TextosApp.TituloVentana}"
         Width="1280" Height="800" MinWidth="800" MinHeight="600"
         WindowStartupLocation="CenterScreen"
-        Background="{StaticResource Pincel.Fondo}"
+        Background="{DynamicResource Pincel.Fondo}"
         AutomationProperties.AutomationId="VentanaBaseLunar"
         KeyDown="AlPulsarTecla" Loaded="AlCargar">
     <v:PantallaJuego x:Name="Pantalla" />

@@ -125,6 +125,9 @@ public sealed record FuenteVM(string Nombre, string Url)
 /// <summary>El 💡 Dato real de un nivel, con sus líneas extra y sus fuentes.</summary>
 public sealed record DatoVM(string Titulo, string Texto, IReadOnlyList<string> Extra, string EtiquetaFuentes, IReadOnlyList<FuenteVM> Fuentes)
 {
+    /// <summary>Las fuentes en una línea de texto, para el certificado impreso (en papel no hay enlaces).</summary>
+    public string TextoFuentes => EtiquetaFuentes + " " + string.Join(" · ", Fuentes.Select(f => f.Nombre));
+
     public static DatoVM De(Nivel nivel, Tormenta tormenta)
     {
         var fuentes = Presentacion.FuentesDe(nivel, tormenta);

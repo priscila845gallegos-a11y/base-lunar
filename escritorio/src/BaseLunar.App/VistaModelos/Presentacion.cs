@@ -168,6 +168,20 @@ public static class Presentacion
         return [nivel.Opciones[estado.UltimaOpcion!].Resultado, .. cambios, Textos.Rellenar(Textos.Anuncios.Dato, ("texto", nivel.Dato.Texto))];
     }
 
+    /// <summary>Nombre del certificado (D-17): sin caracteres de control y con 24 caracteres como máximo.</summary>
+    public static string LimpiarNombre(string? texto)
+    {
+        if (string.IsNullOrEmpty(texto)) return string.Empty;
+        var limpio = new string(texto.Where(c => !char.IsControl(c)).ToArray());
+        var resultado = new System.Text.StringBuilder();
+        var elementos = StringInfo.GetTextElementEnumerator(limpio);
+        while (elementos.MoveNext() && resultado.Length + elementos.GetTextElement().Length <= MaximoNombre)
+            resultado.Append(elementos.GetTextElement());
+        return resultado.ToString();
+    }
+
+    public const int MaximoNombre = 24;
+
     /// <summary>«🛡️ Protección: 80 %» para el certificado.</summary>
     public static string LineaMedidor(InfoMedidor info, Medidores medidores) =>
         $"{info.Icono} {info.Nombre}: {Porcentaje(medidores[info.Clave])}";

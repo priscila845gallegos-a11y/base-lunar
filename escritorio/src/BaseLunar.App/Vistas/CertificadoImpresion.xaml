@@ -1,0 +1,67 @@
+<UserControl x:Class="BaseLunar.App.Vistas.CertificadoImpresion"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="clr-namespace:BaseLunar.App.Controles"
+             xmlns:vm="clr-namespace:BaseLunar.App.VistaModelos"
+             Width="794" Height="1123" Background="White" Foreground="#FF0F172A"
+             FontFamily="{StaticResource Fuente.Principal}" FontSize="16">
+    <!--
+        Certificado para imprimir (A4 vertical a 96 DIP): fondo blanco y texto oscuro para ahorrar tinta.
+        Sin logos ni títulos «de la NASA» (3.7); las fuentes van por su nombre, porque en papel no hay enlaces.
+        El nombre del niño solo vive en memoria y solo se imprime si la familia pulsa «Imprimir» (D-17).
+    -->
+    <Border Margin="40" BorderBrush="#FF1E3A8A" BorderThickness="4" CornerRadius="18" Padding="6">
+        <Border BorderBrush="#FFF97316" BorderThickness="2" CornerRadius="14" Padding="36,30">
+            <StackPanel>
+                <DockPanel>
+                    <Border Width="64" Height="64" CornerRadius="32" Margin="0,0,16,0" Background="#FFFDE047" BorderBrush="#FFA16207" BorderThickness="2">
+                        <c:Icono Margin="14" Geometria="{StaticResource Icono.Estrella}" Foreground="#FF0F172A" />
+                    </Border>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="{x:Static vm:TextosApp.TituloVentana}" FontSize="16" Foreground="#FF334155" />
+                        <TextBlock Text="{x:Static vm:TextosApp+Victoria.Titulo}" FontSize="28" FontWeight="Bold" TextWrapping="Wrap" />
+                    </StackPanel>
+                </DockPanel>
+                <TextBlock x:Name="Nombre" Text="{Binding LineaNombre}" FontSize="26" FontWeight="Bold" Foreground="#FF1E3A8A" Margin="0,18,0,0"
+                           Visibility="{Binding LineaNombre, Converter={StaticResource Visible}}" />
+                <TextBlock Text="{x:Static vm:TextosApp+Victoria.Historia}" FontSize="18" TextWrapping="Wrap" Margin="0,14,0,0" />
+                <TextBlock Text="{Binding FechaCertificado}" Margin="0,12,0,0" />
+                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                    <ItemsControl ItemsSource="{Binding Estrellas}" VerticalAlignment="Center">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <c:Icono Width="24" Height="24" Margin="0,0,4,0" Geometria="{StaticResource Icono.Estrella}" Foreground="#FFA16207" Relleno="#FFFDE047" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <TextBlock Margin="6,0,0,0" VerticalAlignment="Center" Text="{Binding TextoRespaldosCertificado}" />
+                </StackPanel>
+                <ItemsControl Margin="0,8,0,0" ItemsSource="{Binding MedidoresCertificado}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="0,3,0,0" c:Contenido.Texto="{Binding}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <TextBlock Text="{x:Static vm:TextosApp+Victoria.Aprendiste}" FontSize="20" FontWeight="Bold" Margin="0,18,0,0" />
+                <ItemsControl ItemsSource="{Binding DatosCertificado}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type vm:DatoVM}">
+                            <StackPanel Margin="0,10,0,0">
+                                <TextBlock Text="{Binding Titulo}" FontWeight="Bold" />
+                                <TextBlock Text="{Binding Texto}" TextWrapping="Wrap" FontSize="15" />
+                                <TextBlock Text="{Binding TextoFuentes}" TextWrapping="Wrap" FontSize="13" Foreground="#FF334155" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <TextBlock Text="{x:Static vm:TextosApp+Victoria.Nota}" TextWrapping="Wrap" FontSize="13" Foreground="#FF334155" Margin="0,18,0,0" />
+            </StackPanel>
+        </Border>
+    </Border>
+</UserControl>

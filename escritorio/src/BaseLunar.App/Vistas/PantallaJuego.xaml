@@ -3,8 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:c="clr-namespace:BaseLunar.App.Controles"
              xmlns:v="clr-namespace:BaseLunar.App.Vistas"
+             xmlns:vm="clr-namespace:BaseLunar.App.VistaModelos"
              FontFamily="{StaticResource Fuente.Principal}" FontSize="{StaticResource Tamano.Base}"
-             Foreground="{StaticResource Pincel.Texto}" UseLayoutRounding="True">
+             Foreground="{DynamicResource Pincel.Texto}" UseLayoutRounding="True">
     <!--
         Pantalla del juego. Dos disposiciones (PantallaJuego.xaml.cs):
         · Ancha (1000 DIP o más): barra superior; la escena a la izquierda y, a la derecha, medidores, tarjeta y decisiones.
@@ -13,15 +14,15 @@
     <Grid x:Name="Raiz">
         <Grid.Style>
             <Style TargetType="Grid">
-                <Setter Property="Background" Value="{StaticResource Pincel.Espacio}" />
+                <Setter Property="Background" Value="{DynamicResource Pincel.Espacio}" />
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding Alerta}" Value="True">
-                        <Setter Property="Background" Value="{StaticResource Pincel.CieloAlerta}" />
+                        <Setter Property="Background" Value="{DynamicResource Pincel.CieloAlerta}" />
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
         </Grid.Style>
-        <Rectangle Fill="{StaticResource Pincel.Estrellas}" Opacity="0.5" IsHitTestVisible="False" />
+        <Rectangle Fill="{DynamicResource Pincel.Estrellas}" Opacity="0.5" IsHitTestVisible="False" />
 
         <Grid x:Name="Rejilla" Margin="12">
             <Grid.ColumnDefinitions>
@@ -52,5 +53,44 @@
         <TextBlock x:Name="AnuncioUrgente" Width="1" Height="1" Opacity="0" IsHitTestVisible="False"
                    HorizontalAlignment="Left" VerticalAlignment="Top"
                    AutomationProperties.LiveSetting="Assertive" AutomationProperties.AutomationId="AnuncioUrgente" />
+
+        <!-- Modo de depuración (opción debug): estado interno y registro técnico, solo para quien prueba (sección 7) -->
+        <Border HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="20" Padding="10,8" MaxWidth="600" CornerRadius="10"
+                Background="#E6000000" BorderBrush="#FF4ADE80" BorderThickness="1" IsHitTestVisible="False"
+                Visibility="{Binding ModoDepuracion, Converter={StaticResource Visible}}">
+            <StackPanel>
+                <TextBlock Text="{Binding TextoDepuracion}" FontFamily="Consolas" FontSize="13" Foreground="#FF4ADE80" TextWrapping="Wrap"
+                           AutomationProperties.AutomationId="Depuracion" />
+                <ItemsControl Focusable="False" ItemsSource="{Binding RegistroDepuracion}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" FontFamily="Consolas" FontSize="12" Foreground="#FFFDE047" TextWrapping="Wrap" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </Border>
+
+        <!-- Control de Misión (D-57): un error inesperado nunca deja al niño atascado -->
+        <Grid x:Name="ControlMision" Background="#D9020617" Visibility="{Binding ControlMisionVisible, Converter={StaticResource Visible}}"
+              IsVisibleChanged="AlMostrarControlMision">
+            <Border MaxWidth="580" Margin="24" Padding="28,24" CornerRadius="22" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Background="{DynamicResource Pincel.Superficie}" BorderBrush="{DynamicResource Pincel.Enlace}" BorderThickness="3">
+                <StackPanel>
+                    <DockPanel>
+                        <Border Style="{StaticResource Insignia}">
+                            <c:Icono Margin="13" Geometria="{StaticResource Icono.Antena}" Foreground="White" />
+                        </Border>
+                        <TextBlock Style="{StaticResource Texto.Titulo}" Text="{x:Static vm:TextosApp+ControlMision.Titulo}"
+                                   AutomationProperties.AutomationId="TituloControlMision" />
+                    </DockPanel>
+                    <TextBlock Style="{StaticResource Texto.Historia}" Text="{x:Static vm:TextosApp+ControlMision.Mensaje}" />
+                    <Button x:Name="BotonSeguir" Style="{StaticResource BotonPrincipal}" Margin="0,22,0,0" Command="{Binding SeguirMision}"
+                            AutomationProperties.Name="{x:Static vm:TextosApp+ControlMision.Boton}" AutomationProperties.AutomationId="BotonSeguirMision">
+                        <c:TextoDecorativo Text="{x:Static vm:TextosApp+ControlMision.Boton}" />
+                    </Button>
+                </StackPanel>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>

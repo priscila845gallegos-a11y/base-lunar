@@ -4,8 +4,8 @@
              xmlns:c="clr-namespace:BaseLunar.App.Controles"
              xmlns:vm="clr-namespace:BaseLunar.App.VistaModelos">
     <!-- Los 3 medidores, en fila: en la disposición ancha flotan sobre la escena -->
-    <Border CornerRadius="18" Background="{StaticResource Pincel.SuperficieTranslucida}"
-            BorderBrush="{StaticResource Pincel.Borde}" BorderThickness="1" Padding="12,6">
+    <Border CornerRadius="18" Background="{DynamicResource Pincel.SuperficieTranslucida}"
+            BorderBrush="{DynamicResource Pincel.Borde}" BorderThickness="1" Padding="12,6">
         <ItemsControl ItemsSource="{Binding Medidores}" Focusable="False" AutomationProperties.Name="{x:Static vm:TextosApp.RegionMedidores}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -19,7 +19,7 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <Border Width="40" Height="40" CornerRadius="12" Background="{StaticResource Pincel.Fondo}" VerticalAlignment="Center">
+                        <Border Width="40" Height="40" CornerRadius="12" Background="{DynamicResource Pincel.Fondo}" VerticalAlignment="Center">
                             <c:Icono Width="24" Height="24" Geometria="{Binding Icono, Converter={StaticResource IconoDeEmoji}}"
                                      Foreground="{Binding ClavePincel, Converter={StaticResource Recurso}}" />
                         </Border>
@@ -31,11 +31,11 @@
                             <DockPanel>
                                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                                     <c:Icono x:Name="AvisoBajo" Width="18" Height="18" Margin="0,0,4,0" Visibility="Collapsed"
-                                             Geometria="{StaticResource Icono.Alerta}" Foreground="{StaticResource Pincel.Acento}" />
+                                             Geometria="{StaticResource Icono.Alerta}" Foreground="{DynamicResource Pincel.Acento}" />
                                     <c:TextoDecorativo x:Name="Numero" Text="{Binding Texto}" FontWeight="Bold" />
                                 </StackPanel>
                                 <c:TextoDecorativo Text="{Binding Nombre}" FontSize="{StaticResource Tamano.Pequeno}" TextTrimming="CharacterEllipsis"
-                                                   Foreground="{StaticResource Pincel.TextoSuave}" VerticalAlignment="Center" />
+                                                   Foreground="{DynamicResource Pincel.TextoSuave}" VerticalAlignment="Center" />
                             </DockPanel>
                             <ProgressBar x:Name="Barra" Grid.Row="1" Margin="0,4,0,0" Style="{StaticResource BarraMedidor}"
                                          c:Animaciones.ValorSuave="{Binding Valor}"
@@ -48,29 +48,29 @@
                             <!-- Número flotante («+20 ⚡», «¡Al máximo!»): solo visual, como en la web -->
                             <c:TextoDecorativo x:Name="Flotante" Grid.RowSpan="2" HorizontalAlignment="Right" VerticalAlignment="Top"
                                                Margin="0,-26,0,0" Opacity="0" IsHitTestVisible="False" FontWeight="Bold" FontSize="20"
-                                               Foreground="#FFFCA5A5"
+                                               Foreground="{DynamicResource Pincel.Costo}"
                                                c:Contenido.Texto="{Binding Flotante}"
                                                c:Animaciones.Flotante="{Binding Disparo}" />
                             <!-- «¡Al máximo!»: estallido de estrellas junto al número -->
                             <Canvas Grid.RowSpan="2" Width="1" Height="1" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,22,0"
                                     IsHitTestVisible="False" c:Animaciones.Estallido="{Binding Destello}">
-                                <Path Canvas.Left="-7" Canvas.Top="-7" Width="14" Height="14" Stretch="Fill" Opacity="0" Fill="{StaticResource Pincel.Estrella}" Data="M10,0 L12.9,6.5 L20,7.3 L14.7,12.1 L16.2,19.1 L10,15.5 L3.8,19.1 L5.3,12.1 L0,7.3 L7.1,6.5 Z" />
-                                <Path Canvas.Left="-7" Canvas.Top="-7" Width="14" Height="14" Stretch="Fill" Opacity="0" Fill="{StaticResource Pincel.Estrella}" Data="M10,0 L12.9,6.5 L20,7.3 L14.7,12.1 L16.2,19.1 L10,15.5 L3.8,19.1 L5.3,12.1 L0,7.3 L7.1,6.5 Z" />
-                                <Path Canvas.Left="-7" Canvas.Top="-7" Width="14" Height="14" Stretch="Fill" Opacity="0" Fill="{StaticResource Pincel.Estrella}" Data="M10,0 L12.9,6.5 L20,7.3 L14.7,12.1 L16.2,19.1 L10,15.5 L3.8,19.1 L5.3,12.1 L0,7.3 L7.1,6.5 Z" />
-                                <Path Canvas.Left="-7" Canvas.Top="-7" Width="14" Height="14" Stretch="Fill" Opacity="0" Fill="{StaticResource Pincel.Estrella}" Data="M10,0 L12.9,6.5 L20,7.3 L14.7,12.1 L16.2,19.1 L10,15.5 L3.8,19.1 L5.3,12.1 L0,7.3 L7.1,6.5 Z" />
-                                <Path Canvas.Left="-7" Canvas.Top="-7" Width="14" Height="14" Stretch="Fill" Opacity="0" Fill="{StaticResource Pincel.Estrella}" Data="M10,0 L12.9,6.5 L20,7.3 L14.7,12.1 L16.2,19.1 L10,15.5 L3.8,19.1 L5.3,12.1 L0,7.3 L7.1,6.5 Z" />
-                                <Path Canvas.Left="-7" Canvas.Top="-7" Width="14" Height="14" Stretch="Fill" Opacity="0" Fill="{StaticResource Pincel.Estrella}" Data="M10,0 L12.9,6.5 L20,7.3 L14.7,12.1 L16.2,19.1 L10,15.5 L3.8,19.1 L5.3,12.1 L0,7.3 L7.1,6.5 Z" />
+                                <Path Canvas.Left="-7" Canvas.Top="-7" Width="14" Height="14" Stretch="Fill" Opacity="0" Fill="{DynamicResource Pincel.Estrella}" Data="M10,0 L12.9,6.5 L20,7.3 L14.7,12.1 L16.2,19.1 L10,15.5 L3.8,19.1 L5.3,12.1 L0,7.3 L7.1,6.5 Z" />
+                                <Path Canvas.Left="-7" Canvas.Top="-7" Width="14" Height="14" Stretch="Fill" Opacity="0" Fill="{DynamicResource Pincel.Estrella}" Data="M10,0 L12.9,6.5 L20,7.3 L14.7,12.1 L16.2,19.1 L10,15.5 L3.8,19.1 L5.3,12.1 L0,7.3 L7.1,6.5 Z" />
+                                <Path Canvas.Left="-7" Canvas.Top="-7" Width="14" Height="14" Stretch="Fill" Opacity="0" Fill="{DynamicResource Pincel.Estrella}" Data="M10,0 L12.9,6.5 L20,7.3 L14.7,12.1 L16.2,19.1 L10,15.5 L3.8,19.1 L5.3,12.1 L0,7.3 L7.1,6.5 Z" />
+                                <Path Canvas.Left="-7" Canvas.Top="-7" Width="14" Height="14" Stretch="Fill" Opacity="0" Fill="{DynamicResource Pincel.Estrella}" Data="M10,0 L12.9,6.5 L20,7.3 L14.7,12.1 L16.2,19.1 L10,15.5 L3.8,19.1 L5.3,12.1 L0,7.3 L7.1,6.5 Z" />
+                                <Path Canvas.Left="-7" Canvas.Top="-7" Width="14" Height="14" Stretch="Fill" Opacity="0" Fill="{DynamicResource Pincel.Estrella}" Data="M10,0 L12.9,6.5 L20,7.3 L14.7,12.1 L16.2,19.1 L10,15.5 L3.8,19.1 L5.3,12.1 L0,7.3 L7.1,6.5 Z" />
+                                <Path Canvas.Left="-7" Canvas.Top="-7" Width="14" Height="14" Stretch="Fill" Opacity="0" Fill="{DynamicResource Pincel.Estrella}" Data="M10,0 L12.9,6.5 L20,7.3 L14.7,12.1 L16.2,19.1 L10,15.5 L3.8,19.1 L5.3,12.1 L0,7.3 L7.1,6.5 Z" />
                             </Canvas>
                         </Grid>
                     </Grid>
                     <DataTemplate.Triggers>
                         <DataTrigger Binding="{Binding Bajo}" Value="True">
                             <Setter TargetName="AvisoBajo" Property="Visibility" Value="Visible" />
-                            <Setter TargetName="Numero" Property="Foreground" Value="{StaticResource Pincel.Acento}" />
-                            <Setter TargetName="Barra" Property="Foreground" Value="{StaticResource Pincel.Acento}" />
+                            <Setter TargetName="Numero" Property="Foreground" Value="{DynamicResource Pincel.Acento}" />
+                            <Setter TargetName="Barra" Property="Foreground" Value="{DynamicResource Pincel.Acento}" />
                         </DataTrigger>
                         <DataTrigger Binding="{Binding FlotanteGana}" Value="True">
-                            <Setter TargetName="Flotante" Property="Foreground" Value="{StaticResource Pincel.Exito}" />
+                            <Setter TargetName="Flotante" Property="Foreground" Value="{DynamicResource Pincel.Exito}" />
                         </DataTrigger>
                     </DataTemplate.Triggers>
                 </DataTemplate>

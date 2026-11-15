@@ -41,6 +41,10 @@
     <SolidColorBrush x:Key="Pincel.Estrella" Color="{StaticResource Color.Estrella}" />
     <SolidColorBrush x:Key="Pincel.Exito" Color="{StaticResource Color.Exito}" />
     <SolidColorBrush x:Key="Pincel.Velo" Color="#26FFFFFF" />
+    <SolidColorBrush x:Key="Pincel.Costo" Color="#FCA5A5" />
+    <SolidColorBrush x:Key="Pincel.FondoEfecto" Color="#F20F172A" />
+    <SolidColorBrush x:Key="Pincel.Pista" Color="#FF0B1222" />
+    <SolidColorBrush x:Key="Pincel.BordeBoton" Color="#4DFFFFFF" />
 
     <!-- Fondo del espacio -->
     <LinearGradientBrush x:Key="Pincel.Espacio" StartPoint="0,0" EndPoint="0.4,1">

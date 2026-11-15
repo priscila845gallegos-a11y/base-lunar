@@ -17,8 +17,8 @@
         <Setter Property="Control.Template">
             <Setter.Value>
                 <ControlTemplate>
-                    <Border Margin="-5" CornerRadius="20" BorderBrush="{StaticResource Pincel.Texto}" BorderThickness="3" SnapsToDevicePixels="True">
-                        <Border CornerRadius="17" BorderBrush="{StaticResource Pincel.Fondo}" BorderThickness="2" />
+                    <Border Margin="-5" CornerRadius="20" BorderBrush="{DynamicResource Pincel.Texto}" BorderThickness="3" SnapsToDevicePixels="True">
+                        <Border CornerRadius="17" BorderBrush="{DynamicResource Pincel.Fondo}" BorderThickness="2" />
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
@@ -29,7 +29,7 @@
     <Style x:Key="Texto.Etiqueta" TargetType="TextBlock">
         <Setter Property="FontSize" Value="{StaticResource Tamano.Pequeno}" />
         <Setter Property="FontWeight" Value="Bold" />
-        <Setter Property="Foreground" Value="{StaticResource Pincel.TextoSuave}" />
+        <Setter Property="Foreground" Value="{DynamicResource Pincel.TextoSuave}" />
         <Setter Property="TextWrapping" Value="Wrap" />
     </Style>
 
@@ -73,7 +73,7 @@
 
     <Style x:Key="Texto.Nota" TargetType="TextBlock" BasedOn="{StaticResource Texto.Normal}">
         <Setter Property="FontSize" Value="{StaticResource Tamano.Pequeno}" />
-        <Setter Property="Foreground" Value="{StaticResource Pincel.TextoSuave}" />
+        <Setter Property="Foreground" Value="{DynamicResource Pincel.TextoSuave}" />
         <Setter Property="LineHeight" Value="23" />
         <Setter Property="Margin" Value="0,16,0,0" />
     </Style>
@@ -91,8 +91,8 @@
         Se usa dentro de una rejilla de 2 columnas (* y Auto) y 2 filas.
     -->
     <Style x:Key="Pildora" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource Pincel.Fondo}" />
-        <Setter Property="BorderBrush" Value="{StaticResource Pincel.Borde}" />
+        <Setter Property="Background" Value="{DynamicResource Pincel.Fondo}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Pincel.Borde}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="14" />
         <Setter Property="Padding" Value="12,4" />
@@ -155,14 +155,14 @@
         <Setter Property="Padding" Value="14,12" />
         <Setter Property="Margin" Value="0,14,0,0" />
         <Setter Property="BorderThickness" Value="2" />
-        <Setter Property="Background" Value="{StaticResource Pincel.Fondo}" />
+        <Setter Property="Background" Value="{DynamicResource Pincel.Fondo}" />
     </Style>
 
     <!-- ===================== Botones ===================== -->
     <!-- Botón de juego en relieve: se hunde al pulsarlo y brilla al pasar el ratón -->
     <Style x:Key="BotonJuego" TargetType="Button">
-        <Setter Property="Foreground" Value="{StaticResource Pincel.TextoOscuro}" />
-        <Setter Property="Background" Value="{StaticResource Pincel.Acento}" />
+        <Setter Property="Foreground" Value="{DynamicResource Pincel.TextoOscuro}" />
+        <Setter Property="Background" Value="{DynamicResource Pincel.Acento}" />
         <Setter Property="FontSize" Value="{StaticResource Tamano.Boton}" />
         <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="Padding" Value="16,10" />
@@ -177,7 +177,7 @@
                     <Grid x:Name="Raiz" Background="Transparent">
                         <Border CornerRadius="18" Background="#8C000000" Margin="0,6,0,0" />
                         <Border x:Name="Cara" CornerRadius="18" Margin="0,0,0,6" Background="{TemplateBinding Background}"
-                                BorderBrush="#4DFFFFFF" BorderThickness="2">
+                                BorderBrush="{DynamicResource Pincel.BordeBoton}" BorderThickness="2">
                             <Grid>
                                 <Border x:Name="Brillo" CornerRadius="16" Background="#26FFFFFF" Opacity="0" />
                                 <ContentPresenter Margin="{TemplateBinding Padding}"
@@ -204,13 +204,13 @@
     </Style>
 
     <Style x:Key="BotonOpcionA" TargetType="Button" BasedOn="{StaticResource BotonJuego}">
-        <Setter Property="Background" Value="{StaticResource Pincel.Primario}" />
+        <Setter Property="Background" Value="{DynamicResource Pincel.Primario}" />
         <Setter Property="MinHeight" Value="88" />
         <Setter Property="Padding" Value="12,10" />
     </Style>
 
     <Style x:Key="BotonOpcionB" TargetType="Button" BasedOn="{StaticResource BotonOpcionA}">
-        <Setter Property="Background" Value="{StaticResource Pincel.Acento}" />
+        <Setter Property="Background" Value="{DynamicResource Pincel.Acento}" />
     </Style>
 
     <Style x:Key="BotonPrincipal" TargetType="Button" BasedOn="{StaticResource BotonJuego}">
@@ -221,7 +221,7 @@
 
     <!-- Palabra del glosario: una píldora con «?» que abre su explicación -->
     <Style x:Key="BotonGlosario" TargetType="Button">
-        <Setter Property="Foreground" Value="{StaticResource Pincel.Enlace}" />
+        <Setter Property="Foreground" Value="{DynamicResource Pincel.Enlace}" />
         <Setter Property="FontSize" Value="{StaticResource Tamano.Pequeno}" />
         <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="MinHeight" Value="40" />
@@ -231,18 +231,18 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="Pildora" CornerRadius="20" Padding="6,4,14,4" Background="{StaticResource Pincel.Fondo}"
-                            BorderBrush="{StaticResource Pincel.Enlace}" BorderThickness="2">
+                    <Border x:Name="Pildora" CornerRadius="20" Padding="6,4,14,4" Background="{DynamicResource Pincel.Fondo}"
+                            BorderBrush="{DynamicResource Pincel.Enlace}" BorderThickness="2">
                         <StackPanel Orientation="Horizontal">
-                            <Border Width="26" Height="26" CornerRadius="13" Background="{StaticResource Pincel.Enlace}" Margin="0,0,8,0">
-                                <TextBlock Text="?" FontWeight="Bold" Foreground="{StaticResource Pincel.TextoOscuro}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <Border Width="26" Height="26" CornerRadius="13" Background="{DynamicResource Pincel.Enlace}" Margin="0,0,8,0">
+                                <TextBlock Text="?" FontWeight="Bold" Foreground="{DynamicResource Pincel.TextoOscuro}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
                             <ContentPresenter VerticalAlignment="Center" />
                         </StackPanel>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Pildora" Property="Background" Value="{StaticResource Pincel.Superficie}" />
+                            <Setter TargetName="Pildora" Property="Background" Value="{DynamicResource Pincel.Superficie}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -252,7 +252,7 @@
 
     <!-- Botones de la barra superior: Escuchar y efectos de sonido (44 DIP de alto) -->
     <Style x:Key="BotonBarra" TargetType="ButtonBase">
-        <Setter Property="Foreground" Value="{StaticResource Pincel.Texto}" />
+        <Setter Property="Foreground" Value="{DynamicResource Pincel.Texto}" />
         <Setter Property="FontSize" Value="{StaticResource Tamano.Pequeno}" />
         <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="MinHeight" Value="44" />
@@ -262,14 +262,14 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ButtonBase">
-                    <Border x:Name="Marco" CornerRadius="22" Padding="11,0" Background="{StaticResource Pincel.Fondo}"
-                            BorderBrush="{StaticResource Pincel.BordeControl}" BorderThickness="2">
+                    <Border x:Name="Marco" CornerRadius="22" Padding="11,0" Background="{DynamicResource Pincel.Fondo}"
+                            BorderBrush="{DynamicResource Pincel.BordeControl}" BorderThickness="2">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Marco" Property="Background" Value="{StaticResource Pincel.Superficie}" />
-                            <Setter TargetName="Marco" Property="BorderBrush" Value="{StaticResource Pincel.Texto}" />
+                            <Setter TargetName="Marco" Property="Background" Value="{DynamicResource Pincel.Superficie}" />
+                            <Setter TargetName="Marco" Property="BorderBrush" Value="{DynamicResource Pincel.Texto}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -278,19 +278,44 @@
     </Style>
     <Style x:Key="BotonBarraAlternar" TargetType="ToggleButton" BasedOn="{StaticResource BotonBarra}" />
 
+    <!-- Campo de texto (el nombre del certificado) -->
+    <Style x:Key="CampoTexto" TargetType="TextBox">
+        <Setter Property="Foreground" Value="{DynamicResource Pincel.Texto}" />
+        <Setter Property="CaretBrush" Value="{DynamicResource Pincel.Texto}" />
+        <Setter Property="SelectionBrush" Value="{DynamicResource Pincel.Primario}" />
+        <Setter Property="FontSize" Value="{StaticResource Tamano.Base}" />
+        <Setter Property="MinHeight" Value="44" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border x:Name="Marco" CornerRadius="12" Padding="10,6" Background="{DynamicResource Pincel.Fondo}"
+                            BorderBrush="{DynamicResource Pincel.BordeControl}" BorderThickness="2">
+                        <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Marco" Property="BorderBrush" Value="{DynamicResource Pincel.Enlace}" />
+                            <Setter TargetName="Marco" Property="BorderThickness" Value="3" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- Letra A o B en un círculo oscuro -->
     <Style x:Key="LetraOpcion" TargetType="Border">
         <Setter Property="Width" Value="44" />
         <Setter Property="Height" Value="44" />
         <Setter Property="CornerRadius" Value="22" />
-        <Setter Property="Background" Value="{StaticResource Pincel.Fondo}" />
+        <Setter Property="Background" Value="{DynamicResource Pincel.Fondo}" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="Margin" Value="0,0,12,0" />
     </Style>
 
     <!-- Ganancia, costo o requisito dentro del botón -->
     <Style x:Key="Efecto" TargetType="Border">
-        <Setter Property="Background" Value="#F20F172A" />
+        <Setter Property="Background" Value="{DynamicResource Pincel.FondoEfecto}" />
         <Setter Property="CornerRadius" Value="10" />
         <Setter Property="Padding" Value="8,2" />
         <Setter Property="Margin" Value="0,6,6,0" />
@@ -306,7 +331,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="ProgressBar">
                     <Grid>
-                        <Border x:Name="PART_Track" CornerRadius="8" Background="#FF0B1222" BorderBrush="{StaticResource Pincel.Borde}" BorderThickness="1" />
+                        <Border x:Name="PART_Track" CornerRadius="8" Background="{DynamicResource Pincel.Pista}" BorderBrush="{DynamicResource Pincel.Borde}" BorderThickness="1" />
                         <Border x:Name="PART_Indicator" HorizontalAlignment="Left" CornerRadius="8" Background="{TemplateBinding Foreground}">
                             <Border VerticalAlignment="Top" Height="5" Margin="5,2,5,0" CornerRadius="3" Background="#59FFFFFF" />
                         </Border>
@@ -321,7 +346,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Thumb">
-                    <Border CornerRadius="6" Background="{StaticResource Pincel.BordeControl}" />
+                    <Border CornerRadius="6" Background="{DynamicResource Pincel.BordeControl}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -369,16 +394,16 @@
 
     <!-- ===================== Enlaces ===================== -->
     <Style TargetType="Hyperlink">
-        <Setter Property="Foreground" Value="{StaticResource Pincel.Enlace}" />
+        <Setter Property="Foreground" Value="{DynamicResource Pincel.Enlace}" />
         <Setter Property="TextDecorations" Value="Underline" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Foreground" Value="{StaticResource Pincel.Texto}" />
+                <Setter Property="Foreground" Value="{DynamicResource Pincel.Texto}" />
             </Trigger>
             <Trigger Property="IsKeyboardFocused" Value="True">
-                <Setter Property="Foreground" Value="{StaticResource Pincel.TextoOscuro}" />
-                <Setter Property="Background" Value="{StaticResource Pincel.Enlace}" />
+                <Setter Property="Foreground" Value="{DynamicResource Pincel.TextoOscuro}" />
+                <Setter Property="Background" Value="{DynamicResource Pincel.Enlace}" />
             </Trigger>
         </Style.Triggers>
     </Style>

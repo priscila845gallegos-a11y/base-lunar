@@ -22,6 +22,8 @@ public sealed class JuegoVM : Observable, IDisposable
     private Estado estado = Motor.CrearEstadoInicial();
     private AyudaActivada? ayuda;
     private Tormenta? tormentaPendiente;
+    private string nombreCertificado = string.Empty;
+    private readonly List<string> registro = [];
 
     public JuegoVM() : this(DatosDonki.RespaldoHistorico())
     {
@@ -45,6 +47,8 @@ public sealed class JuegoVM : Observable, IDisposable
         Principal = new Comando(_ => AccionPrincipal(), () => !Bloqueado);
         VerTermino = new Comando(p => AlternarTermino(p as Termino), () => true);
         Escuchar = new Comando(_ => narrador.Leer(TextoParaEscuchar()), () => narrador.Disponible);
+        Imprimir = new Comando(_ => ImprimirPedido?.Invoke(this, EventArgs.Empty), () => true);
+        SeguirMision = new Comando(_ => ContinuarTrasError(), () => true);
         transicion = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(Tiempos.TransicionMs) };
         transicion.Tick += (_, _) => TerminarTransicion();
         Pintar();
@@ -74,6 +78,95 @@ public sealed class JuegoVM : Observable, IDisposable
 
     /// <summary>Lee en voz alta lo que muestra la tarjeta (D-21).</summary>
     public Comando Escuchar { get; }
+
+    /// <summary>Imprime el certificado (la ventana abre el diálogo de Windows).</summary>
+    public Comando Imprimir { get; }
+
+    public event EventHandler? ImprimirPedido;
+
+    // ---------- Modo demo (D-08, D-56) ----------
+
+    /// <summary>--nivel N: cada partida empieza en el nivel N con el estado inicial.</summary>
+    public int? NivelInicial { get; init; }
+
+    /// <summary>--debug: muestra el estado interno y el registro técnico.</summary>
+    public bool ModoDepuracion { get; init; }
+
+    public IReadOnlyList<string> RegistroDepuracion => registro.ToArray();
+
+    /// <summary>Anota un mensaje técnico. Solo se guarda (y se ve) con --debug: nunca se muestra al niño.</summary>
+    public void Registrar(string mensaje)
+    {
+        if (!ModoDepuracion) return;
+        registro.Add(DateTime.Now.ToString("HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture) + " " + mensaje);
+        if (registro.Count > 6) registro.RemoveAt(0);
+        Avisar(nameof(RegistroDepuracion));
+    }
+
+    /// <summary>El estado interno del motor, para quien prueba el juego (--debug).</summary>
+    public string TextoDepuracion
+    {
+        get
+        {
+            var m = estado.Medidores;
+            var f = estado.Foto;
+            var consulta = Tormenta.Consulta is { } hora ? ", " + hora.ToLocalTime().ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture) : string.Empty;
+            return $"Fase: {Fase} · Nivel: {estado.Nivel} · Respaldos: {estado.Respaldos}{Environment.NewLine}"
+                + $"Medidores: P {m.Proteccion} · S {m.Soporte} · B {m.Bateria} · Foto: {f.Proteccion}/{f.Soporte}/{f.Bateria}{Environment.NewLine}"
+                + $"Clase X: {(estado.ClaseX ? "sí" : "no")} · Fallidos: {string.Join(", ", estado.Fallidos)} · Opción: {estado.UltimaOpcion ?? "-"}{Environment.NewLine}"
+                + $"DONKI: {Tormenta.Clase} ({(Tormenta.EnVivo ? "en vivo" : "histórico")}{consulta})";
+        }
+    }
+
+    // ---------- Certificado (3.7, D-17) ----------
+
+    /// <summary>
+    /// Nombre opcional del certificado: hasta 24 caracteres y solo en memoria. Nunca se guarda ni se envía,
+    /// nunca se lee en voz alta y se borra al jugar de nuevo.
+    /// </summary>
+    public string NombreCertificado
+    {
+        get => nombreCertificado;
+        set
+        {
+            var limpio = Presentacion.LimpiarNombre(value);
+            if (limpio == nombreCertificado) return;
+            nombreCertificado = limpio;
+            Avisar();
+            Avisar(nameof(LineaNombre));
+        }
+    }
+
+    public string? LineaNombre => nombreCertificado.Trim() is { Length: > 0 } nombre ? Textos.Rellenar(TextosApp.Victoria.Comandante, ("nombre", nombre)) : null;
+
+    // ---------- Control de Misión (D-57) ----------
+
+    public bool ControlMisionVisible { get; private set; }
+
+    public Comando SeguirMision { get; }
+
+    /// <summary>Tras «Seguir la misión»: la vista vuelve a colocar la escena según el estado.</summary>
+    public event EventHandler? Recuperado;
+
+    /// <summary>Un error inesperado: aviso amable, sin detalles técnicos. El estado del motor no se toca.</summary>
+    public void MostrarControlMision()
+    {
+        if (ControlMisionVisible) return;
+        ControlMisionVisible = true;
+        Avisar(nameof(ControlMisionVisible));
+        Anunciar?.Invoke(this, new Anuncio(TextosApp.ControlMision.Mensaje, Urgente: true));
+    }
+
+    /// <summary>Vuelve al último estado seguro: el que tenía el motor, con los controles desbloqueados.</summary>
+    private void ContinuarTrasError()
+    {
+        ControlMisionVisible = false;
+        transicion.Stop();
+        Bloqueado = false;
+        Pintar();
+        Recuperado?.Invoke(this, EventArgs.Empty);
+        Enfocar?.Invoke(this, Fase);
+    }
 
     /// <summary>Hay una voz local en español: si no, el botón «Escuchar» se oculta (D-13).</summary>
     public bool PuedeEscuchar => narrador.Disponible;
@@ -187,7 +280,7 @@ public sealed class JuegoVM : Observable, IDisposable
         var contexto = new ContextoPartida(ClaseX: Tormenta.Clase.StartsWith('X'));
         ResultadoMotor? resultado = Fase switch
         {
-            Fase.Inicio => Motor.Empezar(estado, contexto),
+            Fase.Inicio => Motor.Empezar(estado, contexto with { Nivel = NivelInicial }),
             Fase.Resultado => Motor.Continuar(estado, contexto),
             Fase.Respaldo => Motor.Reintentar(estado),
             Fase.Victoria or Fase.MisionAbortada => new ResultadoMotor(Motor.Reiniciar(), []),
@@ -207,7 +300,11 @@ public sealed class JuegoVM : Observable, IDisposable
         if (nuevaAyuda is not null || Fase != Fase.Nivel) ayuda = nuevaAyuda;
         Bloqueado = true;
         narrador.Callar();
-        if (Fase == Fase.Inicio) AplicarTormentaPendiente();
+        if (Fase == Fase.Inicio)
+        {
+            AplicarTormentaPendiente();
+            nombreCertificado = string.Empty; // D-17: «Jugar de nuevo» borra el nombre
+        }
         Pintar();
         if (SonidoActivo) reproductor.Programar(Presentacion.SonidosDe(anterior, resultado));
         UltimoMomento = Presentacion.MomentoDe(anterior, resultado);

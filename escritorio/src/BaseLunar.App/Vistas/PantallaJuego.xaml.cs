@@ -87,13 +87,27 @@ public partial class PantallaJuego : UserControl
             anterior.Anunciar -= AlAnunciar;
             anterior.Enfocar -= AlEnfocar;
             anterior.Escena -= AlCambiarEscena;
+            anterior.Recuperado -= AlRecuperar;
         }
         juego = e.NewValue as JuegoVM;
         if (juego is null) return;
         juego.Anunciar += AlAnunciar;
         juego.Enfocar += AlEnfocar;
         juego.Escena += AlCambiarEscena;
+        juego.Recuperado += AlRecuperar;
         Escenario.Sincronizar(juego.Estado);
+    }
+
+    /// <summary>Tras un error: la escena vuelve a colocarse según el estado, sin animaciones a medias.</summary>
+    private void AlRecuperar(object? sender, EventArgs e)
+    {
+        if (juego is not null) Escenario.Sincronizar(juego.Estado);
+    }
+
+    /// <summary>Al aparecer «Control de Misión», el foco va a su botón: Enter o Espacio siguen la misión.</summary>
+    private void AlMostrarControlMision(object sender, DependencyPropertyChangedEventArgs e)
+    {
+        if (e.NewValue is true) Dispatcher.BeginInvoke(() => BotonSeguir.Focus(), System.Windows.Threading.DispatcherPriority.Input);
     }
 
     private void AlCambiarEscena(object? sender, Momento momento) => Escenario.Representar(momento);

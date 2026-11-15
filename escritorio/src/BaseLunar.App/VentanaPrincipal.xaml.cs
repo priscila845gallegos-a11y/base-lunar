@@ -13,23 +13,27 @@ public partial class VentanaPrincipal : Window
 {
     private (WindowState Estado, WindowStyle Estilo, ResizeMode Redimension)? antesDePantallaCompleta;
 
-    /// <summary>--offline: siempre el respaldo histórico (como ?offline=1 en la web; lo usan las pruebas).</summary>
-    private static bool SinConexion => Environment.GetCommandLineArgs().Contains("--offline", StringComparer.OrdinalIgnoreCase);
+    private readonly Opciones opciones = new();
 
-    public VentanaPrincipal() : this(CrearJuego())
+    public VentanaPrincipal() : this(Opciones.DelProceso())
     {
     }
 
+    private VentanaPrincipal(Opciones opciones) : this(CrearJuego(opciones))
+    {
+        this.opciones = opciones;
+    }
+
     /// <summary>
-    /// El juego con sonido, voz y ajustes reales. Con --silencio (lo usan las pruebas de UI Automation) no
-    /// suena nada y no se tocan los ajustes guardados.
+    /// El juego con sonido, voz y ajustes reales y con las opciones de demostración (D-08, D-56). Con --silencio
+    /// (lo usan las pruebas de UI Automation) no suena nada y no se tocan los ajustes guardados.
     /// </summary>
-    private static JuegoVM CrearJuego()
+    private static JuegoVM CrearJuego(Opciones opciones)
     {
         var tormenta = DatosDonki.RespaldoHistorico();
-        if (Environment.GetCommandLineArgs().Contains("--silencio", StringComparer.OrdinalIgnoreCase))
-            return new JuegoVM(tormenta, new ReproductorMudo(), new NarradorMudo(), Ajustes.EnMemoria());
-        return new JuegoVM(tormenta, new ReproductorWindows(), new NarradorWindows(), Ajustes.Cargar(Ajustes.RutaPredeterminada));
+        return opciones.Silencio
+            ? new JuegoVM(tormenta, new ReproductorMudo(), new NarradorMudo(), Ajustes.EnMemoria()) { NivelInicial = opciones.Nivel, ModoDepuracion = opciones.Depuracion }
+            : new JuegoVM(tormenta, new ReproductorWindows(), new NarradorWindows(), Ajustes.Cargar(Ajustes.RutaPredeterminada)) { NivelInicial = opciones.Nivel, ModoDepuracion = opciones.Depuracion };
     }
 
     public VentanaPrincipal(JuegoVM juego)
@@ -38,6 +42,7 @@ public partial class VentanaPrincipal : Window
         Juego = juego;
         DataContext = juego;
         Closed += (_, _) => juego.Dispose();
+        juego.ImprimirPedido += (_, _) => Vistas.CertificadoImpresion.Imprimir(juego, TextosApp.Victoria.Titulo);
         var area = SystemParameters.WorkArea;
         Width = Math.Max(MinWidth, Math.Min(Width, area.Width * 0.92));
         Height = Math.Max(MinHeight, Math.Min(Height, area.Height * 0.92));
@@ -50,7 +55,7 @@ public partial class VentanaPrincipal : Window
     private void AlCargar(object sender, RoutedEventArgs e)
     {
         Pantalla.Enfocar(Juego.Fase);
-        if (!SinConexion) _ = ConsultarDonkiAsync();
+        if (!opciones.Offline) _ = ConsultarDonkiAsync();
     }
 
     /// <summary>
@@ -61,13 +66,18 @@ public partial class VentanaPrincipal : Window
     private async Task ConsultarDonkiAsync()
     {
         var cache = Path.Combine(Path.GetDirectoryName(Ajustes.RutaPredeterminada)!, "donki.json");
-        using var cliente = new ClienteDonki(rutaCache: cache, registro: m => Debug.WriteLine(m));
+        using var cliente = new ClienteDonki(rutaCache: cache, registro: m =>
+        {
+            Debug.WriteLine(m);
+            Dispatcher.BeginInvoke(() => Juego.Registrar(m));
+        });
         Juego.ActualizarTormenta(await cliente.ObtenerAsync());
     }
 
     /// <summary>Atajos (5.5): A/B o 1/2 eligen en un nivel; Enter usa el botón principal; F11 y Esc.</summary>
     private void AlPulsarTecla(object sender, KeyEventArgs e)
     {
+        if (Juego.ControlMisionVisible) return; // solo vale su botón
         var tecla = e.Key == Key.System ? e.SystemKey : e.Key;
         var atajo = Atajos.Interpretar(tecla, Keyboard.Modifiers, e.IsRepeat, e.OriginalSource is TextBoxBase);
         switch (atajo)

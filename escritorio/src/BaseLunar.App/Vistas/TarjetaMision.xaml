@@ -7,7 +7,7 @@
         <!-- Viñeta de las instrucciones -->
         <DataTemplate x:Key="Instruccion">
             <DockPanel Margin="0,8,0,0">
-                <Border Width="10" Height="10" CornerRadius="5" Background="{StaticResource Pincel.Acento}" Margin="2,9,12,0" VerticalAlignment="Top" />
+                <Border Width="10" Height="10" CornerRadius="5" Background="{DynamicResource Pincel.Acento}" Margin="2,9,12,0" VerticalAlignment="Top" />
                 <TextBlock Style="{StaticResource Texto.Normal}" c:Contenido.Texto="{Binding}" />
             </DockPanel>
         </DataTemplate>
@@ -27,14 +27,14 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <Border x:Name="Marco" CornerRadius="22" BorderThickness="2" Background="{StaticResource Pincel.SuperficieTranslucida}"
+    <Border x:Name="Marco" CornerRadius="22" BorderThickness="2" Background="{DynamicResource Pincel.SuperficieTranslucida}"
             c:Animaciones.Temblor="{Binding Temblor}">
         <Border.Style>
             <Style TargetType="Border">
-                <Setter Property="BorderBrush" Value="{StaticResource Pincel.Borde}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Pincel.Borde}" />
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding Alerta}" Value="True">
-                        <Setter Property="BorderBrush" Value="{StaticResource Pincel.Acento}" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource Pincel.Acento}" />
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
@@ -92,7 +92,7 @@
                                     <Style TargetType="Border" BasedOn="{StaticResource Insignia}">
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding Alerta}" Value="True">
-                                                <Setter Property="Background" Value="{StaticResource Pincel.Acento}" />
+                                                <Setter Property="Background" Value="{DynamicResource Pincel.Acento}" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
@@ -121,7 +121,7 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                    <Border x:Name="CajaDefinicion" Style="{StaticResource Aviso}" Margin="0,4,0,0" BorderBrush="{StaticResource Pincel.Enlace}"
+                    <Border x:Name="CajaDefinicion" Style="{StaticResource Aviso}" Margin="0,4,0,0" BorderBrush="{DynamicResource Pincel.Enlace}"
                             Visibility="{Binding Definicion, Converter={StaticResource Visible}}" IsVisibleChanged="AlMostrarDefinicion">
                         <StackPanel DataContext="{Binding Definicion}">
                             <TextBlock Style="{StaticResource Texto.Normal}" AutomationProperties.AutomationId="Definicion">
@@ -132,32 +132,32 @@
                     </Border>
 
                     <!-- Aviso de llamarada de clase X -->
-                    <Border Style="{StaticResource Aviso}" BorderBrush="{StaticResource Pincel.Acento}"
+                    <Border Style="{StaticResource Aviso}" BorderBrush="{DynamicResource Pincel.Acento}"
                             Visibility="{Binding AvisoX, Converter={StaticResource Visible}}">
                         <DockPanel>
-                            <c:Icono Width="28" Height="28" Margin="0,0,12,0" VerticalAlignment="Top" Geometria="{StaticResource Icono.Sol}" Foreground="{StaticResource Pincel.Acento}" />
+                            <c:Icono Width="28" Height="28" Margin="0,0,12,0" VerticalAlignment="Top" Geometria="{StaticResource Icono.Sol}" Foreground="{DynamicResource Pincel.Acento}" />
                             <TextBlock Style="{StaticResource Texto.Normal}" Text="{Binding AvisoX}" AutomationProperties.AutomationId="AvisoX" />
                         </DockPanel>
                     </Border>
 
                     <!-- Ayuda de Control de Misión (antibloqueo) -->
-                    <Border Style="{StaticResource Aviso}" BorderBrush="{StaticResource Pincel.Primario}"
+                    <Border Style="{StaticResource Aviso}" BorderBrush="{DynamicResource Pincel.Primario}"
                             Visibility="{Binding AvisoAyuda, Converter={StaticResource Visible}}">
                         <DockPanel>
-                            <c:Icono Width="28" Height="28" Margin="0,0,12,0" VerticalAlignment="Top" Geometria="{StaticResource Icono.Antena}" Foreground="{StaticResource Pincel.Enlace}" />
+                            <c:Icono Width="28" Height="28" Margin="0,0,12,0" VerticalAlignment="Top" Geometria="{StaticResource Icono.Antena}" Foreground="{DynamicResource Pincel.Enlace}" />
                             <TextBlock Style="{StaticResource Texto.Normal}" Text="{Binding AvisoAyuda}" AutomationProperties.AutomationId="AvisoAyuda" />
                         </DockPanel>
                     </Border>
 
                     <!-- Protocolo de Respaldo -->
-                    <Border x:Name="AvisoRespaldo" Style="{StaticResource Aviso}" BorderBrush="{StaticResource Pincel.Acento}"
+                    <Border x:Name="AvisoRespaldo" Style="{StaticResource Aviso}" BorderBrush="{DynamicResource Pincel.Acento}"
                             Visibility="{Binding EsRespaldo, Converter={StaticResource Visible}}">
                         <DockPanel>
-                            <c:Icono Width="32" Height="32" Margin="0,0,12,0" VerticalAlignment="Top" Geometria="{StaticResource Icono.Salvavidas}" Foreground="{StaticResource Pincel.Acento}" />
+                            <c:Icono Width="32" Height="32" Margin="0,0,12,0" VerticalAlignment="Top" Geometria="{StaticResource Icono.Salvavidas}" Foreground="{DynamicResource Pincel.Acento}" />
                             <StackPanel>
                                 <TextBlock Style="{StaticResource Texto.Normal}" FontWeight="Bold" Text="{Binding MensajeRespaldo}"
                                            AutomationProperties.AutomationId="MensajeRespaldo" />
-                                <TextBlock Style="{StaticResource Texto.Normal}" Margin="0,8,0,0" Foreground="{StaticResource Pincel.TextoSuave}" Text="{Binding PistaRespaldo}" />
+                                <TextBlock Style="{StaticResource Texto.Normal}" Margin="0,8,0,0" Foreground="{DynamicResource Pincel.TextoSuave}" Text="{Binding PistaRespaldo}" />
                             </StackPanel>
                         </DockPanel>
                     </Border>
@@ -166,10 +166,10 @@
                     <StackPanel x:Name="Resultado" Margin="0,14,0,0" Visibility="{Binding EsResultado, Converter={StaticResource Visible}}">
                         <TextBlock Style="{StaticResource Texto.Normal}" FontSize="20" FontWeight="Bold" Text="{Binding TextoResultado}"
                                    AutomationProperties.AutomationId="TextoResultado" />
-                        <Border Margin="0,12,0,0" Padding="16,12" CornerRadius="14" Background="{StaticResource Pincel.Fondo}"
-                                BorderBrush="{StaticResource Pincel.Primario}" BorderThickness="5,0,0,0">
+                        <Border Margin="0,12,0,0" Padding="16,12" CornerRadius="14" Background="{DynamicResource Pincel.Fondo}"
+                                BorderBrush="{DynamicResource Pincel.Primario}" BorderThickness="5,0,0,0">
                             <StackPanel DataContext="{Binding Dato}">
-                                <TextBlock Style="{StaticResource Texto.Seccion}" Foreground="{StaticResource Pincel.Estrella}"
+                                <TextBlock Style="{StaticResource Texto.Seccion}" Foreground="{DynamicResource Pincel.Estrella}"
                                            c:Contenido.Texto="{x:Static vm:TextosApp.DatoReal}" />
                                 <TextBlock Style="{StaticResource Texto.Normal}" Margin="0,6,0,0" Text="{Binding Texto}"
                                            AutomationProperties.AutomationId="TextoDato" />
@@ -193,15 +193,15 @@
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate DataType="{x:Type vm:LetraEscala}">
                                                 <Border x:Name="Casilla" Width="34" Height="34" CornerRadius="8" Margin="0,0,6,0"
-                                                        Background="{StaticResource Pincel.Superficie}" BorderBrush="{StaticResource Pincel.BordeControl}" BorderThickness="2">
+                                                        Background="{DynamicResource Pincel.Superficie}" BorderBrush="{DynamicResource Pincel.BordeControl}" BorderThickness="2">
                                                     <c:TextoDecorativo x:Name="Letra" Text="{Binding Letra}" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                                       Foreground="{StaticResource Pincel.TextoSuave}" />
+                                                                       Foreground="{DynamicResource Pincel.TextoSuave}" />
                                                 </Border>
                                                 <DataTemplate.Triggers>
                                                     <DataTrigger Binding="{Binding Activa}" Value="True">
-                                                        <Setter TargetName="Casilla" Property="Background" Value="{StaticResource Pincel.Acento}" />
-                                                        <Setter TargetName="Casilla" Property="BorderBrush" Value="{StaticResource Pincel.Texto}" />
-                                                        <Setter TargetName="Letra" Property="Foreground" Value="{StaticResource Pincel.TextoOscuro}" />
+                                                        <Setter TargetName="Casilla" Property="Background" Value="{DynamicResource Pincel.Acento}" />
+                                                        <Setter TargetName="Casilla" Property="BorderBrush" Value="{DynamicResource Pincel.Texto}" />
+                                                        <Setter TargetName="Letra" Property="Foreground" Value="{DynamicResource Pincel.TextoOscuro}" />
                                                     </DataTrigger>
                                                 </DataTemplate.Triggers>
                                             </DataTemplate>
@@ -232,7 +232,7 @@
                             <TextBlock Style="{StaticResource Texto.Etiqueta}" c:Contenido.Texto="{x:Static vm:TextosApp+Abortada.Etiqueta}" />
                         </Border>
                         <DockPanel Style="{StaticResource CabeceraTitulo}">
-                            <Border Style="{StaticResource Insignia}" Background="{StaticResource Pincel.Tierra}" />
+                            <Border Style="{StaticResource Insignia}" Background="{DynamicResource Pincel.Tierra}" />
                             <TextBlock x:Name="TituloAbortada" Style="{StaticResource Texto.Titulo}" Text="{x:Static vm:TextosApp+Abortada.Titulo}"
                                        AutomationProperties.AutomationId="TituloAbortada" />
                         </DockPanel>
@@ -262,14 +262,32 @@
                                         <GradientStop Color="#F97316" Offset="1" />
                                     </LinearGradientBrush>
                                 </Border.Background>
-                                <c:Icono Margin="13" Geometria="{StaticResource Icono.Estrella}" Foreground="{StaticResource Pincel.TextoOscuro}" />
+                                <c:Icono Margin="13" Geometria="{StaticResource Icono.Estrella}" Foreground="{DynamicResource Pincel.TextoOscuro}" />
                             </Border>
                             <TextBlock x:Name="TituloVictoria" Style="{StaticResource Texto.Titulo}" Text="{x:Static vm:TextosApp+Victoria.Titulo}"
                                        AutomationProperties.AutomationId="TituloVictoria" />
                         </DockPanel>
                     </Grid>
                     <TextBlock Style="{StaticResource Texto.Historia}" Text="{x:Static vm:TextosApp+Victoria.Historia}" />
-                    <TextBlock Style="{StaticResource Texto.Normal}" Margin="0,14,0,0" Text="{Binding FechaCertificado}" />
+                    <!-- Nombre opcional (D-17): solo en memoria; nunca se guarda, se envía ni se lee en voz alta -->
+                    <TextBlock x:Name="EtiquetaNombre" Style="{StaticResource Texto.Normal}" FontWeight="Bold" Margin="0,14,0,0"
+                               Text="{x:Static vm:TextosApp+Victoria.NombreEtiqueta}" />
+                    <WrapPanel Margin="0,6,0,0">
+                        <TextBox x:Name="CampoNombre" Style="{StaticResource CampoTexto}" Width="300" Margin="0,0,12,8"
+                                 MaxLength="24" Text="{Binding NombreCertificado, UpdateSourceTrigger=PropertyChanged}"
+                                 AutomationProperties.Name="{x:Static vm:TextosApp+Victoria.NombreEtiqueta}"
+                                 AutomationProperties.AutomationId="NombreCertificado" />
+                        <Button x:Name="BotonImprimir" Style="{StaticResource BotonBarra}" Margin="0,0,0,8" Command="{Binding Imprimir}"
+                                AutomationProperties.Name="{x:Static vm:TextosApp+Victoria.Imprimir}" AutomationProperties.AutomationId="BotonImprimir">
+                            <StackPanel Orientation="Horizontal">
+                                <c:Icono Width="22" Height="22" Geometria="{StaticResource Icono.Imprimir}" />
+                                <c:TextoDecorativo Text="{x:Static vm:TextosApp+Victoria.Imprimir}" Margin="8,0,0,0" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </WrapPanel>
+                    <TextBlock Style="{StaticResource Texto.Seccion}" Foreground="{DynamicResource Pincel.Estrella}" Text="{Binding LineaNombre}"
+                               Visibility="{Binding LineaNombre, Converter={StaticResource Visible}}" AutomationProperties.AutomationId="LineaNombre" />
+                    <TextBlock Style="{StaticResource Texto.Normal}" Margin="0,8,0,0" Text="{Binding FechaCertificado}" />
                     <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
                         <ItemsControl Focusable="False" ItemsSource="{Binding Estrellas}" VerticalAlignment="Center">
                             <ItemsControl.ItemsPanel>
@@ -280,7 +298,7 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <c:Icono Width="28" Height="28" Margin="0,0,4,0" Geometria="{StaticResource Icono.Estrella}"
-                                             Foreground="{StaticResource Pincel.Estrella}" Relleno="{StaticResource Pincel.Estrella}" />
+                                             Foreground="{DynamicResource Pincel.Estrella}" Relleno="{DynamicResource Pincel.Estrella}" />
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>

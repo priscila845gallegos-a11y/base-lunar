@@ -9,7 +9,7 @@
         <DataTemplate x:Key="PlantillaOpcion" DataType="{x:Type vm:OpcionVM}">
             <DockPanel>
                 <Border Style="{StaticResource LetraOpcion}">
-                    <c:TextoDecorativo Text="{Binding Id}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource Pincel.Texto}"
+                    <c:TextoDecorativo Text="{Binding Id}" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource Pincel.Texto}"
                                        HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Border>
                 <StackPanel VerticalAlignment="Center">
@@ -23,14 +23,14 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="{x:Type vm:EfectoVM}">
                                 <Border Style="{StaticResource Efecto}">
-                                    <c:TextoDecorativo x:Name="TextoEfecto" FontSize="18" Foreground="{StaticResource Pincel.Texto}" c:Contenido.Texto="{Binding Texto}" />
+                                    <c:TextoDecorativo x:Name="TextoEfecto" FontSize="18" Foreground="{DynamicResource Pincel.Texto}" c:Contenido.Texto="{Binding Texto}" />
                                 </Border>
                                 <DataTemplate.Triggers>
                                     <DataTrigger Binding="{Binding Gana}" Value="True">
-                                        <Setter TargetName="TextoEfecto" Property="Foreground" Value="{StaticResource Pincel.Exito}" />
+                                        <Setter TargetName="TextoEfecto" Property="Foreground" Value="{DynamicResource Pincel.Exito}" />
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding Gana}" Value="False">
-                                        <Setter TargetName="TextoEfecto" Property="Foreground" Value="#FFFCA5A5" />
+                                        <Setter TargetName="TextoEfecto" Property="Foreground" Value="{DynamicResource Pincel.Costo}" />
                                     </DataTrigger>
                                 </DataTemplate.Triggers>
                             </DataTemplate>
@@ -63,11 +63,11 @@
                 AutomationProperties.AcceleratorKey="Enter">
             <StackPanel Orientation="Horizontal">
                 <c:TextoDecorativo Text="{Binding TextoBotonPrincipal}" VerticalAlignment="Center" />
-                <c:Icono Width="24" Height="24" Margin="12,0,0,0" Foreground="{StaticResource Pincel.TextoOscuro}">
+                <c:Icono Width="24" Height="24" Margin="12,0,0,0" Foreground="{DynamicResource Pincel.TextoOscuro}">
                     <c:Icono.Style>
                         <Style TargetType="c:Icono">
                             <Setter Property="Geometria" Value="{StaticResource Icono.Avanzar}" />
-                            <Setter Property="Relleno" Value="{StaticResource Pincel.TextoOscuro}" />
+                            <Setter Property="Relleno" Value="{DynamicResource Pincel.TextoOscuro}" />
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding BotonReinicia}" Value="True">
                                     <Setter Property="Geometria" Value="{StaticResource Icono.Reiniciar}" />

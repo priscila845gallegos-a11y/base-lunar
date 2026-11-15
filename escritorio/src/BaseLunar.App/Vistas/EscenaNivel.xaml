@@ -15,10 +15,10 @@
     <Grid>
         <Grid.Style>
             <Style TargetType="Grid">
-                <Setter Property="Background" Value="{StaticResource Pincel.CieloNormal}" />
+                <Setter Property="Background" Value="{DynamicResource Pincel.CieloNormal}" />
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding Alerta}" Value="True">
-                        <Setter Property="Background" Value="{StaticResource Pincel.CieloAlerta}" />
+                        <Setter Property="Background" Value="{DynamicResource Pincel.CieloAlerta}" />
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
@@ -27,10 +27,10 @@
             <Canvas x:Name="Lienzo" Width="1600" Height="900" ClipToBounds="True">
                 <!-- Noche lunar (Nivel 1): el cielo se oscurece -->
                 <Rectangle x:Name="CieloNoche" Width="1600" Height="620" Fill="#B3020617" Visibility="Collapsed" />
-                <Rectangle Width="1600" Height="900" Fill="{StaticResource Pincel.Estrellas}" />
+                <Rectangle Width="1600" Height="900" Fill="{DynamicResource Pincel.Estrellas}" />
 
                 <!-- La Tierra, a lo lejos -->
-                <Ellipse Canvas.Left="1250" Canvas.Top="150" Width="130" Height="130" Fill="{StaticResource Pincel.Tierra}" />
+                <Ellipse Canvas.Left="1250" Canvas.Top="150" Width="130" Height="130" Fill="{DynamicResource Pincel.Tierra}" />
                 <Path Fill="#B34ADE80" Data="M1275,190 C1290,175 1315,180 1318,196 C1322,212 1300,222 1290,236 C1280,230 1268,210 1275,190 Z M1335,235 C1345,228 1362,232 1360,248 C1352,262 1336,258 1335,235 Z" />
 
                 <!-- Nivel 3 (fondo): rayos cósmicos que caen -->
@@ -67,7 +67,7 @@
 
                 <!-- Colinas, suelo y cráteres -->
                 <Path Fill="#FF475569" Data="M0,515 C180,470 360,500 540,478 C740,452 960,505 1160,468 C1340,438 1480,478 1600,462 L1600,640 L0,640 Z" />
-                <Path Fill="{StaticResource Pincel.Suelo}" Data="M0,560 C260,532 520,576 800,556 C1080,536 1340,576 1600,550 L1600,900 L0,900 Z" />
+                <Path Fill="{DynamicResource Pincel.Suelo}" Data="M0,560 C260,532 520,576 800,556 C1080,536 1340,576 1600,550 L1600,900 L0,900 Z" />
                 <Ellipse Canvas.Left="150" Canvas.Top="640" Width="240" Height="54" Fill="#80334155" />
                 <Ellipse Canvas.Left="1180" Canvas.Top="690" Width="300" Height="70" Fill="#80334155" />
                 <Ellipse Canvas.Left="720" Canvas.Top="770" Width="170" Height="38" Fill="#80334155" />
@@ -82,7 +82,7 @@
                     <Ellipse x:Name="LuzAntena" Canvas.Left="138" Canvas.Top="-62" Width="24" Height="24" Stroke="#FFF8FAFC" StrokeThickness="3">
                         <Ellipse.Style>
                             <Style TargetType="Ellipse">
-                                <Setter Property="Fill" Value="{StaticResource Pincel.Exito}" />
+                                <Setter Property="Fill" Value="{DynamicResource Pincel.Exito}" />
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding EsRespaldo}" Value="True">
                                         <Setter Property="Fill" Value="#FFEF4444" />
@@ -125,7 +125,7 @@
                             </TransformGroup>
                         </Rectangle.RenderTransform>
                     </Rectangle>
-                    <c:Icono Canvas.Left="466" Canvas.Top="500" Width="28" Height="28" Geometria="{StaticResource Icono.Soporte}" Foreground="{StaticResource Pincel.Fondo}" Grosor="2.5" />
+                    <c:Icono Canvas.Left="466" Canvas.Top="500" Width="28" Height="28" Geometria="{StaticResource Icono.Soporte}" Foreground="{DynamicResource Pincel.Fondo}" Grosor="2.5" />
                     <Rectangle Canvas.Left="474" Canvas.Top="392" Width="12" Height="20" Fill="#FF94A3B8" />
                     <Canvas x:Name="Valvula1">
                         <Canvas.RenderTransform>
@@ -150,7 +150,7 @@
                             </TransformGroup>
                         </Rectangle.RenderTransform>
                     </Rectangle>
-                    <c:Icono Canvas.Left="788" Canvas.Top="484" Width="28" Height="28" Geometria="{StaticResource Icono.Bateria}" Foreground="{StaticResource Pincel.Fondo}" Grosor="2.5" />
+                    <c:Icono Canvas.Left="788" Canvas.Top="484" Width="28" Height="28" Geometria="{StaticResource Icono.Bateria}" Foreground="{DynamicResource Pincel.Fondo}" Grosor="2.5" />
                     <Ellipse x:Name="ChispaBateria1" Canvas.Left="752" Canvas.Top="420" Width="100" Height="100" Opacity="0">
                         <Ellipse.Fill>
                             <RadialGradientBrush>
@@ -278,7 +278,7 @@
                 <Canvas x:Name="Props3" Visibility="Collapsed">
                     <Rectangle Canvas.Left="772" Canvas.Top="466" Width="64" Height="84" RadiusX="10" RadiusY="10" Fill="#FF1E293B" Stroke="#FFCBD5E1" StrokeThickness="3" />
                     <Rectangle Canvas.Left="780" Canvas.Top="476" Width="48" Height="34" RadiusX="4" RadiusY="4" Fill="#FF0F172A" />
-                    <c:Icono Canvas.Left="790" Canvas.Top="478" Width="30" Height="30" Geometria="{StaticResource Icono.Radiacion}" Foreground="{StaticResource Pincel.Bateria}" />
+                    <c:Icono Canvas.Left="790" Canvas.Top="478" Width="30" Height="30" Geometria="{StaticResource Icono.Radiacion}" Foreground="{DynamicResource Pincel.Bateria}" />
                     <Ellipse x:Name="LuzDosimetro" Canvas.Left="796" Canvas.Top="520" Width="16" Height="16" Fill="#FFEF4444" />
                     <Rectangle Canvas.Left="800" Canvas.Top="550" Width="8" Height="10" Fill="#FF94A3B8" />
                     <!-- Agua que rodea los dormitorios (opción A) -->
@@ -378,7 +378,7 @@
                         <Path Stroke="#FF94A3B8" StrokeThickness="8" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Data="M34,150 L6,196 M146,150 L174,196" />
                         <Path Fill="#FFF1F5F9" Stroke="#FF94A3B8" StrokeThickness="4" Data="M22,160 L42,64 Q90,0 138,64 L158,160 Z" />
                         <Ellipse Canvas.Left="66" Canvas.Top="70" Width="48" Height="48" Fill="#FF60A5FA" Stroke="#FF334155" StrokeThickness="4" />
-                        <Rectangle Canvas.Left="18" Canvas.Top="150" Width="144" Height="18" RadiusX="8" RadiusY="8" Fill="{StaticResource Pincel.Acento}" />
+                        <Rectangle Canvas.Left="18" Canvas.Top="150" Width="144" Height="18" RadiusX="8" RadiusY="8" Fill="{DynamicResource Pincel.Acento}" />
                         <Path x:Name="Llama5" Fill="#FFFB923C" Data="M70,168 L90,214 L110,168 Z" />
                     </Canvas>
                 </Canvas>

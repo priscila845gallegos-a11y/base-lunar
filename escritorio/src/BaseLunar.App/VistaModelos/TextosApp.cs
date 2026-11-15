@@ -61,6 +61,19 @@ public static class TextosApp
         public const string Fecha = "Fecha:";
         public const string Aprendiste = "Lo que aprendiste";
         public const string Nota = "Datos: NASA DONKI, NASA OSDR / RadLab, NASA y CSA. Es un juego educativo independiente: este certificado no es oficial.";
+
+        /// <summary>Escritorio: el nombre opcional del certificado (3.7, D-17).</summary>
+        public const string NombreEtiqueta = "Tu nombre (opcional)";
+        public const string Comandante = "Comandante: {nombre}";
+        public const string Imprimir = "Imprimir";
+    }
+
+    /// <summary>Escritorio: si algo falla, un aviso amable y la misión sigue (D-57).</summary>
+    public static class ControlMision
+    {
+        public const string Titulo = "Control de Misión";
+        public const string Mensaje = "¡Hubo un pequeño fallo en la base! Ya lo arreglamos y tu misión sigue igual.";
+        public const string Boton = "Seguir la misión";
     }
 
     /// <summary>Escritorio: líneas honestas del dato en vivo de NASA DONKI (sección 7, D-09, D-54).</summary>
