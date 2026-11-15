@@ -26,6 +26,12 @@ public partial class TarjetaMision : UserControl
         seccion.BringIntoView();
     }
 
+    /// <summary>Al abrir una palabra del glosario, la tarjeta se desplaza hasta su explicación.</summary>
+    private void AlMostrarDefinicion(object sender, DependencyPropertyChangedEventArgs e)
+    {
+        if (e.NewValue is true) Dispatcher.BeginInvoke(() => CajaDefinicion.BringIntoView(), System.Windows.Threading.DispatcherPriority.Loaded);
+    }
+
     /// <summary>El título de la vista de cada fase.</summary>
     public TextBlock TituloDe(Fase fase) => fase switch
     {

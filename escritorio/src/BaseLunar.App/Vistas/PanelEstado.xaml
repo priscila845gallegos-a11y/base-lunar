@@ -44,19 +44,19 @@
                             <DataTemplate DataType="{x:Type vm:EstacionVM}">
                                 <Border x:Name="Punto" Width="32" Height="32" Margin="5,0" CornerRadius="16" BorderThickness="2"
                                         Background="{StaticResource Pincel.Superficie}" BorderBrush="{StaticResource Pincel.BordeControl}"
-                                        AutomationProperties.Name="{Binding TextoAccesible}">
+                                        AutomationProperties.Name="{Binding TextoAccesible}" c:Animaciones.Pulso="{Binding EsActual}">
                                     <c:Icono x:Name="IconoPunto" Width="18" Height="18" Opacity="0.7"
                                              Geometria="{Binding Avatar, Converter={StaticResource IconoDeEmoji}}"
                                              Foreground="{StaticResource Pincel.TextoSuave}" />
                                 </Border>
                                 <DataTemplate.Triggers>
                                     <DataTrigger Binding="{Binding EsHecha}" Value="True">
-                                        <Setter TargetName="Punto" Property="Background" Value="{StaticResource Pincel.Exito}" />
-                                        <Setter TargetName="Punto" Property="BorderBrush" Value="#B3FFFFFF" />
-                                        <Setter TargetName="IconoPunto" Property="Geometria" Value="{StaticResource Icono.Hecho}" />
-                                        <Setter TargetName="IconoPunto" Property="Foreground" Value="{StaticResource Pincel.TextoOscuro}" />
+                                        <Setter TargetName="Punto" Property="Background" Value="{StaticResource Pincel.Fondo}" />
+                                        <Setter TargetName="Punto" Property="BorderBrush" Value="{StaticResource Pincel.Estrella}" />
+                                        <Setter TargetName="IconoPunto" Property="Geometria" Value="{StaticResource Icono.Estrella}" />
+                                        <Setter TargetName="IconoPunto" Property="Foreground" Value="{StaticResource Pincel.Estrella}" />
+                                        <Setter TargetName="IconoPunto" Property="Relleno" Value="{StaticResource Pincel.Estrella}" />
                                         <Setter TargetName="IconoPunto" Property="Opacity" Value="1" />
-                                        <Setter TargetName="IconoPunto" Property="Grosor" Value="3" />
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding EsActual}" Value="True">
                                         <Setter TargetName="Punto" Property="Background" Value="{StaticResource Pincel.Acento}" />

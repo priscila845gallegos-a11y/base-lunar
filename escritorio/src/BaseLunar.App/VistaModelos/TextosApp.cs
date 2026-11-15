@@ -19,6 +19,9 @@ public static class TextosApp
     public const string PrefijoOpcion = "Opción {id}: ";
     public const string DatoReal = "💡 Dato real";
 
+    /// <summary>Escritorio: nombre accesible de cada botón del glosario.</summary>
+    public const string PreguntaGlosario = "¿Qué es {palabra}?";
+
     /// <summary>Escritorio: el enlace se abre en el navegador, no en otra pestaña.</summary>
     public const string EnlaceExterno = " (se abre en el navegador)";
 

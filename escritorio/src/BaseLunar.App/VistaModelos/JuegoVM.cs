@@ -29,6 +29,7 @@ public sealed class JuegoVM : Observable
         Estaciones = Guion.Niveles.Select(n => new EstacionVM(n)).ToArray();
         Elegir = new Comando(p => ElegirOpcion(p as string ?? string.Empty), () => !Bloqueado);
         Principal = new Comando(_ => AccionPrincipal(), () => !Bloqueado);
+        VerTermino = new Comando(p => AlternarTermino(p as Termino), () => true);
         transicion = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(Tiempos.TransicionMs) };
         transicion.Tick += (_, _) => TerminarTransicion();
         Pintar();
@@ -40,6 +41,9 @@ public sealed class JuegoVM : Observable
     /// <summary>Al terminar la transición: la vista mueve el foco según la fase (D-28).</summary>
     public event EventHandler<Fase>? Enfocar;
 
+    /// <summary>Tras cada acción: lo que tiene que representar la escena (consecuencia, fallo, mapa…).</summary>
+    public event EventHandler<Momento>? Escena;
+
     public Tormenta Tormenta { get; }
     public Estado Estado => estado;
     public IReadOnlyList<MedidorVM> Medidores { get; }
@@ -48,11 +52,16 @@ public sealed class JuegoVM : Observable
     public OpcionVM OpcionB { get; } = new("B");
     public Comando Elegir { get; }
     public Comando Principal { get; }
+
+    /// <summary>Abre o cierra la explicación de una palabra del glosario.</summary>
+    public Comando VerTermino { get; }
     public bool Bloqueado { get; private set; }
 
-    /// <summary>Contadores que disparan animaciones: temblor de la tarjeta y salto del astronauta.</summary>
+    /// <summary>Contador que dispara el temblor de la tarjeta al activarse un respaldo.</summary>
     public int Temblor { get; private set; }
-    public int Celebracion { get; private set; }
+
+    /// <summary>El último momento de la escena (null antes de la primera acción).</summary>
+    public Momento? UltimoMomento { get; private set; }
 
     // ---------- Fase y pantalla ----------
     public Fase Fase => estado.Fase;
@@ -73,15 +82,10 @@ public sealed class JuegoVM : Observable
     /// <summary>Un elemento por respaldo inicial: true si todavía está disponible.</summary>
     public IReadOnlyList<bool> Respaldos => Enumerable.Range(0, Reglas.RespaldosIniciales).Select(i => i < estado.Respaldos).ToArray();
 
-    public bool PinEnBase => EsInicio;
-    public bool PinEnMeta => EsVictoria;
 
     // ---------- Tarjeta: nivel ----------
     public string Etiqueta => NivelActual is { } n ? Presentacion.EtiquetaNivel(n, Tormenta) : string.Empty;
     public string Avatar => NivelActual?.Avatar ?? TextosApp.Inicio.Avatar;
-
-    /// <summary>Insignia de la escena: la del nivel, la medalla en la victoria o el salvavidas al abortar.</summary>
-    public string AvatarEscena => EsVictoria ? TextosApp.Victoria.Avatar : EsAbortada ? "🪂" : Avatar;
     public string TituloNivel => NivelActual?.Titulo ?? string.Empty;
     public string NombreTituloNivel => NivelActual is { } n ? Textos.Rellenar(Textos.Tarjeta.PrefijoNivel, ("n", n.Id)) + n.Titulo : string.Empty;
     public string Historia => NivelActual?.Historia ?? string.Empty;
@@ -91,6 +95,11 @@ public sealed class JuegoVM : Observable
     public string? PistaRespaldo => EsRespaldo && NivelActual is { } n ? Presentacion.TextosRespaldo(estado, n).Pista : null;
     public string? TextoResultado => EsResultado && NivelActual is { } n ? n.Opciones[estado.UltimaOpcion!].Resultado : null;
     public DatoVM? Dato => EsResultado && NivelActual is { } n ? DatoVM.De(n, Tormenta) : null;
+
+    // ---------- Tarjeta: glosario ----------
+    public IReadOnlyList<Termino> Terminos => EsVistaNivel && NivelActual is { } n ? Glosario.De(n.Id) : [];
+    public Termino? TerminoAbierto { get; private set; }
+    public DatoVM? Definicion => TerminoAbierto?.ComoDato();
 
     // ---------- Tarjeta: victoria ----------
     public string FechaCertificado => TextosApp.Victoria.Fecha + " " + Presentacion.FechaLocal(DateTime.Now);
@@ -132,11 +141,15 @@ public sealed class JuegoVM : Observable
     private void Procesar(ResultadoMotor resultado)
     {
         if (ReferenceEquals(resultado.Estado, estado)) return; // el motor ignoró la acción
+        var anterior = estado;
         estado = resultado.Estado;
+        if (estado.Nivel != anterior.Nivel || !EsVistaNivel) TerminoAbierto = null;
         var nuevaAyuda = resultado.Eventos.OfType<AyudaActivada>().FirstOrDefault();
         if (nuevaAyuda is not null || Fase != Fase.Nivel) ayuda = nuevaAyuda;
         Bloqueado = true;
         Pintar();
+        UltimoMomento = Presentacion.MomentoDe(anterior, resultado);
+        Escena?.Invoke(this, UltimoMomento);
         Animar(resultado.Eventos);
         AnunciarEventos(resultado.Eventos);
         transicion.Stop();
@@ -151,6 +164,16 @@ public sealed class JuegoVM : Observable
         Bloqueado = false;
         ActualizarBloqueo();
         Enfocar?.Invoke(this, Fase);
+    }
+
+    /// <summary>Abre la explicación (y la anuncia) o la cierra si ya estaba abierta.</summary>
+    private void AlternarTermino(Termino? termino)
+    {
+        TerminoAbierto = termino is null || termino == TerminoAbierto ? null : termino;
+        Avisar(nameof(TerminoAbierto));
+        Avisar(nameof(Definicion));
+        if (TerminoAbierto is { } abierto)
+            Anunciar?.Invoke(this, new Anuncio($"{abierto.ComoDato().Titulo}: {abierto.Definicion}", Urgente: false));
     }
 
     private void Pintar()
@@ -184,7 +207,10 @@ public sealed class JuegoVM : Observable
             {
                 case EfectosAplicados e:
                     foreach (var (clave, valor) in Presentacion.EfectosOrdenados(e.Efectos))
+                    {
                         MedidorDe(clave).Flotar(maximos.Contains(clave) ? Textos.AlMaximo : Presentacion.ConIcono(valor, clave), valor > 0);
+                        if (maximos.Contains(clave)) MedidorDe(clave).Destellar();
+                    }
                     break;
                 case PenalizacionX e:
                     MedidorDe(e.Medidor).Flotar(Presentacion.ConIcono(-e.Cantidad, e.Medidor), false);
@@ -195,10 +221,6 @@ public sealed class JuegoVM : Observable
                 case RespaldoActivado:
                     Temblor++;
                     Avisar(nameof(Temblor));
-                    break;
-                case NivelSuperado or Nucleo.Victoria:
-                    Celebracion++;
-                    Avisar(nameof(Celebracion));
                     break;
             }
         }

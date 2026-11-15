@@ -219,6 +219,37 @@
         <Setter Property="HorizontalContentAlignment" Value="Center" />
     </Style>
 
+    <!-- Palabra del glosario: una píldora con «?» que abre su explicación -->
+    <Style x:Key="BotonGlosario" TargetType="Button">
+        <Setter Property="Foreground" Value="{StaticResource Pincel.Enlace}" />
+        <Setter Property="FontSize" Value="{StaticResource Tamano.Pequeno}" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="MinHeight" Value="40" />
+        <Setter Property="Margin" Value="0,0,8,8" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{StaticResource Foco}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Pildora" CornerRadius="20" Padding="6,4,14,4" Background="{StaticResource Pincel.Fondo}"
+                            BorderBrush="{StaticResource Pincel.Enlace}" BorderThickness="2">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="26" Height="26" CornerRadius="13" Background="{StaticResource Pincel.Enlace}" Margin="0,0,8,0">
+                                <TextBlock Text="?" FontWeight="Bold" Foreground="{StaticResource Pincel.TextoOscuro}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <ContentPresenter VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Pildora" Property="Background" Value="{StaticResource Pincel.Superficie}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- Letra A o B en un círculo oscuro -->
     <Style x:Key="LetraOpcion" TargetType="Border">
         <Setter Property="Width" Value="44" />

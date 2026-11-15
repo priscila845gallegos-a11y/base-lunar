@@ -86,12 +86,17 @@ public partial class PantallaJuego : UserControl
         {
             anterior.Anunciar -= AlAnunciar;
             anterior.Enfocar -= AlEnfocar;
+            anterior.Escena -= AlCambiarEscena;
         }
         juego = e.NewValue as JuegoVM;
         if (juego is null) return;
         juego.Anunciar += AlAnunciar;
         juego.Enfocar += AlEnfocar;
+        juego.Escena += AlCambiarEscena;
+        Escenario.Sincronizar(juego.Estado);
     }
+
+    private void AlCambiarEscena(object? sender, Momento momento) => Escenario.Representar(momento);
 
     private void AlEnfocar(object? sender, Fase fase) => Enfocar(fase);
 

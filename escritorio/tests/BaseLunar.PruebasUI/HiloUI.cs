@@ -126,6 +126,7 @@ internal static class Capturas
 
     public static string Guardar(FrameworkElement elemento, string nombre)
     {
+        elemento.UpdateLayout();
         var mapa = new RenderTargetBitmap((int)Math.Ceiling(elemento.ActualWidth), (int)Math.Ceiling(elemento.ActualHeight), 96, 96, PixelFormats.Pbgra32);
         mapa.Render(elemento);
         var codificador = new PngBitmapEncoder();

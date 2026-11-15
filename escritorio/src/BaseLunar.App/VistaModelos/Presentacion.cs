@@ -147,4 +147,46 @@ public static class Presentacion
 
     public static string TextoRespaldosCertificado(int respaldos) =>
         Textos.Rellenar(Textos.Certificado.Respaldos, ("n", respaldos), ("total", Reglas.RespaldosIniciales));
+
+    /// <summary>Casilla del mapa: 0 es la base, 1 a 5 las estaciones y 6 la meta (el relevo).</summary>
+    public const int CasillaMeta = 6;
+
+    /// <summary>Dónde está el astronauta en el mapa en cada fase.</summary>
+    public static int CasillaDe(Estado estado) => estado.Fase switch
+    {
+        Fase.Inicio => 0,
+        Fase.Victoria => CasillaMeta,
+        _ => estado.Nivel,
+    };
+
+    /// <summary>
+    /// Qué representa la escena tras una acción, deducido del estado anterior y del resultado del motor.
+    /// Es la traducción de los eventos a animaciones de la propuesta de F3 (sección 4).
+    /// </summary>
+    public static Momento MomentoDe(Estado anterior, ResultadoMotor resultado)
+    {
+        var estado = resultado.Estado;
+        var eventos = resultado.Eventos;
+        var ayuda = eventos.OfType<AyudaActivada>().Any();
+        return estado.Fase switch
+        {
+            Fase.Inicio => new Momento(TipoMomento.Inicio, 0),
+            Fase.Nivel when anterior.Fase == Fase.Respaldo => new Momento(TipoMomento.Reintento, estado.Nivel, Ayuda: ayuda),
+            Fase.Nivel => new Momento(TipoMomento.EntrarNivel, estado.Nivel,
+                ClaseX: eventos.OfType<PenalizacionX>().Any(), Ayuda: ayuda, Desde: CasillaDe(anterior)),
+            Fase.Resultado => new Momento(TipoMomento.Consecuencia, estado.Nivel, estado.UltimaOpcion),
+            Fase.Respaldo => new Momento(TipoMomento.Fallo, estado.Nivel, estado.UltimaOpcion, MedidorDelFallo(estado)),
+            Fase.MisionAbortada => new Momento(TipoMomento.Abortada, estado.Nivel, estado.UltimaOpcion, MedidorDelFallo(estado)),
+            Fase.Victoria => new Momento(TipoMomento.Victoria, estado.Nivel, Desde: estado.Nivel),
+            _ => new Momento(TipoMomento.Inicio, 0),
+        };
+    }
+
+    /// <summary>El medidor que explica el fallo: el primero en la prioridad 💧 → 🛡️ → ⚡ o el del requisito.</summary>
+    private static Medidor MedidorDelFallo(Estado estado)
+    {
+        if (estado.Fallidos.Count > 0) return estado.Fallidos[0];
+        var nivel = Guion.Niveles[estado.Nivel - 1];
+        return nivel.Opciones[estado.UltimaOpcion!].Requisito!.Medidor;
+    }
 }

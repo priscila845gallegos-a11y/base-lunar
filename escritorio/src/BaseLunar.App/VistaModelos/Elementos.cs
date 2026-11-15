@@ -21,6 +21,9 @@ public sealed class MedidorVM(InfoMedidor info) : Observable
     /// <summary>Contador que dispara la animación del número flotante.</summary>
     public int Disparo { get; private set; }
 
+    /// <summary>Contador del estallido de estrellas de «¡Al máximo!».</summary>
+    public int Destello { get; private set; }
+
     internal void Actualizar(int valor)
     {
         if (valor == Valor) return;
@@ -29,6 +32,12 @@ public sealed class MedidorVM(InfoMedidor info) : Observable
         Avisar(nameof(Bajo));
         Avisar(nameof(Texto));
         Avisar(nameof(TextoAccesible));
+    }
+
+    internal void Destellar()
+    {
+        Destello++;
+        Avisar(nameof(Destello));
     }
 
     internal void Flotar(string texto, bool gana)

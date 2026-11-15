@@ -39,10 +39,7 @@
             <v:PanelEstado x:Name="Estado" Grid.ColumnSpan="2" Margin="0,0,0,10" />
             <v:PanelMedidores x:Name="Medidores" Grid.Row="1" Margin="0,0,0,10" Panel.ZIndex="1" />
             <Border x:Name="Escena" Grid.Row="2" Margin="0,0,0,10" CornerRadius="22" c:Animaciones.Radio="22">
-                <Grid>
-                    <v:EscenaNivel Visibility="{Binding EsVistaNivel, Converter={StaticResource Visible}}" />
-                    <v:MapaMision Visibility="{Binding EsVistaNivel, Converter={StaticResource Oculto}}" />
-                </Grid>
+                <v:Escenario x:Name="Escenario" />
             </Border>
             <v:TarjetaMision x:Name="Tarjeta" Grid.Row="3" Margin="0,0,0,10" />
             <v:PanelDecisiones x:Name="Decisiones" Grid.Row="4" />

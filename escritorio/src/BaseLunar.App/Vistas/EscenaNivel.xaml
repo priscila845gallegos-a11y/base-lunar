@@ -2,11 +2,15 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:c="clr-namespace:BaseLunar.App.Controles"
+             xmlns:v="clr-namespace:BaseLunar.App.Vistas"
              IsHitTestVisible="False">
     <!--
-        Escena del nivel (arte provisional de F3.2; F3.3 trae el arte final y las animaciones de cada consecuencia).
-        Lienzo de 1600×900 que llena el espacio recortando los bordes: lo importante está en la franja central
-        (x 380–1220, y 340–570), que se ve en cualquier tamaño de ventana.
+        Escena ilustrada (vectores propios). Lienzo de 1600×900 que llena el espacio recortando los bordes:
+        lo importante está en la franja central (x 420–1180, y 335–565), que se ve en cualquier ventana.
+        · Común: cielo, Tierra, suelo, base lunar y astronauta.
+        · Una capa de objetos por nivel (Props1–Props5); el director muestra la del nivel actual.
+        · Efectos comunes encima: escarcha, gota, salvavidas, cápsula, partículas, destello y rebobinado.
+        Animacion/Director.cs anima todo según el momento que publica el modelo de vista.
     -->
     <Grid>
         <Grid.Style>
@@ -20,16 +24,27 @@
             </Style>
         </Grid.Style>
         <Viewbox Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Canvas Width="1600" Height="900">
+            <Canvas x:Name="Lienzo" Width="1600" Height="900" ClipToBounds="True">
+                <!-- Noche lunar (Nivel 1): el cielo se oscurece -->
+                <Rectangle x:Name="CieloNoche" Width="1600" Height="620" Fill="#B3020617" Visibility="Collapsed" />
                 <Rectangle Width="1600" Height="900" Fill="{StaticResource Pincel.Estrellas}" />
 
                 <!-- La Tierra, a lo lejos -->
                 <Ellipse Canvas.Left="1250" Canvas.Top="150" Width="130" Height="130" Fill="{StaticResource Pincel.Tierra}" />
                 <Path Fill="#B34ADE80" Data="M1275,190 C1290,175 1315,180 1318,196 C1322,212 1300,222 1290,236 C1280,230 1268,210 1275,190 Z M1335,235 C1345,228 1362,232 1360,248 C1352,262 1336,258 1335,235 Z" />
 
-                <!-- El Sol de la tormenta solar (Nivel 4) -->
-                <Grid Canvas.Left="140" Canvas.Top="40" Width="340" Height="340" Visibility="{Binding Alerta, Converter={StaticResource Visible}}">
-                    <Ellipse>
+                <!-- Nivel 3 (fondo): rayos cósmicos que caen -->
+                <Canvas x:Name="Rayos3" Visibility="Collapsed">
+                    <Path x:Name="Rayo1" Stroke="#FFC4B5FD" StrokeThickness="4" StrokeEndLineCap="Round" StrokeStartLineCap="Round" Data="M560,60 L610,110" Opacity="0" />
+                    <Path x:Name="Rayo2" Stroke="#FFC4B5FD" StrokeThickness="4" StrokeEndLineCap="Round" StrokeStartLineCap="Round" Data="M760,20 L810,70" Opacity="0" />
+                    <Path x:Name="Rayo3" Stroke="#FFF0ABFC" StrokeThickness="4" StrokeEndLineCap="Round" StrokeStartLineCap="Round" Data="M900,90 L950,140" Opacity="0" />
+                    <Path x:Name="Rayo4" Stroke="#FFC4B5FD" StrokeThickness="4" StrokeEndLineCap="Round" StrokeStartLineCap="Round" Data="M660,150 L710,200" Opacity="0" />
+                    <Path x:Name="Rayo5" Stroke="#FFF0ABFC" StrokeThickness="4" StrokeEndLineCap="Round" StrokeStartLineCap="Round" Data="M480,120 L530,170" Opacity="0" />
+                </Canvas>
+
+                <!-- Nivel 4 (fondo): el Sol lanza la llamarada y la radiación viaja hacia la base -->
+                <Canvas x:Name="Sol4" Visibility="Collapsed">
+                    <Ellipse x:Name="HaloSol" Canvas.Left="140" Canvas.Top="40" Width="340" Height="340">
                         <Ellipse.Fill>
                             <RadialGradientBrush>
                                 <GradientStop Color="#FFFDE047" Offset="0" />
@@ -38,25 +53,33 @@
                             </RadialGradientBrush>
                         </Ellipse.Fill>
                     </Ellipse>
-                    <Ellipse Width="150" Height="150" Fill="#FFFBBF24" />
-                </Grid>
+                    <Ellipse Canvas.Left="235" Canvas.Top="135" Width="150" Height="150" Fill="#FFFBBF24" />
+                    <Path Fill="#FFF97316" Data="M372,170 C430,150 470,190 520,175 C480,205 430,200 380,215 Z" />
+                    <Canvas x:Name="Radiacion4">
+                        <Ellipse Canvas.Left="380" Canvas.Top="200" Width="16" Height="16" Fill="#FFFB923C" Opacity="0" />
+                        <Ellipse Canvas.Left="370" Canvas.Top="240" Width="12" Height="12" Fill="#FFFDE047" Opacity="0" />
+                        <Ellipse Canvas.Left="400" Canvas.Top="180" Width="14" Height="14" Fill="#FFFB923C" Opacity="0" />
+                        <Ellipse Canvas.Left="360" Canvas.Top="215" Width="12" Height="12" Fill="#FFFDE047" Opacity="0" />
+                        <Ellipse Canvas.Left="390" Canvas.Top="260" Width="16" Height="16" Fill="#FFFB923C" Opacity="0" />
+                        <Ellipse Canvas.Left="410" Canvas.Top="225" Width="12" Height="12" Fill="#FFFDE047" Opacity="0" />
+                    </Canvas>
+                </Canvas>
 
-                <!-- Colinas lejanas y suelo lunar con cráteres -->
+                <!-- Colinas, suelo y cráteres -->
                 <Path Fill="#FF475569" Data="M0,515 C180,470 360,500 540,478 C740,452 960,505 1160,468 C1340,438 1480,478 1600,462 L1600,640 L0,640 Z" />
                 <Path Fill="{StaticResource Pincel.Suelo}" Data="M0,560 C260,532 520,576 800,556 C1080,536 1340,576 1600,550 L1600,900 L0,900 Z" />
                 <Ellipse Canvas.Left="150" Canvas.Top="640" Width="240" Height="54" Fill="#80334155" />
                 <Ellipse Canvas.Left="1180" Canvas.Top="690" Width="300" Height="70" Fill="#80334155" />
                 <Ellipse Canvas.Left="720" Canvas.Top="770" Width="170" Height="38" Fill="#80334155" />
-                <Ellipse Canvas.Left="430" Canvas.Top="600" Width="110" Height="22" Fill="#66334155" />
 
-                <!-- La base lunar -->
-                <Canvas Canvas.Left="900" Canvas.Top="370">
-                    <Rectangle Canvas.Left="-118" Canvas.Top="128" Width="8" Height="62" Fill="#FF94A3B8" />
-                    <Rectangle Canvas.Left="-170" Canvas.Top="70" Width="112" Height="64" RadiusX="6" RadiusY="6" Fill="#FF1D4ED8" Stroke="#FF93C5FD" StrokeThickness="3" />
-                    <Path Stroke="#FF93C5FD" StrokeThickness="2" Data="M-133,70 V134 M-96,70 V134 M-170,102 H-58" />
+                <!-- Nivel 1: escarcha que brilla en el suelo -->
+                <Path x:Name="EscarchaSuelo" Visibility="Collapsed" Fill="#FFE0F2FE" Opacity="0.7"
+                      Data="M470,585 l4,-10 l4,10 l10,4 l-10,4 l-4,10 l-4,-10 l-10,-4 Z M705,600 l3,-8 l3,8 l8,3 l-8,3 l-3,8 l-3,-8 l-8,-3 Z M1180,585 l4,-10 l4,10 l10,4 l-10,4 l-4,10 l-4,-10 l-10,-4 Z M905,610 l3,-8 l3,8 l8,3 l-8,3 l-3,8 l-3,-8 l-8,-3 Z M1060,598 l3,-8 l3,8 l8,3 l-8,3 l-3,8 l-3,-8 l-8,-3 Z M580,610 l3,-8 l3,8 l8,3 l-8,3 l-3,8 l-3,-8 l-8,-3 Z" />
+
+                <!-- ===== La base lunar (común) ===== -->
+                <Canvas x:Name="Base" Canvas.Left="860" Canvas.Top="370">
                     <Rectangle Canvas.Left="147" Canvas.Top="-40" Width="6" Height="80" Fill="#FFCBD5E1" />
-                    <Ellipse Canvas.Left="138" Canvas.Top="-62" Width="24" Height="24" Stroke="#FFF8FAFC" StrokeThickness="3"
-                             c:Animaciones.Pulso="{Binding EsRespaldo}">
+                    <Ellipse x:Name="LuzAntena" Canvas.Left="138" Canvas.Top="-62" Width="24" Height="24" Stroke="#FFF8FAFC" StrokeThickness="3">
                         <Ellipse.Style>
                             <Style TargetType="Ellipse">
                                 <Setter Property="Fill" Value="{StaticResource Pincel.Exito}" />
@@ -68,6 +91,7 @@
                             </Style>
                         </Ellipse.Style>
                     </Ellipse>
+                    <Ellipse x:Name="LuzAyuda" Canvas.Left="132" Canvas.Top="-68" Width="36" Height="36" Fill="#FF60A5FA" Opacity="0" />
                     <Path Data="M30,110 A120,105 0 0 1 270,110 Z" Stroke="#FF64748B" StrokeThickness="3">
                         <Path.Fill>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -76,68 +100,368 @@
                             </LinearGradientBrush>
                         </Path.Fill>
                     </Path>
+                    <Path x:Name="DestelloCupula" Data="M30,110 A120,105 0 0 1 270,110 Z" Fill="#D9EF4444" Opacity="0" />
                     <Rectangle Canvas.Top="100" Width="300" Height="90" RadiusX="40" RadiusY="40" Fill="#FFF1F5F9" Stroke="#FF94A3B8" StrokeThickness="3" />
                     <Ellipse Canvas.Left="62" Canvas.Top="128" Width="34" Height="34" Fill="#FFFDE047" Stroke="#FF64748B" StrokeThickness="3" />
                     <Ellipse Canvas.Left="133" Canvas.Top="128" Width="34" Height="34" Fill="#FFFDE047" Stroke="#FF64748B" StrokeThickness="3" />
                     <Ellipse Canvas.Left="204" Canvas.Top="128" Width="34" Height="34" Fill="#FFFDE047" Stroke="#FF64748B" StrokeThickness="3" />
-                    <Rectangle Canvas.Left="282" Canvas.Top="116" Width="36" Height="70" RadiusX="8" RadiusY="8" Fill="#FF475569" Stroke="#FF334155" StrokeThickness="3" />
+                    <Canvas x:Name="VentanasApagadas" Opacity="0">
+                        <Ellipse Canvas.Left="65" Canvas.Top="131" Width="28" Height="28" Fill="#FF1E293B" />
+                        <Ellipse Canvas.Left="136" Canvas.Top="131" Width="28" Height="28" Fill="#FF1E293B" />
+                        <Ellipse Canvas.Left="207" Canvas.Top="131" Width="28" Height="28" Fill="#FF1E293B" />
+                    </Canvas>
+                    <Rectangle x:Name="Puerta" Canvas.Left="282" Canvas.Top="116" Width="36" Height="70" RadiusX="8" RadiusY="8" Fill="#FF475569" Stroke="#FF334155" StrokeThickness="3" />
                 </Canvas>
 
-                <!-- Insignia del nivel, flotando junto al astronauta -->
-                <Grid Canvas.Left="390" Canvas.Top="370" Width="140" Height="140"
-                      Visibility="{Binding EsVictoria, Converter={StaticResource Oculto}}">
-                    <Ellipse>
+                <!-- ===== Nivel 1 · La Noche Lunar: reciclador de agua y batería ===== -->
+                <Canvas x:Name="Props1" Visibility="Collapsed">
+                    <Rectangle Canvas.Left="440" Canvas.Top="410" Width="80" Height="150" RadiusX="30" RadiusY="30" Fill="#FF1E293B" Stroke="#FFCBD5E1" StrokeThickness="4" />
+                    <Rectangle x:Name="Agua1" Canvas.Left="447" Canvas.Top="417" Width="66" Height="136" RadiusX="24" RadiusY="24" Fill="#FF22D3EE" RenderTransformOrigin="0.5,1">
+                        <Rectangle.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleY="0.8" />
+                                <RotateTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Rectangle.RenderTransform>
+                    </Rectangle>
+                    <c:Icono Canvas.Left="466" Canvas.Top="500" Width="28" Height="28" Geometria="{StaticResource Icono.Soporte}" Foreground="{StaticResource Pincel.Fondo}" Grosor="2.5" />
+                    <Rectangle Canvas.Left="474" Canvas.Top="392" Width="12" Height="20" Fill="#FF94A3B8" />
+                    <Canvas x:Name="Valvula1">
+                        <Canvas.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform CenterX="480" CenterY="388" />
+                                <RotateTransform CenterX="480" CenterY="388" />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Canvas.RenderTransform>
+                        <Ellipse Canvas.Left="462" Canvas.Top="370" Width="36" Height="36" Stroke="#FFF97316" StrokeThickness="5" />
+                        <Path Stroke="#FFF97316" StrokeThickness="4" Data="M480,370 V406 M462,388 H498" />
+                    </Canvas>
+                    <!-- Batería -->
+                    <Rectangle Canvas.Left="790" Canvas.Top="430" Width="24" Height="12" RadiusX="3" RadiusY="3" Fill="#FFCBD5E1" />
+                    <Rectangle Canvas.Left="770" Canvas.Top="440" Width="64" Height="120" RadiusX="10" RadiusY="10" Fill="#FF1E293B" Stroke="#FFCBD5E1" StrokeThickness="4" />
+                    <Rectangle x:Name="Carga1" Canvas.Left="777" Canvas.Top="447" Width="50" Height="106" RadiusX="6" RadiusY="6" Fill="#FFFACC15" RenderTransformOrigin="0.5,1">
+                        <Rectangle.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleY="0.8" />
+                                <RotateTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Rectangle.RenderTransform>
+                    </Rectangle>
+                    <c:Icono Canvas.Left="788" Canvas.Top="484" Width="28" Height="28" Geometria="{StaticResource Icono.Bateria}" Foreground="{StaticResource Pincel.Fondo}" Grosor="2.5" />
+                    <Ellipse x:Name="ChispaBateria1" Canvas.Left="752" Canvas.Top="420" Width="100" Height="100" Opacity="0">
                         <Ellipse.Fill>
                             <RadialGradientBrush>
-                                <GradientStop Color="#9960A5FA" Offset="0.45" />
-                                <GradientStop Color="#0060A5FA" Offset="1" />
+                                <GradientStop Color="#CCFDE047" Offset="0" />
+                                <GradientStop Color="#00FDE047" Offset="1" />
                             </RadialGradientBrush>
                         </Ellipse.Fill>
                     </Ellipse>
-                    <Ellipse Margin="22" Stroke="#CCFFFFFF" StrokeThickness="4">
+                    <!-- Calefacción encendida: las ventanas brillan en naranja -->
+                    <Canvas x:Name="Calor1" Opacity="0">
+                        <Ellipse Canvas.Left="904" Canvas.Top="480" Width="70" Height="70">
+                            <Ellipse.Fill>
+                                <RadialGradientBrush>
+                                    <GradientStop Color="#FFFB923C" Offset="0.3" />
+                                    <GradientStop Color="#00FB923C" Offset="1" />
+                                </RadialGradientBrush>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <Ellipse Canvas.Left="975" Canvas.Top="480" Width="70" Height="70">
+                            <Ellipse.Fill>
+                                <RadialGradientBrush>
+                                    <GradientStop Color="#FFFB923C" Offset="0.3" />
+                                    <GradientStop Color="#00FB923C" Offset="1" />
+                                </RadialGradientBrush>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <Ellipse Canvas.Left="1046" Canvas.Top="480" Width="70" Height="70">
+                            <Ellipse.Fill>
+                                <RadialGradientBrush>
+                                    <GradientStop Color="#FFFB923C" Offset="0.3" />
+                                    <GradientStop Color="#00FB923C" Offset="1" />
+                                </RadialGradientBrush>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <Path Stroke="#B3FB923C" StrokeThickness="4" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                              Data="M960,360 C970,345 950,335 960,320 M1010,350 C1020,335 1000,325 1010,310 M1060,360 C1070,345 1050,335 1060,320" />
+                    </Canvas>
+                </Canvas>
+
+                <!-- ===== Nivel 2 · El Huerto Espacial: invernadero, depósito y máquina de oxígeno ===== -->
+                <Canvas x:Name="Props2" Visibility="Collapsed">
+                    <Path Fill="#2660A5FA" Stroke="#FF93C5FD" StrokeThickness="3" Data="M425,560 A85,82 0 0 1 595,560 Z" />
+                    <Path Stroke="#9993C5FD" StrokeThickness="2" Data="M510,478 V560 M452,500 L466,560 M568,500 L554,560" />
+                    <Canvas x:Name="Planta1">
+                        <Canvas.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform CenterX="470" CenterY="558" ScaleX="0.6" ScaleY="0.6" />
+                                <RotateTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Canvas.RenderTransform>
+                        <Path Stroke="#FF22C55E" StrokeThickness="5" Data="M470,558 V500" />
+                        <Path Fill="#FF4ADE80" Data="M470,525 C445,520 440,500 448,492 C462,498 470,510 470,525 Z M470,512 C495,507 500,487 492,479 C478,485 470,497 470,512 Z" />
+                        <Ellipse x:Name="Fruto1" Canvas.Left="461" Canvas.Top="488" Width="18" Height="18" Fill="#FFEF4444" Stroke="#FFB91C1C" StrokeThickness="2">
+                            <Ellipse.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform CenterX="9" CenterY="9" ScaleX="0" ScaleY="0" />
+                                    <RotateTransform />
+                                    <TranslateTransform />
+                                </TransformGroup>
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+                    </Canvas>
+                    <Canvas x:Name="Planta2">
+                        <Canvas.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform CenterX="512" CenterY="558" ScaleX="0.6" ScaleY="0.6" />
+                                <RotateTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Canvas.RenderTransform>
+                        <Path Stroke="#FF22C55E" StrokeThickness="5" Data="M512,558 V492" />
+                        <Path Fill="#FF4ADE80" Data="M512,520 C487,515 482,495 490,487 C504,493 512,505 512,520 Z M512,505 C537,500 542,480 534,472 C520,478 512,490 512,505 Z" />
+                        <Ellipse x:Name="Fruto2" Canvas.Left="503" Canvas.Top="478" Width="18" Height="18" Fill="#FFEF4444" Stroke="#FFB91C1C" StrokeThickness="2">
+                            <Ellipse.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform CenterX="9" CenterY="9" ScaleX="0" ScaleY="0" />
+                                    <RotateTransform />
+                                    <TranslateTransform />
+                                </TransformGroup>
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+                    </Canvas>
+                    <Canvas x:Name="Planta3">
+                        <Canvas.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform CenterX="552" CenterY="558" ScaleX="0.6" ScaleY="0.6" />
+                                <RotateTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Canvas.RenderTransform>
+                        <Path Stroke="#FF22C55E" StrokeThickness="5" Data="M552,558 V502" />
+                        <Path Fill="#FF4ADE80" Data="M552,528 C527,523 522,503 530,495 C544,501 552,513 552,528 Z M552,515 C577,510 582,490 574,482 C560,488 552,500 552,515 Z" />
+                        <Ellipse x:Name="Fruto3" Canvas.Left="543" Canvas.Top="490" Width="18" Height="18" Fill="#FFEF4444" Stroke="#FFB91C1C" StrokeThickness="2">
+                            <Ellipse.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform CenterX="9" CenterY="9" ScaleX="0" ScaleY="0" />
+                                    <RotateTransform />
+                                    <TranslateTransform />
+                                </TransformGroup>
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+                    </Canvas>
+                    <!-- Depósito de agua y máquina que separa el oxígeno -->
+                    <Rectangle Canvas.Left="756" Canvas.Top="466" Width="50" Height="94" RadiusX="18" RadiusY="18" Fill="#FF1E293B" Stroke="#FFCBD5E1" StrokeThickness="4" />
+                    <Rectangle x:Name="Agua2" Canvas.Left="762" Canvas.Top="472" Width="38" Height="82" RadiusX="14" RadiusY="14" Fill="#FF22D3EE" RenderTransformOrigin="0.5,1">
+                        <Rectangle.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleY="0.8" />
+                                <RotateTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Rectangle.RenderTransform>
+                    </Rectangle>
+                    <Path Stroke="#FF94A3B8" StrokeThickness="6" Data="M806,545 H818" />
+                    <Rectangle Canvas.Left="816" Canvas.Top="488" Width="40" Height="72" RadiusX="8" RadiusY="8" Fill="#FF475569" Stroke="#FFCBD5E1" StrokeThickness="3" />
+                    <Ellipse Canvas.Left="826" Canvas.Top="498" Width="20" Height="20" Fill="#FF334155" />
+                    <Ellipse x:Name="LuzMaquina2" Canvas.Left="826" Canvas.Top="498" Width="20" Height="20" Fill="#FF22D3EE" Opacity="0" />
+                    <Canvas x:Name="Flujo2" Opacity="0">
+                        <Ellipse Canvas.Left="804" Canvas.Top="541" Width="8" Height="8" Fill="#FF67E8F9" />
+                    </Canvas>
+                </Canvas>
+
+                <!-- ===== Nivel 3 · Rayos Invisibles: dosímetro, robots, agua en las paredes, escudo y regolito ===== -->
+                <Canvas x:Name="Props3" Visibility="Collapsed">
+                    <Rectangle Canvas.Left="772" Canvas.Top="466" Width="64" Height="84" RadiusX="10" RadiusY="10" Fill="#FF1E293B" Stroke="#FFCBD5E1" StrokeThickness="3" />
+                    <Rectangle Canvas.Left="780" Canvas.Top="476" Width="48" Height="34" RadiusX="4" RadiusY="4" Fill="#FF0F172A" />
+                    <c:Icono Canvas.Left="790" Canvas.Top="478" Width="30" Height="30" Geometria="{StaticResource Icono.Radiacion}" Foreground="{StaticResource Pincel.Bateria}" />
+                    <Ellipse x:Name="LuzDosimetro" Canvas.Left="796" Canvas.Top="520" Width="16" Height="16" Fill="#FFEF4444" />
+                    <Rectangle Canvas.Left="800" Canvas.Top="550" Width="8" Height="10" Fill="#FF94A3B8" />
+                    <!-- Agua que rodea los dormitorios (opción A) -->
+                    <Rectangle x:Name="AguaParedes" Canvas.Left="866" Canvas.Top="476" Width="288" Height="78" RadiusX="34" RadiusY="34" Fill="#9922D3EE" RenderTransformOrigin="0.5,1">
+                        <Rectangle.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleY="0" />
+                                <RotateTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Rectangle.RenderTransform>
+                    </Rectangle>
+                    <Path x:Name="Escudo3" Opacity="0" Stroke="#FF93C5FD" StrokeThickness="6" Fill="#2660A5FA" Data="M830,562 A180,215 0 0 1 1190,562 Z" />
+                    <!-- Polvo lunar sobre el módulo (opción B) -->
+                    <Path x:Name="Monticulo" Fill="#FFA8A29E" Stroke="#FF78716C" StrokeThickness="3" RenderTransformOrigin="0.5,1"
+                          Data="M836,562 C860,500 930,452 1010,446 C1090,452 1160,500 1184,562 Z">
+                        <Path.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleY="0" />
+                                <RotateTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Path.RenderTransform>
+                    </Path>
+                    <!-- Robots excavadores -->
+                    <Canvas x:Name="Robot1" Canvas.Left="420" Canvas.Top="500">
+                        <Path Fill="#FF94A3B8" Stroke="#FF475569" StrokeThickness="3" Data="M58,28 L78,22 L82,52 L58,52 Z" />
+                        <Rectangle Width="60" Height="40" RadiusX="9" RadiusY="9" Fill="#FFF97316" Stroke="#FF9A3412" StrokeThickness="3" />
+                        <Rectangle Canvas.Left="10" Canvas.Top="8" Width="22" Height="14" RadiusX="4" RadiusY="4" Fill="#FF0F172A" />
+                        <Ellipse Canvas.Left="4" Canvas.Top="36" Width="22" Height="22" Fill="#FF334155" Stroke="#FF0F172A" StrokeThickness="3" />
+                        <Ellipse Canvas.Left="36" Canvas.Top="36" Width="22" Height="22" Fill="#FF334155" Stroke="#FF0F172A" StrokeThickness="3" />
+                    </Canvas>
+                    <Canvas x:Name="Robot2" Canvas.Left="510" Canvas.Top="500">
+                        <Path Fill="#FF94A3B8" Stroke="#FF475569" StrokeThickness="3" Data="M58,28 L78,22 L82,52 L58,52 Z" />
+                        <Rectangle Width="60" Height="40" RadiusX="9" RadiusY="9" Fill="#FFFACC15" Stroke="#FFA16207" StrokeThickness="3" />
+                        <Rectangle Canvas.Left="10" Canvas.Top="8" Width="22" Height="14" RadiusX="4" RadiusY="4" Fill="#FF0F172A" />
+                        <Ellipse Canvas.Left="4" Canvas.Top="36" Width="22" Height="22" Fill="#FF334155" Stroke="#FF0F172A" StrokeThickness="3" />
+                        <Ellipse Canvas.Left="36" Canvas.Top="36" Width="22" Height="22" Fill="#FF334155" Stroke="#FF0F172A" StrokeThickness="3" />
+                    </Canvas>
+                </Canvas>
+
+                <!-- ===== Nivel 4 · Tormenta Solar: paneles sobre la batería ===== -->
+                <Canvas x:Name="Props4" Visibility="Collapsed">
+                    <Rectangle Canvas.Left="776" Canvas.Top="490" Width="52" Height="70" RadiusX="8" RadiusY="8" Fill="#FF1E293B" Stroke="#FFCBD5E1" StrokeThickness="3" />
+                    <Rectangle x:Name="Carga4" Canvas.Left="782" Canvas.Top="496" Width="40" Height="58" RadiusX="5" RadiusY="5" Fill="#FFFACC15" RenderTransformOrigin="0.5,1">
+                        <Rectangle.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleY="0.7" />
+                                <RotateTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Rectangle.RenderTransform>
+                    </Rectangle>
+                    <Rectangle Canvas.Left="798" Canvas.Top="470" Width="8" Height="22" Fill="#FF94A3B8" />
+                    <Rectangle Canvas.Left="745" Canvas.Top="420" Width="114" Height="56" RadiusX="6" RadiusY="6" Fill="#FF1D4ED8" Stroke="#FF93C5FD" StrokeThickness="3" />
+                    <Path Stroke="#FF93C5FD" StrokeThickness="2" Data="M783,420 V476 M821,420 V476 M745,448 H859" />
+                    <Rectangle x:Name="BrilloPanel4" Canvas.Left="745" Canvas.Top="420" Width="114" Height="56" RadiusX="6" RadiusY="6" Fill="#E6FDE047" Opacity="0" />
+                </Canvas>
+
+                <!-- ===== Nivel 5 · El Relevo Final: plataforma, baliza, pantalla de guiado y módulo de aterrizaje ===== -->
+                <Canvas x:Name="Props5" Visibility="Collapsed">
+                    <Rectangle Canvas.Left="400" Canvas.Top="554" Width="182" Height="12" RadiusX="6" RadiusY="6" Fill="#FF64748B" />
+                    <Ellipse Canvas.Left="410" Canvas.Top="555" Width="10" Height="10" Fill="#FFFDE047" />
+                    <Ellipse Canvas.Left="562" Canvas.Top="555" Width="10" Height="10" Fill="#FFFDE047" />
+                    <Rectangle Canvas.Left="588" Canvas.Top="418" Width="8" Height="142" Fill="#FF94A3B8" />
+                    <Ellipse x:Name="LuzBaliza" Canvas.Left="552" Canvas.Top="370" Width="80" Height="80" Opacity="0">
                         <Ellipse.Fill>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                <GradientStop Color="#FF6366F1" Offset="0" />
-                                <GradientStop Color="#FF3B82F6" Offset="1" />
-                            </LinearGradientBrush>
+                            <RadialGradientBrush>
+                                <GradientStop Color="#FFFDE047" Offset="0.2" />
+                                <GradientStop Color="#00FDE047" Offset="1" />
+                            </RadialGradientBrush>
                         </Ellipse.Fill>
                     </Ellipse>
-                    <c:Icono Width="54" Height="54" Geometria="{Binding AvatarEscena, Converter={StaticResource IconoDeEmoji}}" Foreground="White" />
+                    <Path x:Name="HazBaliza" Opacity="0" Fill="#40FDE047" Data="M592,410 L470,120 L560,110 Z" />
+                    <Ellipse Canvas.Left="578" Canvas.Top="396" Width="28" Height="28" Fill="#FF64748B" Stroke="#FFCBD5E1" StrokeThickness="3" />
+                    <!-- Pantalla de la radio: estática o líneas de guiado -->
+                    <Rectangle Canvas.Left="800" Canvas.Top="530" Width="10" Height="30" Fill="#FF94A3B8" />
+                    <Rectangle Canvas.Left="756" Canvas.Top="460" Width="98" Height="74" RadiusX="8" RadiusY="8" Fill="#FF0F172A" Stroke="#FFCBD5E1" StrokeThickness="3" />
+                    <Canvas x:Name="Radio5">
+                        <Path x:Name="Estatica5" Stroke="#FFCBD5E1" StrokeThickness="2" Data="M764,478 l8,6 l8,-8 l8,9 l8,-7 l8,8 l8,-9 l8,7 l8,-6 l8,8 M764,498 l8,-6 l8,8 l8,-9 l8,7 l8,-8 l8,9 l8,-7 l8,6 l8,-8 M764,518 l8,6 l8,-8 l8,9 l8,-7 l8,8 l8,-9 l8,7 l8,-6 l8,8" />
+                    </Canvas>
+                    <Canvas x:Name="Guia5" Opacity="0">
+                        <Rectangle Canvas.Left="760" Canvas.Top="464" Width="90" Height="66" Fill="#FF0F172A" />
+                        <Path Stroke="#FF4ADE80" StrokeThickness="2" Data="M805,468 V526 M764,497 H846" />
+                        <Ellipse Canvas.Left="793" Canvas.Top="485" Width="24" Height="24" Stroke="#FF4ADE80" StrokeThickness="3" />
+                    </Canvas>
+                    <Path x:Name="LineasGuia5" Opacity="0" Stroke="#FF4ADE80" StrokeThickness="4" StrokeDashArray="3 3" Data="M790,460 L500,250 M820,460 L520,250" />
+                    <!-- Módulo de aterrizaje: empieza en el cielo (desplazado 330 hacia arriba) -->
+                    <Canvas x:Name="Modulo5" Canvas.Left="400" Canvas.Top="360">
+                        <Canvas.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform />
+                                <RotateTransform CenterX="90" CenterY="100" />
+                                <TranslateTransform Y="-330" />
+                            </TransformGroup>
+                        </Canvas.RenderTransform>
+                        <Path Stroke="#FF94A3B8" StrokeThickness="8" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Data="M34,150 L6,196 M146,150 L174,196" />
+                        <Path Fill="#FFF1F5F9" Stroke="#FF94A3B8" StrokeThickness="4" Data="M22,160 L42,64 Q90,0 138,64 L158,160 Z" />
+                        <Ellipse Canvas.Left="66" Canvas.Top="70" Width="48" Height="48" Fill="#FF60A5FA" Stroke="#FF334155" StrokeThickness="4" />
+                        <Rectangle Canvas.Left="18" Canvas.Top="150" Width="144" Height="18" RadiusX="8" RadiusY="8" Fill="{StaticResource Pincel.Acento}" />
+                        <Path x:Name="Llama5" Fill="#FFFB923C" Data="M70,168 L90,214 L110,168 Z" />
+                    </Canvas>
+                </Canvas>
+
+                <!-- ===== El astronauta ===== -->
+                <v:Astronauta x:Name="Astro" Canvas.Left="610" Canvas.Top="345" />
+
+                <!-- Nivel 4 (delante): bolsas de provisiones del refugio -->
+                <Canvas x:Name="Bolsas4" Visibility="Collapsed">
+                    <Canvas x:Name="Bolsa1" Opacity="0" Canvas.Left="420" Canvas.Top="510">
+                        <Rectangle Width="50" Height="50" RadiusX="14" RadiusY="14" Fill="#FFA16207" Stroke="#FF713F12" StrokeThickness="3" />
+                        <Path Stroke="#FF713F12" StrokeThickness="3" Data="M18,6 L25,14 L32,6" />
+                    </Canvas>
+                    <Canvas x:Name="Bolsa2" Opacity="0" Canvas.Left="466" Canvas.Top="506">
+                        <Rectangle Width="52" Height="54" RadiusX="14" RadiusY="14" Fill="#FFCA8A04" Stroke="#FF713F12" StrokeThickness="3" />
+                        <Path Stroke="#FF713F12" StrokeThickness="3" Data="M19,6 L26,14 L33,6" />
+                    </Canvas>
+                    <Canvas x:Name="Bolsa3" Opacity="0" Canvas.Left="514" Canvas.Top="510">
+                        <Rectangle Width="50" Height="50" RadiusX="14" RadiusY="14" Fill="#FFA16207" Stroke="#FF713F12" StrokeThickness="3" />
+                        <Path Stroke="#FF713F12" StrokeThickness="3" Data="M18,6 L25,14 L32,6" />
+                    </Canvas>
+                    <Canvas x:Name="Bolsa4" Opacity="0" Canvas.Left="442" Canvas.Top="468">
+                        <Rectangle Width="50" Height="44" RadiusX="14" RadiusY="14" Fill="#FFCA8A04" Stroke="#FF713F12" StrokeThickness="3" />
+                        <Path Stroke="#FF713F12" StrokeThickness="3" Data="M18,6 L25,14 L32,6" />
+                    </Canvas>
+                    <Canvas x:Name="Bolsa5" Opacity="0" Canvas.Left="490" Canvas.Top="466">
+                        <Rectangle Width="50" Height="46" RadiusX="14" RadiusY="14" Fill="#FFA16207" Stroke="#FF713F12" StrokeThickness="3" />
+                        <Path Stroke="#FF713F12" StrokeThickness="3" Data="M18,6 L25,14 L32,6" />
+                    </Canvas>
+                </Canvas>
+
+                <!-- ===== Efectos comunes ===== -->
+                <!-- Fallo de batería: escarcha sobre el módulo -->
+                <Path x:Name="EscarchaBase" Opacity="0" Fill="#FFE0F2FE"
+                      Data="M880,470 l5,-12 l5,12 l12,5 l-12,5 l-5,12 l-5,-12 l-12,-5 Z M960,560 l4,-10 l4,10 l10,4 l-10,4 l-4,10 l-4,-10 l-10,-4 Z M1040,470 l5,-12 l5,12 l12,5 l-12,5 l-5,12 l-5,-12 l-12,-5 Z M1120,540 l4,-10 l4,10 l10,4 l-10,4 l-4,10 l-4,-10 l-10,-4 Z M990,410 l4,-10 l4,10 l10,4 l-10,4 l-4,10 l-4,-10 l-10,-4 Z M1100,430 l4,-10 l4,10 l10,4 l-10,4 l-4,10 l-4,-10 l-10,-4 Z M900,530 l4,-10 l4,10 l10,4 l-10,4 l-4,10 l-4,-10 l-10,-4 Z" />
+                <!-- Fallo de soporte vital: una gota que se vacía -->
+                <Canvas x:Name="GotaFallo" Opacity="0">
+                    <Path Fill="#FF0F172A" Stroke="#FF22D3EE" StrokeThickness="4" Data="M790,340 C790,340 760,380 760,400 A30,30 0 0 0 820,400 C820,380 790,340 790,340 Z" />
+                    <Path x:Name="GotaLlena" Fill="#FF22D3EE" RenderTransformOrigin="0.5,1" Data="M790,346 C790,346 765,382 765,400 A25,25 0 0 0 815,400 C815,382 790,346 790,346 Z">
+                        <Path.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform />
+                                <RotateTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Path.RenderTransform>
+                    </Path>
+                </Canvas>
+                <!-- Protocolo de Respaldo: un salvavidas baja colgado de una cuerda -->
+                <Canvas x:Name="Salvavidas">
+                    <Canvas.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform />
+                            <RotateTransform CenterX="568" CenterY="0" />
+                            <TranslateTransform Y="-780" />
+                        </TransformGroup>
+                    </Canvas.RenderTransform>
+                    <Path Stroke="#FFCBD5E1" StrokeThickness="4" Data="M568,-420 V336" />
+                    <Ellipse Canvas.Left="528" Canvas.Top="330" Width="80" Height="80" Fill="#FFF97316" />
+                    <c:Icono Canvas.Left="528" Canvas.Top="330" Width="80" Height="80" Geometria="{StaticResource Icono.Salvavidas}" Foreground="White" Grosor="2.6" />
+                </Canvas>
+                <!-- Misión Abortada: la cápsula de regreso -->
+                <Canvas x:Name="Capsula" Opacity="0">
+                    <Path Fill="#FFF8FAFC" Stroke="#FF94A3B8" StrokeThickness="3" Data="M990,380 L1010,330 L1030,380 Z" />
+                    <Ellipse Canvas.Left="1003" Canvas.Top="352" Width="14" Height="14" Fill="#FF60A5FA" />
+                    <Path Fill="#FFFB923C" Data="M996,382 L1010,412 L1024,382 Z" />
+                </Canvas>
+                <!-- Partículas (burbujas, gotas, estrellas, confeti, polvo…) -->
+                <Canvas x:Name="Particulas" />
+                <!-- Destello (llamarada de clase X) y rebobinado (reintento) -->
+                <Rectangle x:Name="Destello" Width="1600" Height="900" Fill="White" Opacity="0" />
+                <Grid x:Name="Rebobinar" Canvas.Left="740" Canvas.Top="380" Width="120" Height="120" Opacity="0">
+                    <Ellipse Fill="#E60F172A" Stroke="#FFF8FAFC" StrokeThickness="4" />
+                    <c:Icono Margin="24" Geometria="{StaticResource Icono.Reiniciar}" Foreground="White" Grosor="2.6">
+                        <c:Icono.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform CenterX="36" CenterY="36" />
+                                <RotateTransform CenterX="36" CenterY="36" />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </c:Icono.RenderTransform>
+                    </c:Icono>
                 </Grid>
-
-                <!-- Victoria: el módulo del relevo, ya en la Luna -->
-                <Canvas Canvas.Left="360" Canvas.Top="360" Visibility="{Binding EsVictoria, Converter={StaticResource Visible}}">
-                    <Path Stroke="#FF94A3B8" StrokeThickness="8" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Data="M34,150 L6,196 M146,150 L174,196" />
-                    <Path Fill="#FFF1F5F9" Stroke="#FF94A3B8" StrokeThickness="4" Data="M22,160 L42,64 Q90,0 138,64 L158,160 Z" />
-                    <Ellipse Canvas.Left="66" Canvas.Top="70" Width="48" Height="48" Fill="#FF60A5FA" Stroke="#FF334155" StrokeThickness="4" />
-                    <Rectangle Canvas.Left="18" Canvas.Top="150" Width="144" Height="18" RadiusX="8" RadiusY="8" Fill="{StaticResource Pincel.Acento}" />
-                </Canvas>
-
-                <!-- El astronauta (F3.3 lo anima según cada consecuencia) -->
-                <Canvas Canvas.Left="600" Canvas.Top="345" Width="120" Height="212" c:Animaciones.Salto="{Binding Celebracion}">
-                    <Rectangle Canvas.Left="6" Canvas.Top="66" Width="108" Height="94" RadiusX="20" RadiusY="20" Fill="#FFCBD5E1" Stroke="#FF94A3B8" StrokeThickness="3" />
-                    <Rectangle Canvas.Left="28" Canvas.Top="146" Width="28" Height="52" RadiusX="12" RadiusY="12" Fill="#FFF1F5F9" Stroke="#FFCBD5E1" StrokeThickness="2" />
-                    <Rectangle Canvas.Left="64" Canvas.Top="146" Width="28" Height="52" RadiusX="12" RadiusY="12" Fill="#FFF1F5F9" Stroke="#FFCBD5E1" StrokeThickness="2" />
-                    <Rectangle Canvas.Left="22" Canvas.Top="188" Width="38" Height="22" RadiusX="10" RadiusY="10" Fill="#FF475569" />
-                    <Rectangle Canvas.Left="60" Canvas.Top="188" Width="38" Height="22" RadiusX="10" RadiusY="10" Fill="#FF475569" />
-                    <Rectangle Canvas.Left="-2" Canvas.Top="80" Width="26" Height="64" RadiusX="13" RadiusY="13" Fill="#FFF1F5F9" Stroke="#FFCBD5E1" StrokeThickness="2" />
-                    <Rectangle Canvas.Left="96" Canvas.Top="80" Width="26" Height="64" RadiusX="13" RadiusY="13" Fill="#FFF1F5F9" Stroke="#FFCBD5E1" StrokeThickness="2" />
-                    <Rectangle Canvas.Left="18" Canvas.Top="72" Width="84" Height="86" RadiusX="26" RadiusY="26" Fill="#FFF8FAFC" Stroke="#FFCBD5E1" StrokeThickness="3" />
-                    <Rectangle Canvas.Left="38" Canvas.Top="98" Width="44" Height="28" RadiusX="6" RadiusY="6" Fill="#FF1E293B" />
-                    <Ellipse Canvas.Left="44" Canvas.Top="108" Width="9" Height="9" Fill="#FF60A5FA" />
-                    <Ellipse Canvas.Left="56" Canvas.Top="108" Width="9" Height="9" Fill="#FFF97316" />
-                    <Ellipse Canvas.Left="68" Canvas.Top="108" Width="9" Height="9" Fill="#FF4ADE80" />
-                    <Ellipse Canvas.Left="14" Canvas.Top="0" Width="92" Height="84" Fill="#FFF8FAFC" Stroke="#FFCBD5E1" StrokeThickness="3" />
-                    <Ellipse Canvas.Left="26" Canvas.Top="16" Width="68" Height="48" Stroke="#FF334155" StrokeThickness="3">
-                        <Ellipse.Fill>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                <GradientStop Color="#FF1E3A8A" Offset="0" />
-                                <GradientStop Color="#FF7C3AED" Offset="1" />
-                            </LinearGradientBrush>
-                        </Ellipse.Fill>
-                    </Ellipse>
-                    <Ellipse Canvas.Left="36" Canvas.Top="22" Width="22" Height="12" Fill="#99FFFFFF" />
-                </Canvas>
             </Canvas>
         </Viewbox>
     </Grid>

@@ -95,6 +95,35 @@ public static class Animaciones
         Desplazamiento(elemento).BeginAnimation(TranslateTransform.YProperty, subida);
     }
 
+    // ---------- Estallido de estrellas («¡Al máximo!») ----------
+    public static readonly DependencyProperty EstallidoProperty = DependencyProperty.RegisterAttached(
+        "Estallido", typeof(int), typeof(Animaciones), new PropertyMetadata(0, AlEstallar));
+
+    public static int GetEstallido(DependencyObject d) => (int)d.GetValue(EstallidoProperty);
+
+    public static void SetEstallido(DependencyObject d, int valor) => d.SetValue(EstallidoProperty, valor);
+
+    /// <summary>Cada hijo del panel sale disparado en una dirección y se desvanece (con movimiento reducido, solo se desvanece).</summary>
+    private static void AlEstallar(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not System.Windows.Controls.Panel panel || (int)e.NewValue == 0) return;
+        var duracion = TimeSpan.FromMilliseconds(750);
+        for (var i = 0; i < panel.Children.Count; i++)
+        {
+            var estrella = panel.Children[i];
+            var brillo = new DoubleAnimationUsingKeyFrames { Duration = duracion };
+            brillo.KeyFrames.Add(new LinearDoubleKeyFrame(1, KeyTime.FromPercent(0.15)));
+            brillo.KeyFrames.Add(new LinearDoubleKeyFrame(0, KeyTime.FromPercent(1)));
+            estrella.BeginAnimation(UIElement.OpacityProperty, brillo);
+            if (Movimiento.Reducido) continue;
+            var angulo = 2 * Math.PI * i / panel.Children.Count;
+            var desplazamiento = Desplazamiento(estrella);
+            var curva = new QuadraticEase { EasingMode = EasingMode.EaseOut };
+            desplazamiento.BeginAnimation(TranslateTransform.XProperty, new DoubleAnimation(0, Math.Cos(angulo) * 30, duracion) { EasingFunction = curva });
+            desplazamiento.BeginAnimation(TranslateTransform.YProperty, new DoubleAnimation(0, Math.Sin(angulo) * 30, duracion) { EasingFunction = curva });
+        }
+    }
+
     // ---------- Pulso de un medidor bajo ----------
     public static readonly DependencyProperty PulsoProperty = DependencyProperty.RegisterAttached(
         "Pulso", typeof(bool), typeof(Animaciones), new PropertyMetadata(false, AlPulsar));

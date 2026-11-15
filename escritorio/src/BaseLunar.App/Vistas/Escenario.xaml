@@ -1,0 +1,11 @@
+<UserControl x:Class="BaseLunar.App.Vistas.Escenario"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:v="clr-namespace:BaseLunar.App.Vistas"
+             IsHitTestVisible="False">
+    <!-- Zona de la escena: el mapa de la misión y la escena del nivel, que el director alterna con fundidos y zoom -->
+    <Grid ClipToBounds="True">
+        <v:MapaMision x:Name="Mapa" />
+        <v:EscenaNivel x:Name="Escena" Opacity="0" Visibility="Hidden" />
+    </Grid>
+</UserControl>

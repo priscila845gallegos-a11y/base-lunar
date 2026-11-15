@@ -146,6 +146,6 @@ public sealed class PruebasJuegoVM
         Partida.Paso(juego, "P");
         AssertMismoEstado(Motor.CrearEstadoInicial(), juego.Estado, "Estado inicial");
         Assert.IsTrue(juego.EsInicio);
-        Assert.IsTrue(juego.PinEnBase);
+        Assert.AreEqual(0, Presentacion.CasillaDe(juego.Estado), "La ficha vuelve a la base del mapa");
     });
 }
