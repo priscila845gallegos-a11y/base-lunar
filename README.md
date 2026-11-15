@@ -4,8 +4,8 @@ Juego web educativo de decisiones para niñas y niños de 7 a 12 años. Quien ju
 
 > **Estado: F3 en curso. Se está rediseñando la interfaz como aplicación de escritorio (C# + WPF).**
 >
-> - Listos: el núcleo en C# (F3.1), la aplicación jugable de principio a fin (F3.2) y el arte con las animaciones de cada consecuencia y el glosario (F3.3).
-> - Faltan: el sonido, la voz y el dato en vivo.
+> - Listos: el núcleo en C# (F3.1), la aplicación jugable de principio a fin (F3.2), el arte con las animaciones de cada consecuencia y el glosario (F3.3), y los efectos de sonido y la voz (F3.4).
+> - Falta: el dato en vivo de NASA DONKI (F3.5).
 >
 > La versión web de F0–F2 está terminada y se puede jugar de principio a fin. Sigue siendo el acceso por enlace y desde el móvil. Ver [Versión de escritorio](#versión-de-escritorio-windows) y [Plan y estado](#plan-y-estado).
 
@@ -29,13 +29,13 @@ Los parámetros de demostración llegan en F4.
 
 ## Versión de escritorio (Windows)
 
-En construcción (F3). Es la misma partida con una interfaz nueva de videojuego, hecha en C# con WPF (.NET 10). Tiene un mapa de progreso por el que camina el astronauta, una escena ilustrada para cada nivel y una animación para cada una de las 10 elecciones. Los fallos se muestran con variantes amables, y hay barras animadas, partículas y un glosario «?» con fuentes de la NASA. F3.4 añade los sonidos y la voz. Las reglas no cambian: el núcleo se trasladó a C# y se comprueba contra la versión web (ver [DECISIONES.md](DECISIONES.md), D-32 a D-48).
+En construcción (F3). Es la misma partida con una interfaz nueva de videojuego, hecha en C# con WPF (.NET 10). Tiene un mapa de progreso por el que camina el astronauta, una escena ilustrada para cada nivel y una animación para cada una de las 10 elecciones. Los fallos se muestran con variantes amables, y hay barras animadas, partículas y un glosario «?» con fuentes de la NASA. Los efectos de sonido se generan con código, y «Escuchar» lee la tarjeta con una voz en español del propio equipo. Las reglas no cambian: el núcleo se trasladó a C# y se comprueba contra la versión web (ver [DECISIONES.md](DECISIONES.md), D-32 a D-52).
 
-- Requisitos: Windows 10 u 11 y el SDK de .NET 10.
+- Requisitos: Windows 10 u 11 y el SDK de .NET 10. Para «Escuchar» hace falta una voz de Windows en español (si no hay, el botón no aparece).
 - Jugar: `dotnet run --project escritorio/src/BaseLunar.App`. Con teclado: A/B o 1/2 para elegir, Enter para continuar, F11 para la pantalla completa y Esc para salir de ella.
-- Pruebas: `dotnet test escritorio/BaseLunar.sln`. Son 131 pruebas:
+- Pruebas: `dotnet test escritorio/BaseLunar.sln`. Son 140 pruebas:
   - 60 del núcleo: las 39 de tests.html, la tabla de balance y 5 de paridad con js/.
-  - 71 de la interfaz: textos, pantalla, accesibilidad, teclado, escena (10 consecuencias, fallos, victoria y abortada), glosario y 3 partidas con UI Automation.
+  - 80 de la interfaz: textos, pantalla, accesibilidad, teclado, escena (10 consecuencias, fallos, victoria y abortada), glosario, sonido y voz, y 3 partidas con UI Automation.
 - Las 3 partidas con UI Automation abren la ventana del juego unos segundos. Para omitirlas: `--filter "TestCategory!=UIAutomation"`.
 - Las capturas de las pruebas quedan en `escritorio/capturas/`: 8 pantallas a 4 tamaños y, con el prefijo `f33-`, el estado final y un fotograma a mitad de cada animación.
 
@@ -48,11 +48,12 @@ escritorio/
 │   ├── Motor/Motor.cs          # ← js/game.js: mismas funciones, reglas y eventos
 │   ├── Modelos/                # Estado, eventos y medidores
 │   └── Donki/                  # ← js/nasaData.js: el mismo JSON literal, embebido
-├── src/BaseLunar.App/          # Interfaz WPF                                            (F3.2 ✔ · F3.3 ✔ · F3.4–F3.5)
+├── src/BaseLunar.App/          # Interfaz WPF                                            (F3.2 ✔ · F3.3 ✔ · F3.4 ✔ · F3.5)
 │   ├── VentanaPrincipal.xaml   # Ventana, atajos de teclado y pantalla completa
 │   ├── VistaModelos/           # ← js/ui.js: JuegoVM (flujo), Presentacion (textos), Atajos
 │   ├── Vistas/                 # Barra, medidores, escena, astronauta, mapa, tarjeta y decisiones
 │   ├── Animacion/              # Director de escena, coreografías, consecuencias, partículas y ambiente
+│   ├── Audio/                  # Sintetizador de efectos, salida de audio (winmm) y voz local (SAPI)
 │   ├── Controles/              # Íconos, animaciones, emojis → íconos, disposición
 │   └── Temas/                  # Paleta, tipografía, estilos e íconos (Lucide)
 ├── tests/BaseLunar.Pruebas/    # MSTest: motor, contenido, simulador, balance y paridad   (F3.1 ✔)
@@ -125,7 +126,7 @@ Durante las transiciones, los controles están bloqueados.
 
 ## Privacidad
 
-Sin cuentas, sin cookies y sin analítica. El nombre del certificado solo se muestra en pantalla: nunca se guarda, nunca se envía y nunca se lee en voz alta. La única conexión externa es `api.nasa.gov`.
+Sin cuentas, sin cookies y sin analítica. El nombre del certificado solo se muestra en pantalla: nunca se guarda, nunca se envía y nunca se lee en voz alta. La única conexión externa es `api.nasa.gov`. En escritorio, la voz es local y lo único que se guarda es si los efectos de sonido están encendidos (`%LOCALAPPDATA%\BaseLunar\ajustes.json`).
 
 ## Créditos
 
@@ -140,7 +141,7 @@ Sin cuentas, sin cookies y sin analítica. El nombre del certificado solo se mue
 | F0 · Preparación | 0:30 | Repositorio, documentación, fuentes verificadas o marcadas | Hecha (P0 aprobada) |
 | F1 · Maquetación | 1:30 | index.html y style.css con datos de ejemplo | Hecha (P1 aprobada) |
 | F2 · Motor y pruebas | 2:00 | levels.js, game.js, ui.js y tests.html en verde | Hecha (P2 aprobada) |
-| F3 · Rediseño de escritorio (C# + WPF) | 6:30 | F3.1 núcleo en C# con paridad ✔ · F3.2 estructura jugable ✔ · F3.3 arte, animación y glosario ✔ · F3.4 sonido y voz · F3.5 NASA DONKI | En curso (F3.1 y F3.2 aprobadas; F3.3 en revisión) |
+| F3 · Rediseño de escritorio (C# + WPF) | 6:30 | F3.1 núcleo en C# con paridad ✔ · F3.2 estructura jugable ✔ · F3.3 arte, animación y glosario ✔ · F3.4 sonido y voz ✔ · F3.5 NASA DONKI | En curso (F3.1 a F3.3 aprobadas; F3.4 en revisión) |
 | F4 · Pulido y finales | 0:45 | Certificado imprimible, modo demo, alto contraste | Pendiente |
 | F5 · Validación | 1:00 | Pruebas, partidas automatizadas, Narrador y prueba con usuarios | Pendiente |
 | F6 · Despliegue | 0:30 | Web en GitHub Pages, ZIP portable de escritorio y tag v1.0.0 | Pendiente |
