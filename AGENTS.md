@@ -52,7 +52,7 @@ Este archivo es para cualquier agente de IA que trabaje en este repositorio. Lé
 
 ## Privacidad
 
-- Ningún dato del niño sale del navegador. Sin cuentas, analítica, cookies ni servicios de terceros; la única conexión externa es api.nasa.gov.
+- Ningún dato del niño sale del navegador. Sin cuentas, analítica, cookies ni servicios de terceros. La web no se conecta a nada (D-55); el escritorio solo a api.nasa.gov y ccmc.gsfc.nasa.gov.
 - El nombre del certificado vive solo en memoria y nunca se lee en voz alta (D-13, D-17).
 
 ## Pruebas
@@ -77,6 +77,8 @@ Este archivo es para cualquier agente de IA que trabaje en este repositorio. Lé
 - Colores (D-56): en las vistas, los pinceles de la paleta van siempre con `{DynamicResource Pincel.…}` y nunca con colores sueltos, para que el alto contraste los pueda cambiar. `PruebasF4` vigila el contraste AA.
 - El nombre del certificado (D-58) vive solo en memoria: no lo guardes, no lo envíes, no lo leas en voz alta ni lo anuncies.
 - Un error inesperado nunca se enseña al niño: lo recoge `App.ManejarError` y aparece «Control de Misión» (D-57).
+- Validación (F5): [docs/VALIDACION.md](docs/VALIDACION.md) es la matriz de P5. Si un cambio toca un criterio, actualiza su evidencia. `PruebasValidacion` vigila la duración, los errores de enlace, la privacidad (disco y código) y las fuentes. `PruebasWeb` maneja Edge, Chrome y Firefox sin ventana (D-61) y nunca modifica la web.
+- Ventana y zoom (D-59): la pantalla tiene que caber a 960×485 DIP (zoom al 200 % en 1920×1080). Por debajo de 560 DIP de alto, la escena se oculta.
 - Compila con `dotnet build escritorio/BaseLunar.sln -m:1`: en la carpeta de OneDrive, la compilación en paralelo de WPF a veces pierde los `.g.cs` y tapa errores reales.
 - Las 3 pruebas de UI Automation abren la ventana del juego unos segundos. Para omitirlas: `--filter "TestCategory!=UIAutomation"`. Las capturas quedan en `escritorio/capturas/` (ignorada por git).
 - Stack cerrado: C# y las bibliotecas de .NET y Windows. Sin paquetes de terceros (solo los oficiales de Microsoft, como MSTest) y sin motores externos.

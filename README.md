@@ -2,11 +2,12 @@
 
 Juego web educativo de decisiones para niñas y niños de 7 a 12 años. Quien juega comanda una base en la superficie de la Luna durante 5 situaciones reales del espacio y aprende que cada recurso tiene un costo: energía, agua y oxígeno, y protección contra la radiación.
 
-> **Estado: F4 terminada, en revisión. La interfaz se rehízo como aplicación de escritorio (C# + WPF).**
+> **Estado: F5 terminada, en revisión. La interfaz se rehízo como aplicación de escritorio (C# + WPF).**
 >
 > - Listos: el núcleo en C# (F3.1), la aplicación jugable de principio a fin (F3.2), el arte con las animaciones de cada consecuencia y el glosario (F3.3), los efectos de sonido y la voz (F3.4) y el dato en vivo de NASA DONKI (F3.5).
 > - F4: certificado con nombre e «Imprimir», modo demo, alto contraste y «Control de Misión».
-> - Siguiente: F5, validación.
+> - F5: matriz de validación con evidencias en [docs/VALIDACION.md](docs/VALIDACION.md). Pendientes: la prueba con niños, la escucha con el Narrador y Lighthouse.
+> - Siguiente: F6, despliegue.
 >
 > La versión web de F0–F2 está terminada y se puede jugar de principio a fin. Sigue siendo el acceso por enlace y desde el móvil. Ver [Versión de escritorio](#versión-de-escritorio-windows) y [Plan y estado](#plan-y-estado).
 
@@ -30,15 +31,26 @@ Los parámetros de demostración llegan en F4.
 
 ## Versión de escritorio (Windows)
 
-En construcción (F3). Es la misma partida con una interfaz nueva de videojuego, hecha en C# con WPF (.NET 10). Tiene un mapa de progreso por el que camina el astronauta, una escena ilustrada para cada nivel y una animación para cada una de las 10 elecciones. Los fallos se muestran con variantes amables, y hay barras animadas, partículas y un glosario «?» con fuentes de la NASA. Los efectos de sonido se generan con código, y «Escuchar» lee la tarjeta con una voz en español del propio equipo. Las reglas no cambian: el núcleo se trasladó a C# y se comprueba contra la versión web (ver [DECISIONES.md](DECISIONES.md), D-32 a D-58). El Nivel 4 usa la llamarada más intensa del último mes, consultada en vivo a NASA DONKI, con respaldo histórico si no hay red.
+En construcción (F3). Es la misma partida con una interfaz nueva de videojuego, hecha en C# con WPF (.NET 10). Tiene un mapa de progreso por el que camina el astronauta, una escena ilustrada para cada nivel y una animación para cada una de las 10 elecciones. Los fallos se muestran con variantes amables, y hay barras animadas, partículas y un glosario «?» con fuentes de la NASA. Los efectos de sonido se generan con código, y «Escuchar» lee la tarjeta con una voz en español del propio equipo. Las reglas no cambian: el núcleo se trasladó a C# y se comprueba contra la versión web (ver [DECISIONES.md](DECISIONES.md), D-32 a D-62). El Nivel 4 usa la llamarada más intensa del último mes, consultada en vivo a NASA DONKI, con respaldo histórico si no hay red.
 
 - Requisitos: Windows 10 u 11 y el SDK de .NET 10. Para «Escuchar» hace falta una voz de Windows en español (si no hay, el botón no aparece).
 - Jugar: `dotnet run --project escritorio/src/BaseLunar.App`. Opciones de demostración: `--nivel N` (empezar en el nivel N), `--offline` (siempre el respaldo histórico), `--debug` (ver el estado interno), `--silencio` (sin sonido ni voz) y `--alto-contraste`. Si Windows tiene activado el alto contraste, se usa solo. Con teclado: A/B o 1/2 para elegir, Enter para continuar, F11 para la pantalla completa y Esc para salir de ella.
-- Pruebas: `dotnet test escritorio/BaseLunar.sln`. Son 176 pruebas:
-  - 73 del núcleo: las 39 de tests.html, la tabla de balance, 5 de paridad con js/ y 13 de NASA DONKI (una consulta la red real; para omitirla: `--filter "TestCategory!=Red"`).
-  - 103 de la interfaz: textos, pantalla, accesibilidad (contraste AA y alto contraste), teclado (una partida entera solo con teclado), escena (10 consecuencias, fallos, victoria y abortada), glosario, sonido y voz (con medidas de calidad del audio), dato en vivo, modo demo, certificado, «Control de Misión» y 3 partidas con UI Automation.
-- Las 3 partidas con UI Automation abren la ventana del juego unos segundos. Para omitirlas: `--filter "TestCategory!=UIAutomation"`.
-- Las capturas de las pruebas quedan en `escritorio/capturas/`: 8 pantallas a 4 tamaños y, con el prefijo `f33-`, el estado final y un fotograma a mitad de cada animación.
+- Pruebas: `dotnet test escritorio/BaseLunar.sln`. Son 202 pruebas:
+  - 76 del núcleo: las 39 de tests.html, la tabla de balance, el simulador (con medidores siempre en 0–100), 5 de paridad con js/ y 14 de NASA DONKI. Una de ellas consulta la red real; para omitirla: `--filter "TestCategory!=Red"`.
+  - 126 de la interfaz:
+    - textos, pantalla (también con el zoom de Windows al 125, 150 y 200 %) y accesibilidad (contraste AA y alto contraste);
+    - teclado (una partida entera solo con teclado) y escena (10 consecuencias, fallos, victoria y abortada);
+    - glosario, sonido y voz (con medidas de calidad del audio), dato en vivo, modo demo, certificado y «Control de Misión»;
+    - 3 pruebas con UI Automation;
+    - las de validación de F5: duración, cero errores, privacidad y fuentes;
+    - 13 de la web en Edge, Chrome y Firefox.
+- Las pruebas con UI Automation abren la ventana del juego unos segundos. Para omitirlas: `--filter "TestCategory!=UIAutomation"`.
+- Las de la web abren los navegadores sin ventana (D-61), y si falta alguno quedan como «Inconclusive». Para omitirlas: `--filter "TestCategory!=Navegador"`.
+- Las capturas de las pruebas quedan en `escritorio/capturas/`:
+  - 8 pantallas a 4 tamaños y con zoom;
+  - con el prefijo `f33-`, el estado final y un fotograma a mitad de cada animación;
+  - con `f5-`, los informes de validación;
+  - en `web/`, las de la web en cada navegador.
 
 ```
 escritorio/
@@ -123,11 +135,22 @@ Durante las transiciones, los controles están bloqueados.
 - **NASA DONKI** (llamaradas solares): dato en vivo en el Nivel 4, con respaldo histórico (la llamarada X8.7 del 14-05-2024).
 - **NASA OSDR / RadLab**, **NASA** y **CSA**: textos curados y estáticos, con su fuente.
 - La verificación completa, con enlaces, citas y fecha, está en [docs/FUENTES.md](docs/FUENTES.md).
+
+Fuentes que el juego enlaza (las mismas que la pantalla de Victoria):
+
+| Nivel | Fuentes |
+|---|---|
+| 1 · La Noche Lunar | [NASA, Moon Facts](https://science.nasa.gov/moon/facts/) · [NASA, LuSEE-Night](https://www.nasa.gov/solar-system/nasa-department-of-energy-join-forces-on-innovative-lunar-experiment/) |
+| 2 · El Huerto Espacial | [NASA, blog de la Estación (10-08-2015)](https://blogs.nasa.gov/spacestation/2015/08/10/cosmonauts-complete-russian-spacewalk/) · [CSA, Growing healthy food in space](https://www.asc-csa.gc.ca/eng/sciences/food-production/growing-healthy-food-in-space-and-remote-areas.asp) |
+| 3 · Rayos Invisibles | [NASA, RadWorks (NTRS)](https://ntrs.nasa.gov/citations/20150001237) · [NASA, protección en la Luna (NTRS)](https://ntrs.nasa.gov/citations/20050215115) · [NASA OSDR / RadLab](https://www.nasa.gov/reference/osdr-environmental-data) |
+| 4 · Tormenta Solar | [NASA DONKI, llamarada X8.7 del 14-05-2024](https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/30849/-1) (respaldo histórico; en vivo, el enlace de la llamarada consultada) · [NASA, plan de protección de Orión](https://www.nasa.gov/missions/artemis/orion/scientists-and-engineers-evaluate-orion-radiation-protection-plan/) |
+| 5 · El Relevo Final | [NASA, Strong Solar Flare](https://www.nasa.gov/image-article/strong-solar-flare/) · [NASA, ¿Qué es un día luz?](https://science.nasa.gov/mission/voyager/voyager-1/voyager-1-what-is-a-light-day/) |
+| Glosario (escritorio) | [NASA, ECLSS](https://www.nasa.gov/reference/environmental-control-and-life-support-systems-eclss/) · [NASA, Cosmic Rays](https://imagine.gsfc.nasa.gov/science/toolbox/cosmic_rays1.html) · [NASA, Earth's Magnetosphere](https://science.nasa.gov/science-research/planetary-science/earths-magnetosphere/) · [NASA, la mayor llamarada del ciclo 25](https://svs.gsfc.nasa.gov/14592) · [NASA, X-Class: A Guide to Solar Flares](https://svs.gsfc.nasa.gov/10109) |
 - Atribución: «Datos de NASA / CSA». No se usan logos de la NASA ni de la CSA, y el juego no tiene respaldo oficial de ninguna agencia.
 
 ## Privacidad
 
-Sin cuentas, sin cookies y sin analítica. El nombre del certificado solo se muestra en pantalla: nunca se guarda, nunca se envía y nunca se lee en voz alta. La única conexión externa es `api.nasa.gov`. En escritorio, la voz es local y en `%LOCALAPPDATA%\BaseLunar` solo se guardan si los efectos están encendidos (`ajustes.json`) y la última consulta a DONKI durante 6 h (`donki.json`). Las únicas conexiones son a la NASA: `api.nasa.gov` y, si falla, `ccmc.gsfc.nasa.gov`, con las fechas de la consulta y la clave de la API.
+Sin cuentas, sin cookies y sin analítica. El nombre del certificado solo se muestra en pantalla: nunca se guarda, nunca se envía y nunca se lee en voz alta. La web no se conecta a nada: muestra el respaldo histórico (D-55). En escritorio, la voz es local y en `%LOCALAPPDATA%\BaseLunar` solo se guardan si los efectos están encendidos (`ajustes.json`) y la última consulta a DONKI durante 6 h (`donki.json`). Las únicas conexiones son a la NASA: `api.nasa.gov` y, si falla, `ccmc.gsfc.nasa.gov`, con las fechas de la consulta y la clave de la API.
 
 ## Créditos
 
@@ -142,9 +165,9 @@ Sin cuentas, sin cookies y sin analítica. El nombre del certificado solo se mue
 | F0 · Preparación | 0:30 | Repositorio, documentación, fuentes verificadas o marcadas | Hecha (P0 aprobada) |
 | F1 · Maquetación | 1:30 | index.html y style.css con datos de ejemplo | Hecha (P1 aprobada) |
 | F2 · Motor y pruebas | 2:00 | levels.js, game.js, ui.js y tests.html en verde | Hecha (P2 aprobada) |
-| F3 · Rediseño de escritorio (C# + WPF) | 6:30 | F3.1 núcleo en C# con paridad ✔ · F3.2 estructura jugable ✔ · F3.3 arte, animación y glosario ✔ · F3.4 sonido y voz ✔ · F3.5 NASA DONKI en vivo ✔ | Hecha (F3.1 a F3.4 aprobadas; F3.5 en revisión) |
-| F4 · Pulido y finales | 0:45 | Certificado con nombre e «Imprimir», modo demo, alto contraste y «Control de Misión» | Hecha (F3 aprobada; P4 en revisión) |
-| F5 · Validación | 1:00 | Pruebas, partidas automatizadas, Narrador y prueba con usuarios | Pendiente |
+| F3 · Rediseño de escritorio (C# + WPF) | 6:30 | F3.1 núcleo en C# con paridad ✔ · F3.2 estructura jugable ✔ · F3.3 arte, animación y glosario ✔ · F3.4 sonido y voz ✔ · F3.5 NASA DONKI en vivo ✔ | Hecha (aprobada) |
+| F4 · Pulido y finales | 0:45 | Certificado con nombre e «Imprimir», modo demo, alto contraste y «Control de Misión» | Hecha (P4 aprobada) |
+| F5 · Validación | 1:00 | Matriz de P5 con evidencias, web en 3 navegadores, zoom de Windows y protocolos para la prueba con usuarios, el Narrador y Lighthouse | Hecha (P5 en revisión; la prueba con niños, el Narrador y Lighthouse necesitan al equipo) |
 | F6 · Despliegue | 0:30 | Web en GitHub Pages, ZIP portable de escritorio y tag v1.0.0 | Pendiente |
 
 El rediseño amplía el presupuesto inicial de 8 horas (DECISIONES.md, D-37).
@@ -154,4 +177,5 @@ El rediseño amplía el presupuesto inicial de 8 horas (DECISIONES.md, D-37).
 - [docs/PROMPT-0.md](docs/PROMPT-0.md): especificación completa.
 - [DECISIONES.md](DECISIONES.md): decisiones tomadas y su motivo.
 - [docs/FUENTES.md](docs/FUENTES.md): verificación científica.
+- [docs/VALIDACION.md](docs/VALIDACION.md): matriz de validación (P5) y protocolos de la prueba con usuarios, del Narrador y de Lighthouse.
 - [AGENTS.md](AGENTS.md): reglas para agentes de IA.
