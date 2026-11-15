@@ -70,6 +70,9 @@ Este archivo es para cualquier agente de IA que trabaje en este repositorio. Lé
 - MVVM sin bibliotecas externas. `JuegoVM` sigue el flujo de ui.js y `Presentacion` contiene sus funciones de texto (lineasEfecto, descripcion, textoAyuda…). Si cambias una, cambia también la de ui.js.
 - WPF no dibuja emojis en color (D-39). Los textos llevan sus emojis, como en la web, y `c:Contenido.Texto` los cambia por íconos de `Temas/Iconos.xaml`. Si un texto nuevo usa otro emoji, añádelo a `Iconografia`.
 - Los textos nuevos de pantalla van en `TextosApp`. Si ya existen en index.html, se copian literalmente: `PruebasTextosApp` lo comprueba.
+- La escena solo representa (D-46): `Presentacion.MomentoDe` deduce el momento de los eventos del motor y `Animacion/Director` lo anima. Una consecuencia nueva va en `Animacion/Consecuencias` con su clave («3B»…); `PruebasEscena` exige las 10. Todo movimiento pasa por `Coreografia`, que respeta el movimiento reducido.
+- El glosario (D-45) solo admite palabras con fuente leída y registrada en docs/FUENTES.md (G-xx), con frases de 15 palabras o menos.
+- Compila con `dotnet build escritorio/BaseLunar.sln -m:1`: en la carpeta de OneDrive, la compilación en paralelo de WPF a veces pierde los `.g.cs` y tapa errores reales.
 - Las 3 pruebas de UI Automation abren la ventana del juego unos segundos. Para omitirlas: `--filter "TestCategory!=UIAutomation"`. Las capturas quedan en `escritorio/capturas/` (ignorada por git).
 - Stack cerrado: C# y las bibliotecas de .NET y Windows. Sin paquetes de terceros (solo los oficiales de Microsoft, como MSTest) y sin motores externos.
 - Convenciones de C# (D-35): nombres en español, PascalCase en lo público, camelCase en lo local y `record` inmutables. El núcleo compila sin advertencias.

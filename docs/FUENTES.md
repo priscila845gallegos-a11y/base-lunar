@@ -174,3 +174,51 @@ Aplicados en `js/levels.js` en F2, pendientes de revisión en la puerta P2. Se c
 | T-06 | Dato N3 | «El agua bloquea la radiación espacial porque tiene mucho hidrógeno.» | La fuente dice «reduce» (F-08) | «El agua ayuda a frenar la radiación espacial porque tiene mucho hidrógeno.» (12) |
 | T-07 | Dato N3 | «¡Y unos metros de polvo lunar sobre la base también sirven de escudo!» | «Unos metros» no está en la fuente (F-09) | «¡Y una capa gruesa de polvo lunar sobre la base también sirve de escudo!» (14) |
 | T-08 | Dato N4 | «En la nave Orión, los astronautas arman un refugio con sus bolsas de provisiones.» | Es un plan, no un procedimiento ya usado (F-11) | «En la nave Orión, los astronautas pueden armar un refugio con sus bolsas de provisiones.» (15) |
+
+## Glosario de escritorio (F3.3)
+
+Verificación del **15-11-2026**. Se leyó cada página (HTTP 200) y se copió la frase que respalda la explicación. Las explicaciones están en `escritorio/src/BaseLunar.App/VistaModelos/Glosario.cs` (D-45).
+
+| # | Palabra | Explicación en el juego | Niveles |
+|---|---|---|---|
+| G-01 | soporte vital | Son las máquinas que dan agua limpia y oxígeno para respirar. | 1 y 2 |
+| G-02 | rayos cósmicos | No son rayos de luz: son partículas con mucha energía. Viajan por el espacio casi a la velocidad de la luz. | 3 |
+| G-03 | campo magnético | Es un escudo invisible de la Tierra. Desvía casi todo el material que llega del Sol. El de la Luna es muy débil. | 3 |
+| G-04 | regolito | Es el polvo gris y las piedritas que cubren casi toda la Luna. | 3 |
+| G-05 | llamarada solar | Es un destello muy fuerte de luz y radiación en el Sol. | 4 y 5 |
+| G-06 | clase X | Así se llaman las llamaradas más fuertes. De menor a mayor, las clases son B, C, M y X. | 4 |
+
+### G-01 · Soporte vital — ✔
+
+- Fuente: [NASA, «Environmental Control and Life Support Systems (ECLSS)»](https://www.nasa.gov/reference/environmental-control-and-life-support-systems-eclss/).
+- Qué dice: «The Water Recovery System provides clean water by reclaiming wastewater» y «The Oxygen Generation System produces oxygen for the crew to breathe».
+
+### G-02 · Rayos cósmicos — ✔
+
+- Fuente: [NASA Goddard, Imagine the Universe, «Cosmic Rays - Introduction»](https://imagine.gsfc.nasa.gov/science/toolbox/cosmic_rays1.html).
+- Qué dice: «They are high energy particles that move through space at nearly the speed of light.»
+
+### G-03 · Campo magnético — ✔
+
+- Fuentes: [NASA Science, «Earth's Magnetosphere»](https://science.nasa.gov/science-research/planetary-science/earths-magnetosphere/) y [NASA Science, «Moon Facts»](https://science.nasa.gov/moon/facts/).
+- Qué dicen: «It deflects most of the solar material sweeping towards us from our star» y «The magnetosphere is a permeable shield». Sobre la Luna: «today, the Moon has a very weak magnetic field».
+- Nota: por eso la explicación dice «desvía casi todo», no «bloquea». Coincide con F-07.
+
+### G-04 · Regolito — ✔
+
+- Fuente: [NASA Science, «Moon Facts»](https://science.nasa.gov/moon/facts/).
+- Qué dice: «Nearly the entire Moon is covered by a rubble pile of charcoal-gray, powdery dust, and rocky debris» … «called the lunar regolith».
+
+### G-05 · Llamarada solar — ✔
+
+- Fuente: [NASA SVS, «Largest Flare yet from Solar Cycle 25»](https://svs.gsfc.nasa.gov/14592).
+- Qué dice: «A solar flare is an intense burst of radiation, or light, on the Sun.»
+
+### G-06 · Clase X — ✔
+
+- Fuente: [NASA SVS, «X-Class: A Guide to Solar Flares»](https://svs.gsfc.nasa.gov/10109).
+- Qué dice: «The smallest ones are B-class, followed by C, M and X, the largest.» La página 14592 añade: «X-class denotes the most intense flares».
+
+### Palabras que no se usan
+
+- «alunizar» y «baliza»: el Diccionario de la RAE (dle.rae.es) respondió HTTP 403 a la consulta automática. No se pudieron leer las definiciones, así que no se muestran en el juego (⚠ PENDIENTE DE VERIFICAR).
