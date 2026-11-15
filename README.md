@@ -2,10 +2,11 @@
 
 Juego web educativo de decisiones para niñas y niños de 7 a 12 años. Quien juega comanda una base en la superficie de la Luna durante 5 situaciones reales del espacio y aprende que cada recurso tiene un costo: energía, agua y oxígeno, y protección contra la radiación.
 
-> **Estado: F3 terminada (en revisión la última subfase). La interfaz se rehízo como aplicación de escritorio (C# + WPF).**
+> **Estado: F4 terminada, en revisión. La interfaz se rehízo como aplicación de escritorio (C# + WPF).**
 >
 > - Listos: el núcleo en C# (F3.1), la aplicación jugable de principio a fin (F3.2), el arte con las animaciones de cada consecuencia y el glosario (F3.3), los efectos de sonido y la voz (F3.4) y el dato en vivo de NASA DONKI (F3.5).
-> - Siguiente: F4, pulido y finales.
+> - F4: certificado con nombre e «Imprimir», modo demo, alto contraste y «Control de Misión».
+> - Siguiente: F5, validación.
 >
 > La versión web de F0–F2 está terminada y se puede jugar de principio a fin. Sigue siendo el acceso por enlace y desde el móvil. Ver [Versión de escritorio](#versión-de-escritorio-windows) y [Plan y estado](#plan-y-estado).
 
@@ -29,13 +30,13 @@ Los parámetros de demostración llegan en F4.
 
 ## Versión de escritorio (Windows)
 
-En construcción (F3). Es la misma partida con una interfaz nueva de videojuego, hecha en C# con WPF (.NET 10). Tiene un mapa de progreso por el que camina el astronauta, una escena ilustrada para cada nivel y una animación para cada una de las 10 elecciones. Los fallos se muestran con variantes amables, y hay barras animadas, partículas y un glosario «?» con fuentes de la NASA. Los efectos de sonido se generan con código, y «Escuchar» lee la tarjeta con una voz en español del propio equipo. Las reglas no cambian: el núcleo se trasladó a C# y se comprueba contra la versión web (ver [DECISIONES.md](DECISIONES.md), D-32 a D-55). El Nivel 4 usa la llamarada más intensa del último mes, consultada en vivo a NASA DONKI, con respaldo histórico si no hay red.
+En construcción (F3). Es la misma partida con una interfaz nueva de videojuego, hecha en C# con WPF (.NET 10). Tiene un mapa de progreso por el que camina el astronauta, una escena ilustrada para cada nivel y una animación para cada una de las 10 elecciones. Los fallos se muestran con variantes amables, y hay barras animadas, partículas y un glosario «?» con fuentes de la NASA. Los efectos de sonido se generan con código, y «Escuchar» lee la tarjeta con una voz en español del propio equipo. Las reglas no cambian: el núcleo se trasladó a C# y se comprueba contra la versión web (ver [DECISIONES.md](DECISIONES.md), D-32 a D-58). El Nivel 4 usa la llamarada más intensa del último mes, consultada en vivo a NASA DONKI, con respaldo histórico si no hay red.
 
 - Requisitos: Windows 10 u 11 y el SDK de .NET 10. Para «Escuchar» hace falta una voz de Windows en español (si no hay, el botón no aparece).
-- Jugar: `dotnet run --project escritorio/src/BaseLunar.App`. Opciones: `--offline` (siempre el respaldo histórico) y `--silencio` (sin sonido ni voz). Con teclado: A/B o 1/2 para elegir, Enter para continuar, F11 para la pantalla completa y Esc para salir de ella.
-- Pruebas: `dotnet test escritorio/BaseLunar.sln`. Son 167 pruebas:
+- Jugar: `dotnet run --project escritorio/src/BaseLunar.App`. Opciones de demostración: `--nivel N` (empezar en el nivel N), `--offline` (siempre el respaldo histórico), `--debug` (ver el estado interno), `--silencio` (sin sonido ni voz) y `--alto-contraste`. Si Windows tiene activado el alto contraste, se usa solo. Con teclado: A/B o 1/2 para elegir, Enter para continuar, F11 para la pantalla completa y Esc para salir de ella.
+- Pruebas: `dotnet test escritorio/BaseLunar.sln`. Son 176 pruebas:
   - 73 del núcleo: las 39 de tests.html, la tabla de balance, 5 de paridad con js/ y 13 de NASA DONKI (una consulta la red real; para omitirla: `--filter "TestCategory!=Red"`).
-  - 94 de la interfaz: textos, pantalla, accesibilidad, teclado, escena (10 consecuencias, fallos, victoria y abortada), glosario, sonido y voz (con medidas de calidad del audio), dato en vivo y 3 partidas con UI Automation.
+  - 103 de la interfaz: textos, pantalla, accesibilidad (contraste AA y alto contraste), teclado (una partida entera solo con teclado), escena (10 consecuencias, fallos, victoria y abortada), glosario, sonido y voz (con medidas de calidad del audio), dato en vivo, modo demo, certificado, «Control de Misión» y 3 partidas con UI Automation.
 - Las 3 partidas con UI Automation abren la ventana del juego unos segundos. Para omitirlas: `--filter "TestCategory!=UIAutomation"`.
 - Las capturas de las pruebas quedan en `escritorio/capturas/`: 8 pantallas a 4 tamaños y, con el prefijo `f33-`, el estado final y un fotograma a mitad de cada animación.
 
@@ -142,7 +143,7 @@ Sin cuentas, sin cookies y sin analítica. El nombre del certificado solo se mue
 | F1 · Maquetación | 1:30 | index.html y style.css con datos de ejemplo | Hecha (P1 aprobada) |
 | F2 · Motor y pruebas | 2:00 | levels.js, game.js, ui.js y tests.html en verde | Hecha (P2 aprobada) |
 | F3 · Rediseño de escritorio (C# + WPF) | 6:30 | F3.1 núcleo en C# con paridad ✔ · F3.2 estructura jugable ✔ · F3.3 arte, animación y glosario ✔ · F3.4 sonido y voz ✔ · F3.5 NASA DONKI en vivo ✔ | Hecha (F3.1 a F3.4 aprobadas; F3.5 en revisión) |
-| F4 · Pulido y finales | 0:45 | Certificado imprimible, modo demo, alto contraste | Pendiente |
+| F4 · Pulido y finales | 0:45 | Certificado con nombre e «Imprimir», modo demo, alto contraste y «Control de Misión» | Hecha (F3 aprobada; P4 en revisión) |
 | F5 · Validación | 1:00 | Pruebas, partidas automatizadas, Narrador y prueba con usuarios | Pendiente |
 | F6 · Despliegue | 0:30 | Web en GitHub Pages, ZIP portable de escritorio y tag v1.0.0 | Pendiente |
 
