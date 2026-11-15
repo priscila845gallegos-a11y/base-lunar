@@ -113,6 +113,9 @@ public sealed class EstacionVM(Nivel nivel) : Observable
     public override string ToString() => TextoAccesible;
 }
 
+/// <summary>Una letra de la mini escala de llamaradas; Activa es la clase de la llamarada mostrada.</summary>
+public sealed record LetraEscala(string Letra, bool Activa);
+
 /// <summary>Una fuente con enlace. El nombre accesible avisa de que se abre el navegador.</summary>
 public sealed record FuenteVM(string Nombre, string Url)
 {

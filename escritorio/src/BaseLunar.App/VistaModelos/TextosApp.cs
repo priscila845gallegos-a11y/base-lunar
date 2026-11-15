@@ -63,6 +63,17 @@ public static class TextosApp
         public const string Nota = "Datos: NASA DONKI, NASA OSDR / RadLab, NASA y CSA. Es un juego educativo independiente: este certificado no es oficial.";
     }
 
+    /// <summary>Escritorio: líneas honestas del dato en vivo de NASA DONKI (sección 7, D-09, D-54).</summary>
+    public static class Donki
+    {
+        public const string MasFuerte = "Es la más fuerte de los últimos 30 días.";
+        public const string NoEsX = "Las de clase X son todavía más fuertes.";
+        public const string ConsultaHoy = "Dato consultado hoy a las {hora}.";
+        public const string ConsultaOtroDia = "Dato consultado el {fecha} a las {hora}.";
+        public const string Escala = "X es la más fuerte";
+        public const string EscalaAccesible = "Clases de llamarada, de menor a mayor: B, C, M y X. Esta es de clase {letra}. X es la más fuerte.";
+    }
+
     /// <summary>Escritorio: el mapa de progreso no existe en la web, que solo tiene 5 puntos.</summary>
     public static class Mapa
     {

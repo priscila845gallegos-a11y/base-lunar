@@ -38,6 +38,9 @@ public static class Configuracion
         public const string ClaveReserva = "DEMO_KEY";
 
         public const string UrlFlr = "https://api.nasa.gov/DONKI/FLR";
+
+        /// <summary>Segunda vía (D-19): el servicio DONKI del CCMC de la NASA, sin clave. Solo escritorio.</summary>
+        public const string UrlFlrCcmc = "https://ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR";
         public const int DiasConsulta = 30;
         public const int TimeoutMs = 3000;
         public const long CacheMs = 6L * 60 * 60 * 1000;

@@ -100,15 +100,41 @@ public static class Presentacion
     public static string NombreOpcion(string id, Opcion opcion) =>
         Textos.Rellenar(TextosApp.PrefijoOpcion, ("id", id)) + opcion.Texto + Descripcion(opcion);
 
-    /// <summary>Líneas extra del 💡: la de CSA y, en el Nivel 4, la llamarada real (sección 7).</summary>
-    public static IReadOnlyList<string> LineasExtra(Nivel nivel, Tormenta tormenta)
+    /// <summary>
+    /// Líneas extra del 💡: la de CSA y, en el Nivel 4, la llamarada real (sección 7). Con el respaldo, la serie
+    /// de 5 llamaradas X; en vivo, que es la más fuerte del mes (y si no es X, que las X son aún más fuertes) y
+    /// la hora de la consulta.
+    /// </summary>
+    public static IReadOnlyList<string> LineasExtra(Nivel nivel, Tormenta tormenta, DateTimeOffset? ahora = null)
     {
         var lineas = new List<string>(nivel.Dato.Extra ?? []);
         if (!nivel.DatoTormenta) return lineas;
         lineas.Add(Textos.Rellenar(Textos.Llamarada.Linea, ("clase", tormenta.Clase), ("fecha", FechaUtc(tormenta.Fecha))));
-        if (!tormenta.EnVivo) lineas.Add(Textos.Rellenar(Textos.Llamarada.SerieX, ("n", tormenta.LlamaradasX)));
+        if (!tormenta.EnVivo)
+        {
+            lineas.Add(Textos.Rellenar(Textos.Llamarada.SerieX, ("n", tormenta.LlamaradasX)));
+            return lineas;
+        }
+        lineas.Add(EsClaseX(tormenta) ? TextosApp.Donki.MasFuerte : TextosApp.Donki.MasFuerte + " " + TextosApp.Donki.NoEsX);
+        if (tormenta.Consulta is { } consulta) lineas.Add(TextoConsulta(consulta, ahora ?? DateTimeOffset.Now));
         return lineas;
     }
+
+    public static bool EsClaseX(Tormenta tormenta) => tormenta.Clase.StartsWith('X');
+
+    /// <summary>«Dato consultado hoy a las 10:42.» (hora local), o con la fecha si fue otro día.</summary>
+    public static string TextoConsulta(DateTimeOffset consulta, DateTimeOffset ahora)
+    {
+        var local = consulta.ToLocalTime();
+        var hora = local.ToString("HH:mm", CultureInfo.InvariantCulture);
+        return local.Date == ahora.ToLocalTime().Date
+            ? Textos.Rellenar(TextosApp.Donki.ConsultaHoy, ("hora", hora))
+            : Textos.Rellenar(TextosApp.Donki.ConsultaOtroDia, ("fecha", local.ToString("d 'de' MMMM", Espanol)), ("hora", hora));
+    }
+
+    /// <summary>Mini escala de clases (sección 7) con la de la llamarada resaltada: B · C · M · X (D-54).</summary>
+    public static IReadOnlyList<LetraEscala> Escala(Tormenta tormenta) =>
+        new[] { "B", "C", "M", "X" }.Select(l => new LetraEscala(l, tormenta.Clase.StartsWith(l, StringComparison.Ordinal))).ToArray();
 
     public static IReadOnlyList<Fuente> FuentesDe(Nivel nivel, Tormenta tormenta) =>
         nivel.DatoTormenta ? [.. nivel.Dato.Fuentes, new Fuente(Textos.Llamarada.Fuente, tormenta.Url)] : nivel.Dato.Fuentes;

@@ -116,7 +116,7 @@ public sealed class PruebasAutomatizacion
 
         public AppAbierta()
         {
-            proceso = Process.Start(new ProcessStartInfo(Rutas.Ejecutable(), "--silencio") { UseShellExecute = false })
+            proceso = Process.Start(new ProcessStartInfo(Rutas.Ejecutable(), "--silencio --offline") { UseShellExecute = false })
                 ?? throw new InvalidOperationException("No se pudo abrir el juego");
             var condicion = new AndCondition(
                 new PropertyCondition(AutomationElement.ProcessIdProperty, proceso.Id),

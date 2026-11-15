@@ -2,12 +2,15 @@ using System.Text.Json;
 
 namespace BaseLunar.Nucleo;
 
-/// <summary>Dato de una llamarada para el Nivel 4: clase, fecha, fuente, enlace y si es en vivo.</summary>
-public sealed record Tormenta(string Clase, string Fecha, string Fuente, string Url, bool EnVivo, int LlamaradasX);
+/// <summary>
+/// Dato de una llamarada para el Nivel 4: clase, fecha, fuente, enlace, si es en vivo, cuántas de clase X hubo
+/// y, si es en vivo, cuándo se consultó (para la etiqueta honesta de la sección 7).
+/// </summary>
+public sealed record Tormenta(string Clase, string Fecha, string Fuente, string Url, bool EnVivo, int LlamaradasX, DateTimeOffset? Consulta = null);
 
 /// <summary>
-/// Datos de NASA DONKI. F3.1: respaldo histórico (copia literal, la misma de js/nasaData.js).
-/// F3.5: consulta en vivo con timeout, validación y caché.
+/// Datos de NASA DONKI: el respaldo histórico (copia literal, la misma de js/nasaData.js). La consulta en
+/// vivo, con espera máxima, validación y caché, está en <see cref="ClienteDonki"/>.
 /// </summary>
 public static class DatosDonki
 {

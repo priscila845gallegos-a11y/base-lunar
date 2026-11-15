@@ -21,6 +21,7 @@ public sealed class JuegoVM : Observable, IDisposable
     private readonly Ajustes ajustes;
     private Estado estado = Motor.CrearEstadoInicial();
     private AyudaActivada? ayuda;
+    private Tormenta? tormentaPendiente;
 
     public JuegoVM() : this(DatosDonki.RespaldoHistorico())
     {
@@ -58,7 +59,8 @@ public sealed class JuegoVM : Observable, IDisposable
     /// <summary>Tras cada acción: lo que tiene que representar la escena (consecuencia, fallo, mapa…).</summary>
     public event EventHandler<Momento>? Escena;
 
-    public Tormenta Tormenta { get; }
+    /// <summary>El dato del Nivel 4: el respaldo histórico al empezar y, cuando llega, el de NASA DONKI en vivo.</summary>
+    public Tormenta Tormenta { get; private set; }
     public Estado Estado => estado;
     public IReadOnlyList<MedidorVM> Medidores { get; }
     public IReadOnlyList<EstacionVM> Estaciones { get; }
@@ -130,6 +132,29 @@ public sealed class JuegoVM : Observable, IDisposable
     public string? TextoResultado => EsResultado && NivelActual is { } n ? n.Opciones[estado.UltimaOpcion!].Resultado : null;
     public DatoVM? Dato => EsResultado && NivelActual is { } n ? DatoVM.De(n, Tormenta) : null;
 
+    /// <summary>Mini escala B · C · M · X en el dato de la llamarada (sección 7).</summary>
+    public IReadOnlyList<LetraEscala> EscalaLlamarada => EsResultado && NivelActual is { DatoTormenta: true } ? Presentacion.Escala(Tormenta) : [];
+
+    public string EscalaAccesible => Textos.Rellenar(TextosApp.Donki.EscalaAccesible, ("letra", Tormenta.Clase[..1]));
+
+    /// <summary>
+    /// Llega el dato de NASA DONKI (o el respaldo, si falló). Se usa ya si la partida no ha llegado al Nivel 4;
+    /// si no, espera a la siguiente partida: un nivel nunca cambia su dato a medias.
+    /// </summary>
+    public void ActualizarTormenta(Tormenta nueva)
+    {
+        tormentaPendiente = nueva;
+        AplicarTormentaPendiente();
+    }
+
+    private void AplicarTormentaPendiente()
+    {
+        if (tormentaPendiente is null || (Fase != Fase.Inicio && estado.Nivel >= 4)) return;
+        Tormenta = tormentaPendiente;
+        tormentaPendiente = null;
+        AvisarTodo();
+    }
+
     // ---------- Tarjeta: glosario ----------
     public IReadOnlyList<Termino> Terminos => EsVistaNivel && NivelActual is { } n ? Glosario.De(n.Id) : [];
     public Termino? TerminoAbierto { get; private set; }
@@ -182,6 +207,7 @@ public sealed class JuegoVM : Observable, IDisposable
         if (nuevaAyuda is not null || Fase != Fase.Nivel) ayuda = nuevaAyuda;
         Bloqueado = true;
         narrador.Callar();
+        if (Fase == Fase.Inicio) AplicarTormentaPendiente();
         Pintar();
         if (SonidoActivo) reproductor.Programar(Presentacion.SonidosDe(anterior, resultado));
         UltimoMomento = Presentacion.MomentoDe(anterior, resultado);

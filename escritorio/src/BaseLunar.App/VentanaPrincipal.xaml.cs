@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -10,6 +12,9 @@ namespace BaseLunar.App;
 public partial class VentanaPrincipal : Window
 {
     private (WindowState Estado, WindowStyle Estilo, ResizeMode Redimension)? antesDePantallaCompleta;
+
+    /// <summary>--offline: siempre el respaldo histórico (como ?offline=1 en la web; lo usan las pruebas).</summary>
+    private static bool SinConexion => Environment.GetCommandLineArgs().Contains("--offline", StringComparer.OrdinalIgnoreCase);
 
     public VentanaPrincipal() : this(CrearJuego())
     {
@@ -42,7 +47,23 @@ public partial class VentanaPrincipal : Window
 
     public bool EnPantallaCompleta => antesDePantallaCompleta is not null;
 
-    private void AlCargar(object sender, RoutedEventArgs e) => Pantalla.Enfocar(Juego.Fase);
+    private void AlCargar(object sender, RoutedEventArgs e)
+    {
+        Pantalla.Enfocar(Juego.Fase);
+        if (!SinConexion) _ = ConsultarDonkiAsync();
+    }
+
+    /// <summary>
+    /// Consulta NASA DONKI en segundo plano al abrir (sección 7): cuando el niño llega al Nivel 4, ya está.
+    /// Nunca falla: si no hay red, sigue el respaldo histórico. Los errores técnicos solo van al registro de
+    /// depuración, nunca a la pantalla.
+    /// </summary>
+    private async Task ConsultarDonkiAsync()
+    {
+        var cache = Path.Combine(Path.GetDirectoryName(Ajustes.RutaPredeterminada)!, "donki.json");
+        using var cliente = new ClienteDonki(rutaCache: cache, registro: m => Debug.WriteLine(m));
+        Juego.ActualizarTormenta(await cliente.ObtenerAsync());
+    }
 
     /// <summary>Atajos (5.5): A/B o 1/2 eligen en un nivel; Enter usa el botón principal; F11 y Esc.</summary>
     private void AlPulsarTecla(object sender, KeyEventArgs e)
