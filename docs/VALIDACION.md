@@ -170,6 +170,6 @@ Estado al 15-11-2026:
 |---|---|---|
 | Enlace público | <https://priscila845gallegos-a11y.github.io/base-lunar/>. Se publica con GitHub Pages desde `main`, y cada push lo actualiza (D-64). | ✅ |
 | El enlace funciona | Las 13 pruebas de `PruebasWeb` pasan contra la dirección publicada (`BASELUNAR_WEB`) en Edge, Chrome y Firefox: partidas completas en un móvil emulado, tamaños, rotación, zoom, recarga, teclado, cero errores de consola y ningún pedido fuera del sitio. | ✅ |
-| El enlace se probó en un móvil real | Abrir el enlace en un teléfono (Safari en iOS o Chrome en Android) y jugar una partida hasta el certificado. | 🧑 |
+| El enlace se probó en un móvil real | Prueba del equipo en un teléfono. P6 aprobada el 15-11-2026. | ✅ |
 | El README está completo | Explica cómo jugar en la web y en Windows, cómo ejecutar las pruebas, la arquitectura, los datos y fuentes enlazados, la privacidad, los créditos, el plan y la documentación. | ✅ |
 | Existe el ZIP de respaldo | En la [versión v1.0.0](https://github.com/priscila845gallegos-a11y/base-lunar/releases/tag/v1.0.0): el ZIP del repositorio, con la web jugable con doble clic; el ZIP portable de Windows; y `SHA256SUMS.txt`. El .exe descomprimido pasa las 3 partidas de UI Automation (`BASELUNAR_EXE`). | ✅ |

@@ -61,8 +61,9 @@ Estas tareas necesitan personas (protocolos en [docs/VALIDACION.md](VALIDACION.m
 
 - la prueba con 1 o 2 niños;
 - la escucha con el Narrador de Windows;
-- Lighthouse;
-- el enlace probado en móviles reales (Safari en iOS y Chrome en Android).
+- Lighthouse.
+
+El enlace público se probó en un móvil real (P6 aprobada el 15-11-2026).
 
 ### Descargas
 
