@@ -1,15 +1,13 @@
 # Base Lunar: El Escudo Cósmico
 
-Juego web educativo de decisiones para niñas y niños de 7 a 12 años. Quien juega comanda una base en la superficie de la Luna durante 5 situaciones reales del espacio y aprende que cada recurso tiene un costo: energía, agua y oxígeno, y protección contra la radiación.
+Juego educativo de decisiones para niñas y niños de 7 a 12 años, en la web y para Windows. Quien juega comanda una base en la superficie de la Luna durante 5 situaciones reales del espacio y aprende que cada recurso tiene un costo: energía, agua y oxígeno, y protección contra la radiación.
 
-> **Estado: F5 terminada, en revisión. La interfaz se rehízo como aplicación de escritorio (C# + WPF).**
+> **Versión 1.0.0** ([nota de versión](docs/NOTAS-DE-VERSION.md)). Hay dos formas de jugar:
 >
-> - Listos: el núcleo en C# (F3.1), la aplicación jugable de principio a fin (F3.2), el arte con las animaciones de cada consecuencia y el glosario (F3.3), los efectos de sonido y la voz (F3.4) y el dato en vivo de NASA DONKI (F3.5).
-> - F4: certificado con nombre e «Imprimir», modo demo, alto contraste y «Control de Misión».
-> - F5: matriz de validación con evidencias en [docs/VALIDACION.md](docs/VALIDACION.md). Pendientes: la prueba con niños, la escucha con el Narrador y Lighthouse.
-> - Siguiente: F6, despliegue.
+> - **Web**: el acceso por enlace y desde el móvil, sin instalar nada.
+> - **Windows** (C# + WPF): la experiencia completa, con escena animada, sonido, voz, glosario y el dato en vivo de NASA DONKI.
 >
-> La versión web de F0–F2 está terminada y se puede jugar de principio a fin. Sigue siendo el acceso por enlace y desde el móvil. Ver [Versión de escritorio](#versión-de-escritorio-windows) y [Plan y estado](#plan-y-estado).
+> La validación (F5) está en [docs/VALIDACION.md](docs/VALIDACION.md). Quedan pendientes la prueba con niños, la escucha con el Narrador y Lighthouse. Ver [Plan y estado](#plan-y-estado).
 
 ## Cómo se juega
 
@@ -22,19 +20,22 @@ Juego web educativo de decisiones para niñas y niños de 7 a 12 años. Quien ju
 
 ## Cómo ejecutarlo
 
-- Sin instalar nada: abre `index.html` con doble clic. Funciona también desde el ZIP, sin servidor y sin internet (salvo el dato en vivo del Nivel 4, que tiene respaldo histórico).
+Web:
+
+- Sin instalar nada: abre `index.html` con doble clic. Funciona también desde el ZIP del repositorio, sin servidor y sin internet. En el Nivel 4 muestra siempre la llamarada X8.7 real del 14-05-2024, con la etiqueta «HISTÓRICO REAL» (D-55).
 - Con un servidor local (opcional): `python -m http.server 8000` y abre <http://localhost:8000>.
 - Pruebas del motor y simulador de balance: abre `tests/tests.html` en el navegador.
-- Parámetros de demostración: `?nivel=4` (empezar en un nivel), `?offline=1` (forzar el respaldo histórico) y `?debug=1` (ver el estado interno).
+- Las opciones de demostración (empezar en un nivel, sin red, depuración) están en la versión de Windows (D-56).
 
-Los parámetros de demostración llegan en F4.
+Windows: ver la sección siguiente.
 
 ## Versión de escritorio (Windows)
 
-En construcción (F3). Es la misma partida con una interfaz nueva de videojuego, hecha en C# con WPF (.NET 10). Tiene un mapa de progreso por el que camina el astronauta, una escena ilustrada para cada nivel y una animación para cada una de las 10 elecciones. Los fallos se muestran con variantes amables, y hay barras animadas, partículas y un glosario «?» con fuentes de la NASA. Los efectos de sonido se generan con código, y «Escuchar» lee la tarjeta con una voz en español del propio equipo. Las reglas no cambian: el núcleo se trasladó a C# y se comprueba contra la versión web (ver [DECISIONES.md](DECISIONES.md), D-32 a D-62). El Nivel 4 usa la llamarada más intensa del último mes, consultada en vivo a NASA DONKI, con respaldo histórico si no hay red.
+Es la misma partida con una interfaz nueva de videojuego, hecha en C# con WPF (.NET 10). Tiene un mapa de progreso por el que camina el astronauta, una escena ilustrada para cada nivel y una animación para cada una de las 10 elecciones. Los fallos se muestran con variantes amables, y hay barras animadas, partículas y un glosario «?» con fuentes de la NASA. Los efectos de sonido se generan con código, y «Escuchar» lee la tarjeta con una voz en español del propio equipo. Las reglas no cambian: el núcleo se trasladó a C# y se comprueba contra la versión web (ver [DECISIONES.md](DECISIONES.md), D-32 a D-62). El Nivel 4 usa la llamarada más intensa del último mes, consultada en vivo a NASA DONKI, con respaldo histórico si no hay red.
 
-- Requisitos: Windows 10 u 11 y el SDK de .NET 10. Para «Escuchar» hace falta una voz de Windows en español (si no hay, el botón no aparece).
-- Jugar: `dotnet run --project escritorio/src/BaseLunar.App`. Opciones de demostración: `--nivel N` (empezar en el nivel N), `--offline` (siempre el respaldo histórico), `--debug` (ver el estado interno), `--silencio` (sin sonido ni voz) y `--alto-contraste`. Si Windows tiene activado el alto contraste, se usa solo. Con teclado: A/B o 1/2 para elegir, Enter para continuar, F11 para la pantalla completa y Esc para salir de ella.
+- Versión portable (sin instalar nada, con .NET incluido): `BaseLunar-escritorio-v1.0.0-win-x64.zip`. Se descomprime y se abre `BaseLunar.exe`; las instrucciones están en [escritorio/LEEME.txt](escritorio/LEEME.txt). El ZIP se genera con `powershell -ExecutionPolicy Bypass -File escritorio/publicar.ps1 -Version 1.0.0` (D-63).
+- Requisitos: Windows 10 u 11 de 64 bits. Para compilar, el SDK de .NET 10. Para «Escuchar» hace falta una voz de Windows en español (si no hay, el botón no aparece).
+- Jugar desde el código: `dotnet run --project escritorio/src/BaseLunar.App`. Opciones de demostración: `--nivel N` (empezar en el nivel N), `--offline` (siempre el respaldo histórico), `--debug` (ver el estado interno), `--silencio` (sin sonido ni voz) y `--alto-contraste`. Si Windows tiene activado el alto contraste, se usa solo. Con teclado: A/B o 1/2 para elegir, Enter para continuar, F11 para la pantalla completa y Esc para salir de ella.
 - Pruebas: `dotnet test escritorio/BaseLunar.sln`. Son 202 pruebas:
   - 76 del núcleo: las 39 de tests.html, la tabla de balance, el simulador (con medidores siempre en 0–100), 5 de paridad con js/ y 14 de NASA DONKI. Una de ellas consulta la red real; para omitirla: `--filter "TestCategory!=Red"`.
   - 126 de la interfaz:
@@ -81,22 +82,27 @@ HTML5 + CSS3 (variables, Grid y Flexbox) + JavaScript ES6+ puro. Sin frameworks,
 
 ```
 baseLunar/
-├── index.html        # Pantalla única: 3 bloques + Inicio, Respaldo, Abortada y Victoria   (F2 ✔ · F4)
-├── style.css         # Tokens, layout responsivo, estados, animaciones, impresión          (F2 ✔ · F4)
+├── index.html        # Pantalla única: 3 bloques + Inicio, Respaldo, Abortada y Victoria   (F2 ✔)
+├── style.css         # Tokens, layout responsivo, estados, animaciones, impresión          (F2 ✔)
 ├── js/
 │   ├── config.js     # Clave NASA, tiempos, banderas de demo y reglas del juego            (F2 ✔)
 │   ├── levels.js     # Guion: 5 niveles, textos y fuentes (solo datos)                     (F2 ✔)
-│   ├── nasaData.js   # DONKI: consulta con timeout, validación, caché y respaldo histórico (F2 respaldo · F3)
+│   ├── nasaData.js   # DONKI: respaldo histórico real (la consulta en vivo está en escritorio, D-55) (F2 ✔)
 │   ├── game.js       # Motor puro: estado, reglas, respaldos, antibloqueo (sin DOM)        (F2 ✔)
-│   └── ui.js         # Render, eventos, accesibilidad, voz y arranque (único con DOM)      (F2 ✔ · F4 voz)
+│   └── ui.js         # Render, eventos, accesibilidad y arranque (único con DOM)           (F2 ✔)
 ├── tests/
 │   └── tests.html    # Pruebas del motor + simulador de balance                            (F2 ✔)
 ├── assets/
 │   ├── favicon.svg                                                                         (F1 ✔)
+│   ├── og-imagen.png # Vista previa del enlace al compartirlo (Open Graph)                 (F6 ✔)
+│   ├── lucide-LICENSE.txt # Licencia de los íconos de Lucide                               (F6 ✔)
 │   └── fonts/        # Atkinson Hyperlegible 400 y 700 (subconjunto latino) + OFL.txt      (F1 ✔)
 ├── docs/
 │   ├── PROMPT-0.md   # Especificación completa                                             (F0 ✔)
-│   └── FUENTES.md    # Verificación de cada dato científico                                (F0 ✔)
+│   ├── FUENTES.md    # Verificación de cada dato científico                                (F0 ✔)
+│   ├── VALIDACION.md # Matriz de validación (P5) y protocolos con personas                 (F5 ✔)
+│   └── NOTAS-DE-VERSION.md # Qué trae cada versión                                         (F6 ✔)
+├── escritorio/       # Versión de Windows en C# + WPF (ver «Versión de escritorio»)         (F3–F6 ✔)
 ├── README.md
 ├── AGENTS.md         # Reglas para agentes de IA
 └── DECISIONES.md     # Registro de decisiones (fecha · decisión · motivo)
@@ -154,7 +160,7 @@ Sin cuentas, sin cookies y sin analítica. El nombre del certificado solo se mue
 
 ## Créditos
 
-- Íconos: [Lucide](https://lucide.dev/) (licencia ISC). En la web, el salvavidas y el altavoz; en escritorio, todos los íconos.
+- Íconos: [Lucide](https://lucide.dev/) (licencia ISC; MIT para los derivados de Feather, ver [assets/lucide-LICENSE.txt](assets/lucide-LICENSE.txt)). En la web, el salvavidas y el altavoz; en escritorio, todos los íconos.
 - Tipografía: [Atkinson Hyperlegible](https://github.com/googlefonts/atkinson-hyperlegible), del Braille Institute (SIL Open Font License).
 - Datos: NASA DONKI, NASA OSDR / RadLab, NASA y CSA (ver [docs/FUENTES.md](docs/FUENTES.md)).
 
@@ -168,7 +174,7 @@ Sin cuentas, sin cookies y sin analítica. El nombre del certificado solo se mue
 | F3 · Rediseño de escritorio (C# + WPF) | 6:30 | F3.1 núcleo en C# con paridad ✔ · F3.2 estructura jugable ✔ · F3.3 arte, animación y glosario ✔ · F3.4 sonido y voz ✔ · F3.5 NASA DONKI en vivo ✔ | Hecha (aprobada) |
 | F4 · Pulido y finales | 0:45 | Certificado con nombre e «Imprimir», modo demo, alto contraste y «Control de Misión» | Hecha (P4 aprobada) |
 | F5 · Validación | 1:00 | Matriz de P5 con evidencias, web en 3 navegadores, zoom de Windows y protocolos para la prueba con usuarios, el Narrador y Lighthouse | Hecha (P5 en revisión; la prueba con niños, el Narrador y Lighthouse necesitan al equipo) |
-| F6 · Despliegue | 0:30 | Web en GitHub Pages, ZIP portable de escritorio y tag v1.0.0 | Pendiente |
+| F6 · Despliegue | 0:30 | Web en GitHub Pages, ZIP portable de escritorio y tag v1.0.0 | En curso (P5 aprobada) |
 
 El rediseño amplía el presupuesto inicial de 8 horas (DECISIONES.md, D-37).
 
@@ -178,4 +184,5 @@ El rediseño amplía el presupuesto inicial de 8 horas (DECISIONES.md, D-37).
 - [DECISIONES.md](DECISIONES.md): decisiones tomadas y su motivo.
 - [docs/FUENTES.md](docs/FUENTES.md): verificación científica.
 - [docs/VALIDACION.md](docs/VALIDACION.md): matriz de validación (P5) y protocolos de la prueba con usuarios, del Narrador y de Lighthouse.
+- [docs/NOTAS-DE-VERSION.md](docs/NOTAS-DE-VERSION.md): qué trae cada versión.
 - [AGENTS.md](AGENTS.md): reglas para agentes de IA.
