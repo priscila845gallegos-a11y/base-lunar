@@ -2,7 +2,7 @@
 
 Juego web educativo de decisiones para niñas y niños de 7 a 12 años. Quien juega comanda una base en la superficie de la Luna durante 5 situaciones reales del espacio y aprende que cada recurso tiene un costo: energía, agua y oxígeno, y protección contra la radiación.
 
-> **Estado: fase F2 (Motor y pruebas) en revisión.** El juego ya se puede jugar de principio a fin. El Nivel 4 usa el dato histórico real hasta F3, y la voz y el modo demo llegan en F4. Ver [Plan y estado](#plan-y-estado).
+> **Estado: F3 en curso. Se está rediseñando la interfaz como aplicación de escritorio (C# + WPF).** La versión web de F0–F2 está terminada y se puede jugar de principio a fin. Sigue siendo el acceso por enlace y desde el móvil. Ver [Versión de escritorio](#versión-de-escritorio-windows) y [Plan y estado](#plan-y-estado).
 
 ## Cómo se juega
 
@@ -21,6 +21,26 @@ Juego web educativo de decisiones para niñas y niños de 7 a 12 años. Quien ju
 - Parámetros de demostración: `?nivel=4` (empezar en un nivel), `?offline=1` (forzar el respaldo histórico) y `?debug=1` (ver el estado interno).
 
 Los parámetros de demostración llegan en F4.
+
+## Versión de escritorio (Windows)
+
+En construcción (F3). Es la misma partida con una interfaz nueva de videojuego, hecha en C# con WPF (.NET 10): mapa de progreso, escenas ilustradas, un astronauta animado, sonidos y voz. Las reglas no cambian. El núcleo se trasladó a C# y se comprueba contra la versión web (ver [DECISIONES.md](DECISIONES.md), D-32 a D-37).
+
+- Requisitos: Windows 10 u 11 y el SDK de .NET 10.
+- Pruebas del núcleo: `dotnet test escritorio/BaseLunar.sln`. Son 60 pruebas: las 39 de tests.html, la tabla de balance de 16 combinaciones y 5 de paridad con js/.
+
+```
+escritorio/
+├── BaseLunar.sln
+├── src/BaseLunar.Nucleo/       # Núcleo sin interfaz                                   (F3.1 ✔)
+│   ├── Configuracion.cs        # ← js/config.js
+│   ├── Contenido/              # ← js/levels.js: Guion.cs, Textos.cs y Modelo.cs
+│   ├── Motor/Motor.cs          # ← js/game.js: mismas funciones, reglas y eventos
+│   ├── Modelos/                # Estado, eventos y medidores
+│   └── Donki/                  # ← js/nasaData.js: el mismo JSON literal, embebido
+├── src/BaseLunar.App/          # Interfaz WPF                                          (F3.2–F3.5)
+└── tests/BaseLunar.Pruebas/    # MSTest: motor, contenido, simulador, balance y paridad (F3.1 ✔)
+```
 
 ## Arquitectura
 
@@ -102,11 +122,13 @@ Sin cuentas, sin cookies y sin analítica. El nombre del certificado solo se mue
 |---|---|---|---|
 | F0 · Preparación | 0:30 | Repositorio, documentación, fuentes verificadas o marcadas | Hecha (P0 aprobada) |
 | F1 · Maquetación | 1:30 | index.html y style.css con datos de ejemplo | Hecha (P1 aprobada) |
-| F2 · Motor y pruebas | 2:00 | levels.js, game.js, ui.js y tests.html en verde | En revisión (P2) |
-| F3 · NASA DONKI | 1:00 | nasaData.js con timeout, validación, caché y respaldo | Pendiente |
-| F4 · Pulido y finales | 1:00 | Inicio, certificado, Misión Abortada, voz, demo | Pendiente |
-| F5 · Validación | 1:00 | Matriz de pruebas, Lighthouse, prueba con usuarios | Pendiente |
-| F6 · Despliegue | 0:30 | Enlace público, ZIP offline, tag v1.0.0 | Pendiente |
+| F2 · Motor y pruebas | 2:00 | levels.js, game.js, ui.js y tests.html en verde | Hecha (P2 aprobada) |
+| F3 · Rediseño de escritorio (C# + WPF) | 6:30 | F3.1 núcleo en C# con paridad ✔ · F3.2 estructura · F3.3 arte y animación · F3.4 sonido y voz · F3.5 NASA DONKI | En curso (F3.1 en revisión) |
+| F4 · Pulido y finales | 0:45 | Certificado imprimible, modo demo, alto contraste | Pendiente |
+| F5 · Validación | 1:00 | Pruebas, partidas automatizadas, Narrador y prueba con usuarios | Pendiente |
+| F6 · Despliegue | 0:30 | Web en GitHub Pages, ZIP portable de escritorio y tag v1.0.0 | Pendiente |
+
+El rediseño amplía el presupuesto inicial de 8 horas (DECISIONES.md, D-37).
 
 ## Documentación del proyecto
 

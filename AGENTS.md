@@ -61,6 +61,16 @@ Este archivo es para cualquier agente de IA que trabaje en este repositorio. Lé
 - El simulador de balance tiene que confirmar 0 estados sin salida. Referencia con las cifras v2, idéntica con y sin clase X: 59 rutas, 45 victorias (16 con 3 respaldos, 13 con 2 y 16 con 1) y 14 Misiones Abortadas.
 - Si cambias alguna cifra de `js/levels.js`, vuelve a ejecutar el simulador y anota el cambio en DECISIONES.md.
 
+## Versión de escritorio (`escritorio/`)
+
+- Desde F3 es la experiencia principal (D-32): C# con WPF sobre .NET 10. La versión web de la raíz no se modifica.
+- `BaseLunar.Nucleo` es el núcleo sin interfaz, con las mismas reglas, textos y eventos que js/. Nunca cambies una regla o un texto en un solo lado: cambia los dos y deja que las pruebas de paridad lo confirmen.
+- `dotnet test escritorio/BaseLunar.sln` tiene que pasar entero antes de cualquier commit que toque `escritorio/`.
+- La aplicación WPF solo presenta: escucha los eventos del motor y los convierte en animación, sonido, voz y anuncios. Nunca decide reglas.
+- Stack cerrado: C# y las bibliotecas de .NET y Windows. Sin paquetes de terceros (solo los oficiales de Microsoft, como MSTest) y sin motores externos.
+- Convenciones de C# (D-35): nombres en español, PascalCase en lo público, camelCase en lo local y `record` inmutables. El núcleo compila sin advertencias.
+- Las reglas de contenido, privacidad y honestidad de este archivo valen igual en escritorio.
+
 ## Fuera de alcance
 
-Backend, cuentas, ranking en línea, analítica, cookies, varios idiomas, frameworks y paso de compilación.
+Backend, cuentas, ranking en línea, analítica, cookies y varios idiomas. En la web, además, frameworks y paso de compilación; en escritorio se compila con .NET por decisión del equipo (D-32).
