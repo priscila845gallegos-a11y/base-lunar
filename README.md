@@ -29,13 +29,13 @@ Los parámetros de demostración llegan en F4.
 
 ## Versión de escritorio (Windows)
 
-En construcción (F3). Es la misma partida con una interfaz nueva de videojuego, hecha en C# con WPF (.NET 10). Tiene un mapa de progreso por el que camina el astronauta, una escena ilustrada para cada nivel y una animación para cada una de las 10 elecciones. Los fallos se muestran con variantes amables, y hay barras animadas, partículas y un glosario «?» con fuentes de la NASA. Los efectos de sonido se generan con código, y «Escuchar» lee la tarjeta con una voz en español del propio equipo. Las reglas no cambian: el núcleo se trasladó a C# y se comprueba contra la versión web (ver [DECISIONES.md](DECISIONES.md), D-32 a D-52).
+En construcción (F3). Es la misma partida con una interfaz nueva de videojuego, hecha en C# con WPF (.NET 10). Tiene un mapa de progreso por el que camina el astronauta, una escena ilustrada para cada nivel y una animación para cada una de las 10 elecciones. Los fallos se muestran con variantes amables, y hay barras animadas, partículas y un glosario «?» con fuentes de la NASA. Los efectos de sonido se generan con código, y «Escuchar» lee la tarjeta con una voz en español del propio equipo. Las reglas no cambian: el núcleo se trasladó a C# y se comprueba contra la versión web (ver [DECISIONES.md](DECISIONES.md), D-32 a D-53).
 
 - Requisitos: Windows 10 u 11 y el SDK de .NET 10. Para «Escuchar» hace falta una voz de Windows en español (si no hay, el botón no aparece).
 - Jugar: `dotnet run --project escritorio/src/BaseLunar.App`. Con teclado: A/B o 1/2 para elegir, Enter para continuar, F11 para la pantalla completa y Esc para salir de ella.
-- Pruebas: `dotnet test escritorio/BaseLunar.sln`. Son 140 pruebas:
+- Pruebas: `dotnet test escritorio/BaseLunar.sln`. Son 150 pruebas:
   - 60 del núcleo: las 39 de tests.html, la tabla de balance y 5 de paridad con js/.
-  - 80 de la interfaz: textos, pantalla, accesibilidad, teclado, escena (10 consecuencias, fallos, victoria y abortada), glosario, sonido y voz, y 3 partidas con UI Automation.
+  - 90 de la interfaz: textos, pantalla, accesibilidad, teclado, escena (10 consecuencias, fallos, victoria y abortada), glosario, sonido y voz (con medidas de calidad del audio), y 3 partidas con UI Automation.
 - Las 3 partidas con UI Automation abren la ventana del juego unos segundos. Para omitirlas: `--filter "TestCategory!=UIAutomation"`.
 - Las capturas de las pruebas quedan en `escritorio/capturas/`: 8 pantallas a 4 tamaños y, con el prefijo `f33-`, el estado final y un fotograma a mitad de cada animación.
 
