@@ -11,13 +11,14 @@ namespace BaseLunar.App.Audio;
 public static class Sintetizador
 {
     public const int Muestreo = 22050;
-    private const double Margen = 0.85;
+
+    /// <summary>Techo de pico de cada efecto (−9 dBFS): deja margen para que varios suenen a la vez.</summary>
+    public const double TechoDb = -9;
 
     private enum Onda
     {
         Seno,
         Triangulo,
-        Sierra,
     }
 
     private static readonly Dictionary<Sonido, byte[]> Cache = [];
@@ -27,10 +28,21 @@ public static class Sintetizador
     {
         lock (Cache)
         {
-            if (!Cache.TryGetValue(sonido, out var wav)) Cache[sonido] = wav = Empaquetar(Muestras(sonido));
+            if (!Cache.TryGetValue(sonido, out var wav)) Cache[sonido] = wav = Empaquetar(Muestras(sonido), NivelDb(sonido));
             return wav;
         }
     }
+
+    /// <summary>
+    /// Nivel medio objetivo (dBFS): los de interfaz suenan suaves, los avisos un poco más y los grandes
+    /// momentos algo más fuertes. Así ninguno sobresale ni asusta (D-49).
+    /// </summary>
+    public static double NivelDb(Sonido sonido) => sonido switch
+    {
+        Sonido.Seleccion or Sonido.Glosario or Sonido.Costo => -24,
+        Sonido.Victoria or Sonido.Abortada => -20,
+        _ => -22,
+    };
 
     /// <summary>Las muestras de un efecto, entre −1 y 1.</summary>
     public static float[] Muestras(Sonido sonido) => sonido switch
@@ -43,14 +55,14 @@ public static class Sintetizador
         Sonido.NivelSuperado => Mezclar((Tono(392, 120, Onda.Triangulo, 0.35), 0), (Tono(523.3, 120, Onda.Triangulo, 0.35), 110),
             (Tono(659.3, 120, Onda.Triangulo, 0.35), 220), (Tono(784, 320, Onda.Triangulo, 0.35), 330)),
         Sonido.Respaldo => Mezclar((Tono(493.9, 180, Onda.Triangulo, 0.33), 0), (Tono(392, 280, Onda.Triangulo, 0.33), 200)),
-        Sonido.Rebobinar => Mezclar((Ruido(420, 0.22, 600, 4000), 0), (Tono(300, 420, Onda.Seno, 0.25, hasta: 900), 0)),
+        Sonido.Rebobinar => Mezclar((Ruido(420, 0.18, 400, 1800), 0), (Tono(300, 420, Onda.Seno, 0.3, hasta: 900), 0)),
         Sonido.Victoria => Mezclar((Tono(523.3, 140, Onda.Triangulo, 0.33), 0), (Tono(659.3, 140, Onda.Triangulo, 0.33), 130),
             (Tono(784, 140, Onda.Triangulo, 0.33), 260), (Tono(1046.5, 280, Onda.Triangulo, 0.33), 390),
             (Tono(523.3, 650, Onda.Seno, 0.22), 660), (Tono(659.3, 650, Onda.Seno, 0.22), 660), (Tono(784, 650, Onda.Seno, 0.22), 660)),
         Sonido.Abortada => Mezclar((Ruido(700, 0.25, 300, 1200), 0), (Tono(200, 700, Onda.Seno, 0.25, hasta: 600), 0),
             (Tono(523.3, 450, Onda.Seno, 0.2), 750), (Tono(659.3, 450, Onda.Seno, 0.2), 750), (Tono(784, 450, Onda.Seno, 0.2), 750)),
-        Sonido.Llamarada => Mezclar((Tono(1200, 280, Onda.Sierra, 0.22, hasta: 180), 0), (Ruido(280, 0.2, 3000, 500), 0)),
-        Sonido.Entrar => Mezclar((Ruido(380, 0.16, 3000, 600), 0), (Tono(440, 220, Onda.Seno, 0.2, hasta: 660), 150)),
+        Sonido.Llamarada => Mezclar((Tono(900, 300, Onda.Triangulo, 0.3, hasta: 160), 0), (Ruido(300, 0.18, 1600, 300), 0)),
+        Sonido.Entrar => Mezclar((Ruido(380, 0.14, 1600, 400), 0), (Tono(440, 220, Onda.Seno, 0.25, hasta: 660), 150)),
         Sonido.Glosario => Tono(600, 85, Onda.Seno, 0.35, hasta: 900),
         _ => Silencio(50),
     };
@@ -79,7 +91,6 @@ public static class Sintetizador
             var valor = onda switch
             {
                 Onda.Triangulo => 4 * Math.Abs(fase - 0.5) - 1,
-                Onda.Sierra => 2 * fase - 1,
                 _ => Math.Sin(2 * Math.PI * fase),
             };
             muestras[i] = (float)(valor * volumen * Envolvente(i, n));
@@ -87,19 +98,20 @@ public static class Sintetizador
         return muestras;
     }
 
-    /// <summary>Ruido suave con un filtro de paso bajo que barre de una frecuencia de corte a otra.</summary>
+    /// <summary>Ruido suave con un filtro de paso bajo doble (12 dB por octava) que barre de un corte a otro.</summary>
     private static float[] Ruido(double milisegundos, double volumen, double corteDesde, double corteHasta)
     {
         var azar = new Random(17);
         var n = Cantidad(milisegundos);
         var muestras = new float[n];
-        var filtrado = 0.0;
+        double primero = 0, segundo = 0;
         for (var i = 0; i < n; i++)
         {
             var corte = corteDesde + (corteHasta - corteDesde) * i / n;
             var alfa = 1 - Math.Exp(-2 * Math.PI * corte / Muestreo);
-            filtrado += alfa * (azar.NextDouble() * 2 - 1 - filtrado);
-            muestras[i] = (float)(filtrado * volumen * 2 * Envolvente(i, n));
+            primero += alfa * (azar.NextDouble() * 2 - 1 - primero);
+            segundo += alfa * (primero - segundo);
+            muestras[i] = (float)(segundo * volumen * 3 * Envolvente(i, n));
         }
         return muestras;
     }
@@ -128,10 +140,23 @@ public static class Sintetizador
 
     // ---------- WAV ----------
 
-    /// <summary>Normaliza (sin saturar) y escribe un WAV PCM de 16 bits mono.</summary>
-    public static byte[] Empaquetar(float[] muestras)
+    /// <summary>
+    /// Ajusta el efecto a su nivel medio objetivo sin pasar del techo de pico y escribe un WAV PCM de 16 bits
+    /// mono. Sin nivel, solo se evita saturar (las pruebas lo usan con silencio).
+    /// </summary>
+    public static byte[] Empaquetar(float[] muestras, double? nivelDb = null)
     {
-        var pico = Math.Max(1f, muestras.Length == 0 ? 1f : muestras.Max(Math.Abs));
+        var pico = muestras.Length == 0 ? 0 : muestras.Max(Math.Abs);
+        var ganancia = 1.0;
+        if (nivelDb is { } nivel && pico > 0)
+        {
+            var techo = Math.Pow(10, TechoDb / 20);
+            ganancia = Math.Min(Math.Pow(10, nivel / 20) / NivelMedio(muestras), techo / pico);
+        }
+        else if (pico > 1)
+        {
+            ganancia = 1 / pico;
+        }
         using var memoria = new MemoryStream();
         using (var escritor = new BinaryWriter(memoria, Encoding.ASCII, leaveOpen: true))
         {
@@ -149,8 +174,24 @@ public static class Sintetizador
             escritor.Write((short)16);
             escritor.Write("data"u8);
             escritor.Write(datos);
-            foreach (var muestra in muestras) escritor.Write((short)Math.Round(muestra / pico * Margen * short.MaxValue));
+            foreach (var muestra in muestras) escritor.Write((short)Math.Round(Math.Clamp(muestra * ganancia, -1, 1) * short.MaxValue));
         }
         return memoria.ToArray();
+    }
+
+    /// <summary>Nivel medio de la parte que suena: bloques de 10 ms por encima de −50 dB respecto al pico.</summary>
+    private static double NivelMedio(float[] muestras)
+    {
+        var pico = muestras.Max(Math.Abs);
+        var bloque = Muestreo / 100;
+        var energias = new List<double>();
+        for (var b = 0; b + bloque <= muestras.Length; b += bloque)
+        {
+            var energia = 0.0;
+            for (var i = b; i < b + bloque; i++) energia += muestras[i] * (double)muestras[i];
+            energia /= bloque;
+            if (energia > pico * pico * 1e-5) energias.Add(energia);
+        }
+        return energias.Count == 0 ? pico : Math.Sqrt(energias.Average());
     }
 }

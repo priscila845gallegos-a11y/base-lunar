@@ -60,7 +60,7 @@ public sealed class ReproductorWindows : IReproductor, IDisposable
         if (roto) return;
         try
         {
-            activas.Add(Reproduccion.Empezar(wav));
+            activas.Add(Reproduccion.Empezar(wav, VolumenCero));
             limpieza.Start();
         }
         catch (Exception)
@@ -68,6 +68,9 @@ public sealed class ReproductorWindows : IReproductor, IDisposable
             roto = true; // sin dispositivo de audio o sin winmm: el juego sigue en silencio
         }
     }
+
+    /// <summary>Pruebas: abre cada salida con el volumen a cero, para recorrer la API real sin hacer ruido.</summary>
+    internal bool VolumenCero { get; init; }
 
     /// <summary>Pruebas: salidas abiertas, si el audio falló y limpieza inmediata.</summary>
     internal int Activas => activas.Count;
@@ -107,7 +110,7 @@ public sealed class ReproductorWindows : IReproductor, IDisposable
         public bool Terminada => cabecera == IntPtr.Zero
             || (Marshal.ReadInt32(cabecera, Marshal.OffsetOf<CabeceraOnda>(nameof(CabeceraOnda.Banderas)).ToInt32()) & Hecho) != 0;
 
-        public static Reproduccion Empezar(byte[] wav)
+        public static Reproduccion Empezar(byte[] wav, bool volumenCero)
         {
             var reproduccion = new Reproduccion();
             try
@@ -125,6 +128,7 @@ public sealed class ReproductorWindows : IReproductor, IDisposable
                     BitsPorMuestra = 16,
                 };
                 Comprobar(Nativo.waveOutOpen(out reproduccion.salida, MapeadorDeOnda, ref formato, IntPtr.Zero, IntPtr.Zero, 0));
+                if (volumenCero) Comprobar(Nativo.waveOutSetVolume(reproduccion.salida, 0));
                 var tamano = Marshal.SizeOf<CabeceraOnda>();
                 reproduccion.cabecera = Marshal.AllocHGlobal(tamano);
                 Marshal.StructureToPtr(new CabeceraOnda { Datos = reproduccion.datos, Largo = largo }, reproduccion.cabecera, false);
@@ -205,5 +209,8 @@ public sealed class ReproductorWindows : IReproductor, IDisposable
 
         [DllImport("winmm.dll")]
         public static extern int waveOutClose(IntPtr salida);
+
+        [DllImport("winmm.dll")]
+        public static extern int waveOutSetVolume(IntPtr salida, uint volumen);
     }
 }

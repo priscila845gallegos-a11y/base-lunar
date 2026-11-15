@@ -1,3 +1,5 @@
+using System.IO;
+using System.Speech.AudioFormat;
 using System.Speech.Synthesis;
 
 namespace BaseLunar.App.Audio;
@@ -56,6 +58,29 @@ public sealed class NarradorWindows : INarrador, IDisposable
         {
             // Una voz que falla no puede bloquear el juego.
         }
+    }
+
+    /// <summary>
+    /// Pruebas: genera en memoria (sin altavoces) lo que se oiría, con la misma voz y velocidad. Devuelve un
+    /// WAV PCM de 16 bits mono a 22 050 Hz, o null si no hay voz.
+    /// </summary>
+    internal byte[]? Grabar(string texto)
+    {
+        if (voz is null || NombreVoz is null) return null;
+        using var sintetizador = new SpeechSynthesizer();
+        sintetizador.SelectVoice(NombreVoz);
+        sintetizador.Rate = voz.Rate;
+        using var memoria = new MemoryStream();
+        sintetizador.SetOutputToAudioStream(memoria, new SpeechAudioFormatInfo(Sintetizador.Muestreo, AudioBitsPerSample.Sixteen, AudioChannel.Mono));
+        sintetizador.Speak(texto);
+        sintetizador.SetOutputToNull();
+        var pcm = memoria.ToArray();
+        var wav = new byte[44 + pcm.Length];
+        Array.Copy(Sintetizador.Empaquetar([]), wav, 44);
+        BitConverter.GetBytes(36 + pcm.Length).CopyTo(wav, 4);
+        BitConverter.GetBytes(pcm.Length).CopyTo(wav, 40);
+        pcm.CopyTo(wav, 44);
+        return wav;
     }
 
     public void Callar()
