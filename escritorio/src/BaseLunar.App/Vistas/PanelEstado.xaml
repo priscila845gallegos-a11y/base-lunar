@@ -24,7 +24,7 @@
                     </Border.Background>
                     <c:Icono Width="26" Height="26" Geometria="{StaticResource Icono.Luna}" Foreground="{StaticResource Pincel.TextoOscuro}" />
                 </Border>
-                <StackPanel Margin="10,0,0,0" VerticalAlignment="Center">
+                <StackPanel x:Name="Nombre" Margin="10,0,0,0" VerticalAlignment="Center">
                     <TextBlock Text="{x:Static vm:TextosApp.Titulo}" FontSize="20" FontWeight="Bold" AutomationProperties.HeadingLevel="Level1" />
                     <TextBlock x:Name="Subtitulo" Text="{x:Static vm:TextosApp.Subtitulo}" FontSize="{StaticResource Tamano.Pequeno}" Foreground="{StaticResource Pincel.TextoSuave}" />
                 </StackPanel>
@@ -78,8 +78,28 @@
                            AutomationProperties.AutomationId="ProgresoTexto" />
             </StackPanel>
 
+            <!-- Escuchar (lee la tarjeta) y efectos de sonido (enciende o apaga), como en la web (D-21) -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+            <Button x:Name="BotonEscuchar" Style="{StaticResource BotonBarra}" Margin="0,0,8,0" Command="{Binding Escuchar}"
+                    Visibility="{Binding PuedeEscuchar, Converter={StaticResource Visible}}"
+                    AutomationProperties.Name="{x:Static vm:TextosApp.Escuchar}" AutomationProperties.AutomationId="BotonEscuchar">
+                <StackPanel Orientation="Horizontal">
+                    <c:Icono Width="22" Height="22" Geometria="{StaticResource Icono.Escuchar}" />
+                    <c:TextoDecorativo x:Name="TextoEscuchar" Text="{x:Static vm:TextosApp.Escuchar}" Margin="8,0,0,0" VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+            <ToggleButton x:Name="BotonSonido" Style="{StaticResource BotonBarraAlternar}" Margin="0,0,14,0" IsChecked="{Binding SonidoActivo, Mode=TwoWay}"
+                          AutomationProperties.Name="{x:Static vm:TextosApp.EfectosDeSonido}" AutomationProperties.AutomationId="BotonSonido">
+                <Grid>
+                    <c:Icono Width="22" Height="22" Geometria="{StaticResource Icono.Sonido}"
+                             Visibility="{Binding SonidoActivo, Converter={StaticResource Visible}}" />
+                    <c:Icono Width="22" Height="22" Geometria="{StaticResource Icono.Silencio}" Foreground="{StaticResource Pincel.TextoSuave}"
+                             Visibility="{Binding SonidoActivo, Converter={StaticResource Oculto}}" />
+                </Grid>
+            </ToggleButton>
+
             <!-- Respaldos: salvavidas encendidos o apagados -->
-            <StackPanel Grid.Column="2" VerticalAlignment="Center">
+            <StackPanel VerticalAlignment="Center">
                 <ItemsControl ItemsSource="{Binding Respaldos}" Focusable="False" HorizontalAlignment="Center">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -102,6 +122,7 @@
                 <TextBlock Text="{x:Static vm:TextosApp.Respaldos}" FontSize="{StaticResource Tamano.Pequeno}" Foreground="{StaticResource Pincel.TextoSuave}"
                            HorizontalAlignment="Center" AutomationProperties.Name="{Binding TextoRespaldos}"
                            AutomationProperties.AutomationId="RespaldosTexto" />
+            </StackPanel>
             </StackPanel>
         </Grid>
     </Border>

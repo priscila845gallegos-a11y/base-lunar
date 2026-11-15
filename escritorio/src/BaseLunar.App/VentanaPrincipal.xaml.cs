@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using BaseLunar.App.Audio;
 using BaseLunar.App.VistaModelos;
 
 namespace BaseLunar.App;
@@ -10,8 +11,20 @@ public partial class VentanaPrincipal : Window
 {
     private (WindowState Estado, WindowStyle Estilo, ResizeMode Redimension)? antesDePantallaCompleta;
 
-    public VentanaPrincipal() : this(new JuegoVM())
+    public VentanaPrincipal() : this(CrearJuego())
     {
+    }
+
+    /// <summary>
+    /// El juego con sonido, voz y ajustes reales. Con --silencio (lo usan las pruebas de UI Automation) no
+    /// suena nada y no se tocan los ajustes guardados.
+    /// </summary>
+    private static JuegoVM CrearJuego()
+    {
+        var tormenta = DatosDonki.RespaldoHistorico();
+        if (Environment.GetCommandLineArgs().Contains("--silencio", StringComparer.OrdinalIgnoreCase))
+            return new JuegoVM(tormenta, new ReproductorMudo(), new NarradorMudo(), Ajustes.EnMemoria());
+        return new JuegoVM(tormenta, new ReproductorWindows(), new NarradorWindows(), Ajustes.Cargar(Ajustes.RutaPredeterminada));
     }
 
     public VentanaPrincipal(JuegoVM juego)
@@ -19,6 +32,7 @@ public partial class VentanaPrincipal : Window
         InitializeComponent();
         Juego = juego;
         DataContext = juego;
+        Closed += (_, _) => juego.Dispose();
         var area = SystemParameters.WorkArea;
         Width = Math.Max(MinWidth, Math.Min(Width, area.Width * 0.92));
         Height = Math.Max(MinHeight, Math.Min(Height, area.Height * 0.92));

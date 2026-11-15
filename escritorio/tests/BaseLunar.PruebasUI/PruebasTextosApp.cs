@@ -26,7 +26,7 @@ public sealed partial class PruebasTextosApp
     {
         string[] textos =
         [
-            TextosApp.TituloVentana, TextosApp.Titulo, TextosApp.Subtitulo, TextosApp.DatoReal,
+            TextosApp.TituloVentana, TextosApp.Titulo, TextosApp.Subtitulo, TextosApp.DatoReal, TextosApp.Escuchar,
             TextosApp.Inicio.Etiqueta, TextosApp.Inicio.Titulo, TextosApp.Inicio.Historia, TextosApp.Inicio.Nota,
             .. TextosApp.Inicio.Instrucciones,
             TextosApp.Abortada.Etiqueta, TextosApp.Abortada.Titulo, TextosApp.Abortada.Historia,
@@ -51,6 +51,7 @@ public sealed partial class PruebasTextosApp
         Assert.Contains($"aria-label=\"{TextosApp.RegionMedidores}\"", html);
         Assert.Contains($"aria-label=\"{TextosApp.RegionTarjeta}\"", html);
         Assert.Contains($"aria-label=\"{TextosApp.RegionDecisiones}\"", html);
+        Assert.Contains($"aria-label=\"{TextosApp.EfectosDeSonido}\"", html);
         Assert.Contains("<span class=\"sr-only\">Opción A: </span>", html);
     }
 

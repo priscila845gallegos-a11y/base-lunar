@@ -1,4 +1,5 @@
 using System.Globalization;
+using BaseLunar.App.Audio;
 using static BaseLunar.Nucleo.Configuracion;
 
 namespace BaseLunar.App.VistaModelos;
@@ -180,6 +181,55 @@ public static class Presentacion
             Fase.Victoria => new Momento(TipoMomento.Victoria, estado.Nivel, Desde: estado.Nivel),
             _ => new Momento(TipoMomento.Inicio, 0),
         };
+    }
+
+    /// <summary>
+    /// Los efectos de sonido de cada acción, con su retraso para acompañar a la animación: clic al elegir,
+    /// subida y bajada de los medidores, «¡Al máximo!», nivel superado, respaldo, rebobinado, victoria…
+    /// </summary>
+    public static IReadOnlyList<Pista> SonidosDe(Estado anterior, ResultadoMotor resultado)
+    {
+        var momento = MomentoDe(anterior, resultado);
+        var eventos = resultado.Eventos;
+        var pistas = new List<Pista>();
+        switch (momento.Tipo)
+        {
+            case TipoMomento.Inicio:
+                pistas.Add(new Pista(Sonido.Seleccion));
+                break;
+            case TipoMomento.EntrarNivel:
+                pistas.Add(new Pista(Sonido.Entrar));
+                if (momento.ClaseX) pistas.Add(new Pista(Sonido.Llamarada, 1900));
+                if (momento.Ayuda) pistas.Add(new Pista(Sonido.Ganancia, 2300));
+                break;
+            case TipoMomento.Consecuencia:
+                pistas.Add(new Pista(Sonido.Seleccion));
+                if (eventos.OfType<EfectosAplicados>().FirstOrDefault() is { } efectos)
+                {
+                    if (efectos.Efectos.Values.Any(v => v > 0)) pistas.Add(new Pista(Sonido.Ganancia, 300));
+                    if (efectos.Efectos.Values.Any(v => v < 0)) pistas.Add(new Pista(Sonido.Costo, 600));
+                }
+                if (eventos.OfType<MedidorAlMaximo>().Any()) pistas.Add(new Pista(Sonido.AlMaximo, 850));
+                pistas.Add(new Pista(Sonido.NivelSuperado, 1300));
+                break;
+            case TipoMomento.Fallo:
+                pistas.Add(new Pista(Sonido.Seleccion));
+                pistas.Add(new Pista(Sonido.Respaldo, 350));
+                break;
+            case TipoMomento.Reintento:
+                pistas.Add(new Pista(Sonido.Rebobinar));
+                if (momento.Ayuda) pistas.Add(new Pista(Sonido.Ganancia, 600));
+                break;
+            case TipoMomento.Victoria:
+                pistas.Add(new Pista(Sonido.Victoria));
+                break;
+            case TipoMomento.Abortada:
+                pistas.Add(new Pista(Sonido.Seleccion));
+                pistas.Add(new Pista(Sonido.Respaldo, 350));
+                pistas.Add(new Pista(Sonido.Abortada, 1600));
+                break;
+        }
+        return pistas;
     }
 
     /// <summary>El medidor que explica el fallo: el primero en la prioridad 💧 → 🛡️ → ⚡ o el del requisito.</summary>

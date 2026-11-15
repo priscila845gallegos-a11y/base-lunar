@@ -132,9 +132,21 @@ internal static class Capturas
         var codificador = new PngBitmapEncoder();
         codificador.Frames.Add(BitmapFrame.Create(mapa));
         var ruta = Path.Combine(Carpeta, nombre + ".png");
-        using var archivo = File.Create(ruta);
-        codificador.Save(archivo);
-        return ruta;
+        using var memoria = new MemoryStream();
+        codificador.Save(memoria);
+        // La carpeta está dentro de OneDrive, que bloquea un momento los archivos nuevos al sincronizarlos.
+        for (var intento = 1; ; intento++)
+        {
+            try
+            {
+                File.WriteAllBytes(ruta, memoria.ToArray());
+                return ruta;
+            }
+            catch (IOException) when (intento < 10)
+            {
+                Thread.Sleep(150);
+            }
+        }
     }
 }
 

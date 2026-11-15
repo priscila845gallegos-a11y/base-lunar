@@ -250,6 +250,34 @@
         </Setter>
     </Style>
 
+    <!-- Botones de la barra superior: Escuchar y efectos de sonido (44 DIP de alto) -->
+    <Style x:Key="BotonBarra" TargetType="ButtonBase">
+        <Setter Property="Foreground" Value="{StaticResource Pincel.Texto}" />
+        <Setter Property="FontSize" Value="{StaticResource Tamano.Pequeno}" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="MinHeight" Value="44" />
+        <Setter Property="MinWidth" Value="44" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{StaticResource Foco}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ButtonBase">
+                    <Border x:Name="Marco" CornerRadius="22" Padding="11,0" Background="{StaticResource Pincel.Fondo}"
+                            BorderBrush="{StaticResource Pincel.BordeControl}" BorderThickness="2">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Marco" Property="Background" Value="{StaticResource Pincel.Superficie}" />
+                            <Setter TargetName="Marco" Property="BorderBrush" Value="{StaticResource Pincel.Texto}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="BotonBarraAlternar" TargetType="ToggleButton" BasedOn="{StaticResource BotonBarra}" />
+
     <!-- Letra A o B en un círculo oscuro -->
     <Style x:Key="LetraOpcion" TargetType="Border">
         <Setter Property="Width" Value="44" />

@@ -1,4 +1,6 @@
 using System.Windows.Threading;
+using BaseLunar.App.Audio;
+using BaseLunar.App.Controles;
 using static BaseLunar.Nucleo.Configuracion;
 
 namespace BaseLunar.App.VistaModelos;
@@ -11,9 +13,12 @@ public sealed record Anuncio(string Texto, bool Urgente);
 /// publica el nuevo estado; anima, anuncia y bloquea los controles durante la transición (D-30).
 /// Nunca decide reglas: todo lo decide <see cref="Motor"/>.
 /// </summary>
-public sealed class JuegoVM : Observable
+public sealed class JuegoVM : Observable, IDisposable
 {
     private readonly DispatcherTimer transicion;
+    private readonly IReproductor reproductor;
+    private readonly INarrador narrador;
+    private readonly Ajustes ajustes;
     private Estado estado = Motor.CrearEstadoInicial();
     private AyudaActivada? ayuda;
 
@@ -21,15 +26,24 @@ public sealed class JuegoVM : Observable
     {
     }
 
+    /// <summary>Sin sonido ni voz y sin guardar ajustes: así lo usan las pruebas.</summary>
+    public JuegoVM(Tormenta tormenta) : this(tormenta, new ReproductorMudo(), new NarradorMudo(), Ajustes.EnMemoria())
+    {
+    }
+
     /// <param name="tormenta">Dato del Nivel 4. F3.2: el respaldo histórico; F3.5: la consulta en vivo.</param>
-    public JuegoVM(Tormenta tormenta)
+    public JuegoVM(Tormenta tormenta, IReproductor reproductor, INarrador narrador, Ajustes ajustes)
     {
         Tormenta = tormenta;
+        this.reproductor = reproductor;
+        this.narrador = narrador;
+        this.ajustes = ajustes;
         Medidores = Guion.InfoMedidores.Select(i => new MedidorVM(i)).ToArray();
         Estaciones = Guion.Niveles.Select(n => new EstacionVM(n)).ToArray();
         Elegir = new Comando(p => ElegirOpcion(p as string ?? string.Empty), () => !Bloqueado);
         Principal = new Comando(_ => AccionPrincipal(), () => !Bloqueado);
         VerTermino = new Comando(p => AlternarTermino(p as Termino), () => true);
+        Escuchar = new Comando(_ => narrador.Leer(TextoParaEscuchar()), () => narrador.Disponible);
         transicion = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(Tiempos.TransicionMs) };
         transicion.Tick += (_, _) => TerminarTransicion();
         Pintar();
@@ -55,6 +69,26 @@ public sealed class JuegoVM : Observable
 
     /// <summary>Abre o cierra la explicación de una palabra del glosario.</summary>
     public Comando VerTermino { get; }
+
+    /// <summary>Lee en voz alta lo que muestra la tarjeta (D-21).</summary>
+    public Comando Escuchar { get; }
+
+    /// <summary>Hay una voz local en español: si no, el botón «Escuchar» se oculta (D-13).</summary>
+    public bool PuedeEscuchar => narrador.Disponible;
+
+    /// <summary>Efectos de sonido encendidos (el botón de la barra). La preferencia se recuerda.</summary>
+    public bool SonidoActivo
+    {
+        get => ajustes.Sonido;
+        set
+        {
+            if (ajustes.Sonido == value) return;
+            ajustes.Sonido = value;
+            ajustes.Guardar();
+            if (!value) reproductor.Cancelar();
+            Avisar();
+        }
+    }
     public bool Bloqueado { get; private set; }
 
     /// <summary>Contador que dispara el temblor de la tarjeta al activarse un respaldo.</summary>
@@ -147,7 +181,9 @@ public sealed class JuegoVM : Observable
         var nuevaAyuda = resultado.Eventos.OfType<AyudaActivada>().FirstOrDefault();
         if (nuevaAyuda is not null || Fase != Fase.Nivel) ayuda = nuevaAyuda;
         Bloqueado = true;
+        narrador.Callar();
         Pintar();
+        if (SonidoActivo) reproductor.Programar(Presentacion.SonidosDe(anterior, resultado));
         UltimoMomento = Presentacion.MomentoDe(anterior, resultado);
         Escena?.Invoke(this, UltimoMomento);
         Animar(resultado.Eventos);
@@ -166,14 +202,42 @@ public sealed class JuegoVM : Observable
         Enfocar?.Invoke(this, Fase);
     }
 
+    /// <summary>Al cerrar: calla la voz y libera las salidas de audio.</summary>
+    public void Dispose()
+    {
+        transicion.Stop();
+        (reproductor as IDisposable)?.Dispose();
+        (narrador as IDisposable)?.Dispose();
+    }
+
     /// <summary>Abre la explicación (y la anuncia) o la cierra si ya estaba abierta.</summary>
     private void AlternarTermino(Termino? termino)
     {
         TerminoAbierto = termino is null || termino == TerminoAbierto ? null : termino;
         Avisar(nameof(TerminoAbierto));
         Avisar(nameof(Definicion));
-        if (TerminoAbierto is { } abierto)
-            Anunciar?.Invoke(this, new Anuncio($"{abierto.ComoDato().Titulo}: {abierto.Definicion}", Urgente: false));
+        if (TerminoAbierto is not { } abierto) return;
+        if (SonidoActivo) reproductor.Sonar(Sonido.Glosario);
+        Anunciar?.Invoke(this, new Anuncio($"{abierto.ComoDato().Titulo}: {abierto.Definicion}", Urgente: false));
+    }
+
+    /// <summary>
+    /// Lo que lee «Escuchar»: lo principal de la tarjeta en cada fase, sin emojis. Nunca incluye el nombre
+    /// del certificado (D-13).
+    /// </summary>
+    internal string TextoParaEscuchar()
+    {
+        string[] partes = Fase switch
+        {
+            Fase.Inicio => [TextosApp.Inicio.Titulo, TextosApp.Inicio.Historia, .. TextosApp.Inicio.Instrucciones],
+            Fase.Nivel => [NombreTituloNivel + ".", Historia, AvisoX ?? string.Empty, AvisoAyuda ?? string.Empty],
+            Fase.Respaldo => [MensajeRespaldo ?? string.Empty, PistaRespaldo ?? string.Empty],
+            Fase.Resultado when Dato is { } dato => [TextoResultado ?? string.Empty, Textos.Rellenar(Textos.Anuncios.Dato, ("texto", dato.Texto)), .. dato.Extra],
+            Fase.Victoria => [TextosApp.Victoria.Titulo + ".", TextosApp.Victoria.Historia, TextoRespaldosCertificado + "."],
+            Fase.MisionAbortada => [TextosApp.Abortada.Titulo + ".", TextosApp.Abortada.Historia],
+            _ => [],
+        };
+        return string.Join(" ", partes.Where(p => p.Length > 0).Select(Iconografia.SinIconos));
     }
 
     private void Pintar()

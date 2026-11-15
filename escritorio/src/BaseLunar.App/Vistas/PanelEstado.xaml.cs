@@ -11,6 +11,14 @@ public partial class PanelEstado : UserControl
         InitializeComponent();
     }
 
-    /// <summary>En pantallas estrechas se oculta el subtítulo para dejar sitio al minimapa.</summary>
-    public void Disponer(bool compacto) => Subtitulo.Visibility = compacto ? Visibility.Collapsed : Visibility.Visible;
+    /// <summary>
+    /// En pantallas estrechas se oculta el nombre (queda el logo; el nombre está en el título de la ventana)
+    /// para dejar sitio al minimapa, al progreso y a los botones de sonido.
+    /// </summary>
+    public void Disponer(bool compacto)
+    {
+        Nombre.Visibility = compacto ? Visibility.Collapsed : Visibility.Visible;
+        // En la compacta, «Escuchar» queda solo con el ícono; la palabra sigue siendo su nombre accesible (D-21).
+        TextoEscuchar.Visibility = compacto ? Visibility.Collapsed : Visibility.Visible;
+    }
 }

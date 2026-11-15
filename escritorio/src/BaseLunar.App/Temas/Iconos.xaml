@@ -86,4 +86,17 @@
     <GeometryGroup x:Key="Icono.Avanzar">
         <PathGeometry Figures="M 5 5 a 2 2 0 0 1 3.008 -1.728 l 11.997 6.998 a 2 2 0 0 1 0.003 3.458 l -12 7 A 2 2 0 0 1 5 19 z" />
     </GeometryGroup>
+    <GeometryGroup x:Key="Icono.Sonido">
+        <PathGeometry Figures="M 11 4.702 a 0.705 0.705 0 0 0 -1.203 -0.498 L 6.413 7.587 A 1.4 1.4 0 0 1 5.416 8 H 3 a 1 1 0 0 0 -1 1 v 6 a 1 1 0 0 0 1 1 h 2.416 a 1.4 1.4 0 0 1 0.997 0.413 l 3.383 3.384 A 0.705 0.705 0 0 0 11 19.298 z" />
+        <PathGeometry Figures="M 16 9 a 5 5 0 0 1 0 6" />
+        <PathGeometry Figures="M 19.364 18.364 a 9 9 0 0 0 0 -12.728" />
+    </GeometryGroup>
+    <GeometryGroup x:Key="Icono.Silencio">
+        <PathGeometry Figures="M 11 4.702 a 0.7 0.7 0 0 0 -1.203 -0.498 L 6.413 7.587 A 1.4 1.4 0 0 1 5.416 8 H 3 a 1 1 0 0 0 -1 1 v 6 a 1 1 0 0 0 1 1 h 2.416 a 1.4 1.4 0 0 1 0.997 0.413 l 3.383 3.384 A 0.7 0.7 0 0 0 11 19.298 z" />
+        <PathGeometry Figures="m 16.5 14.5 l 5 -5" />
+        <PathGeometry Figures="m 16.5 9.5 l 5 5" />
+    </GeometryGroup>
+    <GeometryGroup x:Key="Icono.Escuchar">
+        <PathGeometry Figures="M 3 14 h 3 a 2 2 0 0 1 2 2 v 3 a 2 2 0 0 1 -2 2 H 5 a 2 2 0 0 1 -2 -2 v -7 a 9 9 0 0 1 18 0 v 7 a 2 2 0 0 1 -2 2 h -1 a 2 2 0 0 1 -2 -2 v -3 a 2 2 0 0 1 2 -2 h 3" />
+    </GeometryGroup>
 </ResourceDictionary>

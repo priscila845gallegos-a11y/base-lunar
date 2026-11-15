@@ -22,4 +22,9 @@
     <None Include="Temas\Fuentes\OFL.txt" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Voz local de Windows (SAPI): paquete oficial de Microsoft, sin conexión (D-50) -->
+    <PackageReference Include="System.Speech" Version="10.0.0" />
+  </ItemGroup>
+
 </Project>

@@ -19,6 +19,9 @@ public static class TextosApp
     public const string PrefijoOpcion = "Opción {id}: ";
     public const string DatoReal = "💡 Dato real";
 
+    public const string Escuchar = "Escuchar";
+    public const string EfectosDeSonido = "Efectos de sonido";
+
     /// <summary>Escritorio: nombre accesible de cada botón del glosario.</summary>
     public const string PreguntaGlosario = "¿Qué es {palabra}?";
 
