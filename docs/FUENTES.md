@@ -222,3 +222,11 @@ Verificación del **15-11-2026**. Se leyó cada página (HTTP 200) y se copió l
 ### Palabras que no se usan
 
 - «alunizar» y «baliza»: el Diccionario de la RAE (dle.rae.es) respondió HTTP 403 a la consulta automática. No se pudieron leer las definiciones, así que no se muestran en el juego (⚠ PENDIENTE DE VERIFICAR).
+
+## Consulta en vivo de NASA DONKI (F3.5)
+
+Prueba real del **15-11-2026** desde la aplicación de escritorio (D-54), con el rango del 16-10-2026 al 15-11-2026:
+
+- `https://api.nasa.gov/DONKI/FLR` (clave personal): HTTP 404, como en F0 (D-19).
+- `https://ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR` (sin clave): lista válida. La más intensa es una **M3.5** con pico el 05-11-2026 a las 18:33 UTC ([registro DONKI](https://ccmc.gsfc.nasa.gov/DONKI/view/FLR/49391/-1)). No hubo ninguna de clase X, así que el juego no aplica la penalización X y el 💡 lo aclara con «Las de clase X son todavía más fuertes.».
+- Coincide con lo anotado en D-09 el 14-11-2026: la más intensa del mes era una M3.5 del 05-11.
