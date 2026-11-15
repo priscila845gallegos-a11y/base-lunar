@@ -72,5 +72,7 @@ El enlace público se probó en un móvil real (P6 aprobada el 15-11-2026).
 | `BaseLunar-escritorio-v1.0.0-win-x64.zip` | El juego para Windows, con .NET incluido, el LEEME y las licencias |
 | `BaseLunar-v1.0.0-repositorio.zip` | El repositorio en el tag v1.0.0. La web funciona con doble clic en `index.html` |
 | `SHA256SUMS.txt` | La huella SHA-256 de cada ZIP |
+| `MANUAL-DE-USUARIO.pdf` | El manual de usuario, para leer o imprimir |
+| `DOCUMENTACION.pdf` | La documentación técnica |
 
 Juego educativo independiente, con datos reales de NASA y CSA. No tiene respaldo oficial de ninguna agencia.

@@ -2,7 +2,7 @@
 
 Versión 1.0.0 · 15-11-2026
 
-Este documento explica cómo está hecho el juego, con qué herramientas, cómo se valida, cómo se publica y cómo se mantiene. Está pensado para quien vaya a continuar el proyecto o a evaluarlo.
+Este documento explica cómo está hecho el juego, con qué herramientas, cómo se valida, cómo se publica y cómo se mantiene. Está pensado para quien vaya a continuar el proyecto o a evaluarlo. También está en PDF: [DOCUMENTACION.pdf](pdf/DOCUMENTACION.pdf).
 
 - Para jugar: [MANUAL-DE-USUARIO.md](MANUAL-DE-USUARIO.md).
 - La especificación original: [PROMPT-0.md](PROMPT-0.md).
@@ -125,6 +125,7 @@ No hay ninguna otra dependencia. Ni la web ni la aplicación usan CDN, analític
 | Windows PowerShell | 5.1 | `escritorio/publicar.ps1` (publicación) |
 | winget | — | Instalar GitHub CLI |
 | GitHub CLI (`gh`) | 2.104.0 | Crear el repositorio, activar Pages y crear la versión v1.0.0 |
+| `dotnet run` con un solo archivo C# | .NET 10 | `escritorio/herramientas/GenerarPdf.cs`: convierte la documentación y el manual a PDF (D-65) |
 
 ### 3.5 Herramientas de prueba y validación
 
@@ -149,19 +150,7 @@ No hay ninguna otra dependencia. Ni la web ni la aplicación usan CDN, analític
 
 ## 4. Arquitectura general
 
-```mermaid
-flowchart LR
-  subgraph Web["Web (raíz del repositorio)"]
-    cfg[js/config.js] --> lv[js/levels.js] --> nd[js/nasaData.js] --> gm[js/game.js] --> ui[js/ui.js]
-    ui --> html[index.html + style.css]
-  end
-  subgraph Escritorio["escritorio/ (C# + WPF)"]
-    nucleo[BaseLunar.Nucleo<br/>Configuracion · Guion · Motor · Donki] --> app[BaseLunar.App<br/>JuegoVM · Vistas · Animacion · Audio]
-  end
-  lv -. paridad: mismos textos y cifras .-> nucleo
-  gm -. paridad: mismas reglas y eventos .-> nucleo
-  nucleo -- HTTPS GET --> donki[(NASA DONKI)]
-```
+![Arquitectura: la web encadena config, levels, nasaData, game y ui; en escritorio, la aplicación WPF usa el núcleo, que consulta NASA DONKI; las pruebas de paridad comparan el núcleo con la web](diagramas/arquitectura.svg)
 
 La idea central es **separar las reglas de la presentación**:
 
@@ -179,9 +168,12 @@ baseLunar/
 ├── tests/tests.html                # Pruebas de la web y simulador
 ├── assets/                         # Favicon, imagen para compartir, fuentes y licencias
 ├── docs/                           # Prompt 0, fuentes, validación, notas, esta documentación y el manual
+│   ├── diagramas/                  # Diagramas en SVG
+│   └── pdf/                        # La documentación y el manual en PDF
 ├── escritorio/
 │   ├── BaseLunar.sln
 │   ├── LEEME.txt, publicar.ps1     # Versión portable
+│   ├── herramientas/GenerarPdf.cs  # Markdown → PDF
 │   ├── src/BaseLunar.Nucleo/       # Reglas, contenido, motor y DONKI (sin interfaz)
 │   ├── src/BaseLunar.App/          # Aplicación WPF
 │   ├── tests/BaseLunar.Pruebas/    # Pruebas del núcleo
@@ -209,19 +201,7 @@ baseLunar/
 
 ### 5.2 Máquina de estados
 
-```mermaid
-stateDiagram-v2
-  [*] --> Inicio
-  Inicio --> Nivel: Comenzar misión
-  Nivel --> Resultado: decisión sin fallo
-  Nivel --> Respaldo: un medidor llega a 0<br/>(o requisito no cumplido en el Nivel 5)
-  Nivel --> MisionAbortada: se pierde el último respaldo
-  Respaldo --> Nivel: Reintentar (foto restaurada)
-  Resultado --> Nivel: Continuar (niveles 1 a 4)
-  Resultado --> Victoria: Continuar (tras el Nivel 5)
-  Victoria --> Inicio: Jugar de nuevo
-  MisionAbortada --> Inicio: Jugar de nuevo
-```
+![Máquina de estados: Inicio, Nivel, Resultado, Respaldo, Victoria y Misión Abortada, con sus transiciones](diagramas/estados.svg)
 
 El motor devuelve estados inmutables y eventos tipados: `efectos`, `medidorAlMaximo`, `respaldoActivado`, `reintento`, `penalizacionX`, `ayudaActivada`, `nivelSuperado`, `victoria` y `misionAbortada`. Las acciones fuera de su fase no hacen nada, y una segunda decisión durante la transición se ignora.
 
@@ -322,17 +302,7 @@ El simulador recorre todas las rutas, con fallos y reintentos, con y sin clase X
 
 ## 8. NASA DONKI: el dato del Nivel 4
 
-```mermaid
-flowchart TD
-  A[Abrir el juego] -->|opción offline| H
-  A --> C{¿Caché de menos de 6 h y válida?}
-  C -- sí --> V[Dato EN VIVO con la hora de la consulta]
-  C -- no --> N[api.nasa.gov · 3 s como máximo]
-  N -- ok --> V
-  N -- falla --> M[CCMC · 3 s como máximo]
-  M -- ok --> V
-  M -- falla --> H[Respaldo histórico: X8.7 del 14-05-2024 · HISTÓRICO REAL]
-```
+![Cómo se obtiene el dato del Nivel 4: caché, api.nasa.gov, CCMC y respaldo histórico](diagramas/donki.svg)
 
 - **Cuándo**: la consulta se hace en segundo plano al abrir el juego. Cuando el niño llega al Nivel 4, el dato ya está, y la pantalla nunca espera. Si llega con el Nivel 4 ya empezado, se aplica en la siguiente partida, porque un nivel nunca cambia su dato a medias.
 - **Qué se pide**: las llamaradas (FLR) de los últimos 30 días. Se elige la más intensa y, si hay empate, la más reciente (D-09).
@@ -436,7 +406,23 @@ El script (D-63):
    - `BaseLunar-v<versión>-repositorio.zip`, hecho con `git archive` del tag;
    - `SHA256SUMS.txt`.
 
-### 13.3 Desplegar
+### 13.3 Generar los PDF de la documentación
+
+```powershell
+dotnet run escritorio/herramientas/GenerarPdf.cs -- docs/MANUAL-DE-USUARIO.md docs/pdf/MANUAL-DE-USUARIO.pdf "Manual de usuario"
+dotnet run escritorio/herramientas/GenerarPdf.cs -- docs/DOCUMENTACION.md docs/pdf/DOCUMENTACION.pdf "Documentación técnica"
+```
+
+El programa (D-65):
+
+1. Convierte a HTML el Markdown que usan los documentos: títulos, listas, tablas, código, enlaces e imágenes.
+2. Le añade una portada, la tipografía del juego y estilos de impresión.
+3. Lo imprime en A4 con Microsoft Edge sin ventana, por su protocolo de DevTools, con números de página y marcadores.
+4. Cambia los enlaces relativos por enlaces al repositorio de GitHub, para que funcionen en el PDF.
+
+Hay que volver a generar los PDF cada vez que cambia el Markdown.
+
+### 13.4 Desplegar
 
 | Paso | Cómo se hizo en la v1.0.0 |
 |---|---|

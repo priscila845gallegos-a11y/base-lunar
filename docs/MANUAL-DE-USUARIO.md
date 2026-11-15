@@ -4,6 +4,8 @@ Versión 1.0.0
 
 Este manual explica cómo abrir el juego, cómo se juega y qué hacer si algo no funciona. Está pensado para familias, docentes y quien presente el juego, y también para leerlo junto a la niña o el niño que va a jugar.
 
+También está en PDF, listo para imprimir: [MANUAL-DE-USUARIO.pdf](pdf/MANUAL-DE-USUARIO.pdf).
+
 ## Índice
 
 1. [¿Qué es Base Lunar?](#1-qué-es-base-lunar)

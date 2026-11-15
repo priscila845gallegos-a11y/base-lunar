@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" width="900" height="420" role="img" aria-labelledby="titulo desc">
+  <title id="titulo">Máquina de estados del juego</title>
+  <desc id="desc">Inicio pasa a Nivel con Comenzar misión. Desde Nivel: una decisión sin fallo lleva a Resultado; si un medidor llega a 0, a Respaldo; si se pierde el último respaldo, a Misión Abortada. Respaldo vuelve a Nivel con Reintentar. Resultado vuelve a Nivel con Continuar en los niveles 1 a 4, o pasa a Victoria tras el Nivel 5. Victoria y Misión Abortada vuelven a Inicio con Jugar de nuevo.</desc>
+  <defs>
+    <marker id="flecha" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#334155"/>
+    </marker>
+  </defs>
+  <style>
+    text { font-family: "Segoe UI", Helvetica, Arial, sans-serif; fill: #0F172A; }
+    .estado { font-size: 15px; font-weight: 700; }
+    .nota { font-size: 12.5px; fill: #334155; }
+    .flecha { stroke: #334155; stroke-width: 1.6; fill: none; }
+  </style>
+  <rect width="900" height="420" fill="#FFFFFF"/>
+
+  <!-- Estados -->
+  <rect x="30" y="180" width="130" height="50" rx="25" fill="#E0F2FE" stroke="#0284C7" stroke-width="1.5"/>
+  <text class="estado" x="95" y="210" text-anchor="middle">Inicio</text>
+  <rect x="270" y="180" width="130" height="50" rx="25" fill="#E0F2FE" stroke="#0284C7" stroke-width="1.5"/>
+  <text class="estado" x="335" y="210" text-anchor="middle">Nivel</text>
+  <rect x="540" y="60" width="150" height="50" rx="25" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.5"/>
+  <text class="estado" x="615" y="90" text-anchor="middle">Resultado</text>
+  <rect x="740" y="60" width="130" height="50" rx="25" fill="#FEF9C3" stroke="#CA8A04" stroke-width="1.5"/>
+  <text class="estado" x="805" y="90" text-anchor="middle">Victoria</text>
+  <rect x="540" y="310" width="150" height="50" rx="25" fill="#FFEDD5" stroke="#EA580C" stroke-width="1.5"/>
+  <text class="estado" x="615" y="340" text-anchor="middle">Respaldo</text>
+  <rect x="240" y="330" width="190" height="50" rx="25" fill="#F1F5F9" stroke="#64748B" stroke-width="1.5"/>
+  <text class="estado" x="335" y="360" text-anchor="middle">Misión Abortada</text>
+
+  <!-- Inicio → Nivel -->
+  <path class="flecha" d="M160,205 H268" marker-end="url(#flecha)"/>
+  <text class="nota" x="214" y="196" text-anchor="middle">Comenzar misión</text>
+
+  <!-- Nivel ↔ Resultado -->
+  <path class="flecha" d="M395,186 L548,104" marker-end="url(#flecha)"/>
+  <text class="nota" x="420" y="128">decisión sin fallo</text>
+  <path class="flecha" d="M585,110 C560,190 470,215 402,212" marker-end="url(#flecha)"/>
+  <text class="nota" x="545" y="178">Continuar (niveles 1 a 4)</text>
+
+  <!-- Resultado → Victoria -->
+  <path class="flecha" d="M690,85 H738" marker-end="url(#flecha)"/>
+  <text class="nota" x="714" y="135" text-anchor="middle">Continuar</text>
+  <text class="nota" x="714" y="151" text-anchor="middle">(tras el Nivel 5)</text>
+
+  <!-- Nivel ↔ Respaldo -->
+  <path class="flecha" d="M395,224 L550,318" marker-end="url(#flecha)"/>
+  <text class="nota" x="500" y="258">un medidor llega a 0</text>
+  <text class="nota" x="500" y="274">(o requisito no cumplido)</text>
+  <path class="flecha" d="M560,356 C470,360 420,300 372,232" marker-end="url(#flecha)"/>
+  <text class="nota" x="452" y="318">Reintentar</text>
+
+  <!-- Nivel → Misión Abortada -->
+  <path class="flecha" d="M335,230 V328" marker-end="url(#flecha)"/>
+  <text class="nota" x="210" y="270" text-anchor="middle">se pierde el</text>
+  <text class="nota" x="210" y="286" text-anchor="middle">último respaldo</text>
+  <path class="flecha" d="M250,278 H330" style="stroke:#94A3B8; stroke-width:1; stroke-dasharray:3 3"/>
+
+  <!-- Jugar de nuevo -->
+  <path class="flecha" d="M805,60 V24 H95 V178" marker-end="url(#flecha)"/>
+  <text class="nota" x="450" y="18" text-anchor="middle">Jugar de nuevo (desde la Victoria)</text>
+  <path class="flecha" d="M240,355 H95 V232" marker-end="url(#flecha)"/>
+  <text class="nota" x="168" y="372" text-anchor="middle">Jugar de nuevo</text>
+</svg>

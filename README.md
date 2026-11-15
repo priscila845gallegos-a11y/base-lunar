@@ -7,7 +7,7 @@ Juego educativo de decisiones para niñas y niños de 7 a 12 años, en la web y 
 > - **Web**: el acceso por enlace y desde el móvil, sin instalar nada. **Jugar: <https://priscila845gallegos-a11y.github.io/base-lunar/>**
 > - **Windows** (C# + WPF): la experiencia completa, con escena animada, sonido, voz, glosario y el dato en vivo de NASA DONKI. **Descarga:** `BaseLunar-escritorio-v1.0.0-win-x64.zip` en la [versión v1.0.0](https://github.com/priscila845gallegos-a11y/base-lunar/releases/tag/v1.0.0).
 >
-> Para jugar, lee el [manual de usuario](docs/MANUAL-DE-USUARIO.md); para saber cómo está hecho, la [documentación técnica](docs/DOCUMENTACION.md).
+> Para jugar, lee el [manual de usuario](docs/MANUAL-DE-USUARIO.md) ([PDF](docs/pdf/MANUAL-DE-USUARIO.pdf)); para saber cómo está hecho, la [documentación técnica](docs/DOCUMENTACION.md) ([PDF](docs/pdf/DOCUMENTACION.pdf)).
 >
 > Las 7 fases (F0 a F6) están terminadas y aprobadas. La validación está en [docs/VALIDACION.md](docs/VALIDACION.md). Quedan como mejora, a cargo del equipo, la prueba con niños, la escucha con el Narrador y Lighthouse. Ver [Plan y estado](#plan-y-estado).
 
@@ -186,8 +186,8 @@ El rediseño amplía el presupuesto inicial de 8 horas (DECISIONES.md, D-37).
 
 ## Documentación del proyecto
 
-- [docs/MANUAL-DE-USUARIO.md](docs/MANUAL-DE-USUARIO.md): manual de usuario (cómo abrir y jugar, controles, accesibilidad, preguntas frecuentes).
-- [docs/DOCUMENTACION.md](docs/DOCUMENTACION.md): documentación técnica (herramientas, arquitectura, pruebas, publicación y mantenimiento).
+- [docs/MANUAL-DE-USUARIO.md](docs/MANUAL-DE-USUARIO.md): manual de usuario (cómo abrir y jugar, controles, accesibilidad, preguntas frecuentes). En PDF: [docs/pdf/MANUAL-DE-USUARIO.pdf](docs/pdf/MANUAL-DE-USUARIO.pdf).
+- [docs/DOCUMENTACION.md](docs/DOCUMENTACION.md): documentación técnica (herramientas, arquitectura, pruebas, publicación y mantenimiento). En PDF: [docs/pdf/DOCUMENTACION.pdf](docs/pdf/DOCUMENTACION.pdf).
 - [docs/PROMPT-0.md](docs/PROMPT-0.md): especificación completa.
 - [DECISIONES.md](DECISIONES.md): decisiones tomadas y su motivo.
 - [docs/FUENTES.md](docs/FUENTES.md): verificación científica.
