@@ -43,9 +43,18 @@ public partial class VentanaPrincipal : Window
         DataContext = juego;
         Closed += (_, _) => juego.Dispose();
         juego.ImprimirPedido += (_, _) => Vistas.CertificadoImpresion.Imprimir(juego, TextosApp.Victoria.Titulo);
-        var area = SystemParameters.WorkArea;
-        Width = Math.Max(MinWidth, Math.Min(Width, area.Width * 0.92));
-        Height = Math.Max(MinHeight, Math.Min(Height, area.Height * 0.92));
+        (MinWidth, MinHeight, Width, Height) = Medidas(SystemParameters.WorkArea.Size, new Size(MinWidth, MinHeight), new Size(Width, Height));
+    }
+
+    /// <summary>
+    /// Tamaño inicial: el pedido, sin pasar del 92 % del área de trabajo. El mínimo nunca es mayor que el área,
+    /// para que con zoom de Windows (200 % en 1920×1080 deja 960×516 DIP) la ventana quepa entera (D-59).
+    /// </summary>
+    internal static (double MinAncho, double MinAlto, double Ancho, double Alto) Medidas(Size area, Size minimo, Size pedido)
+    {
+        var minAncho = Math.Min(minimo.Width, area.Width);
+        var minAlto = Math.Min(minimo.Height, area.Height);
+        return (minAncho, minAlto, Math.Max(minAncho, Math.Min(pedido.Width, area.Width * 0.92)), Math.Max(minAlto, Math.Min(pedido.Height, area.Height * 0.92)));
     }
 
     public JuegoVM Juego { get; }

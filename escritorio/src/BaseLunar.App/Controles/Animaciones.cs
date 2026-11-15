@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Effects;
 
 namespace BaseLunar.App.Controles;
 
@@ -45,12 +46,34 @@ public static class Animaciones
 
     private static void AlTemblar(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        if (d is not UIElement elemento || (int)e.NewValue == 0 || Movimiento.Reducido) return;
+        if (d is not UIElement elemento || (int)e.NewValue == 0) return;
+        if (Movimiento.Reducido)
+        {
+            Destellar(elemento);
+            return;
+        }
         var animacion = new DoubleAnimationUsingKeyFrames { Duration = TimeSpan.FromMilliseconds(Configuracion.Tiempos.TemblorMs) };
         double[] pasos = [0, -12, 12, -9, 9, -5, 5, 0];
         for (var i = 0; i < pasos.Length; i++)
             animacion.KeyFrames.Add(new LinearDoubleKeyFrame(pasos[i], KeyTime.FromPercent(i / (double)(pasos.Length - 1))));
         Desplazamiento(elemento).BeginAnimation(TranslateTransform.XProperty, animacion);
+    }
+
+    /// <summary>
+    /// La alternativa al temblor con movimiento reducido, como el «destello» de style.css: un halo del color de
+    /// acento que se apaga en 600 ms, sin desplazar nada (F5). Al terminar se quita para que el texto quede nítido.
+    /// </summary>
+    private static void Destellar(UIElement elemento)
+    {
+        var color = (elemento as FrameworkElement)?.TryFindResource("Pincel.Acento") is SolidColorBrush acento ? acento.Color : Colors.Orange;
+        var halo = new DropShadowEffect { Color = color, ShadowDepth = 0, BlurRadius = 24, Opacity = 0 };
+        elemento.Effect = halo;
+        var apagar = new DoubleAnimation(0.9, 0, TimeSpan.FromMilliseconds(600)) { EasingFunction = new QuadraticEase() };
+        apagar.Completed += (_, _) =>
+        {
+            if (elemento.Effect == halo) elemento.Effect = null;
+        };
+        halo.BeginAnimation(DropShadowEffect.OpacityProperty, apagar);
     }
 
     // ---------- Salto de alegría al superar un nivel ----------

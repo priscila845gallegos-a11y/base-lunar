@@ -22,12 +22,18 @@ public partial class PantallaJuego : UserControl
     /// </summary>
     public const double AnchoDisposicionAncha = 1100;
 
+    /// <summary>
+    /// En la disposición compacta, por debajo de esta altura (en DIP) la escena se oculta y la tarjeta se queda
+    /// con su sitio (D-59). Pasa, por ejemplo, con el zoom de Windows al 200 % en una pantalla de 1920×1080.
+    /// </summary>
+    public const double AltoMinimoConEscena = 560;
+
     private JuegoVM? juego;
 
     public PantallaJuego()
     {
         InitializeComponent();
-        Raiz.SizeChanged += (_, e) => Disponer(e.NewSize.Width);
+        Raiz.SizeChanged += (_, e) => Disponer(e.NewSize.Width, e.NewSize.Height);
         DataContextChanged += AlCambiarModelo;
         AddHandler(Hyperlink.RequestNavigateEvent, new RequestNavigateEventHandler(AlAbrirEnlace));
         Disponer(0);
@@ -35,16 +41,23 @@ public partial class PantallaJuego : UserControl
 
     public bool EsAncha { get; private set; }
 
+    /// <summary>La escena está oculta porque no cabe a lo alto (D-59).</summary>
+    public bool SinEscena { get; private set; }
+
     /// <summary>Coloca los paneles para la disposición ancha o la compacta.</summary>
-    public void Disponer(double ancho)
+    public void Disponer(double ancho, double alto = double.PositiveInfinity)
     {
         var ancha = ancho >= AnchoDisposicionAncha;
+        var sinEscena = !ancha && alto < AltoMinimoConEscena;
         EsAncha = ancha;
+        SinEscena = sinEscena;
         Disposicion.SetCompacta(this, !ancha);
         ColumnaLateral.Width = ancha ? new GridLength(Math.Clamp(ancho * 0.36, 420, 600)) : new GridLength(0);
-        FilaEscena.Height = new GridLength(ancha ? 1 : 2, GridUnitType.Star);
+        FilaEscena.Height = sinEscena ? new GridLength(0) : new GridLength(ancha ? 1 : 2, GridUnitType.Star);
         FilaTarjeta.Height = new GridLength(ancha ? 1 : 5, GridUnitType.Star);
-        FilaEscena.MinHeight = ancha ? 0 : 112; // incluye el margen inferior de 10
+        FilaEscena.MinHeight = ancha || sinEscena ? 0 : 112; // incluye el margen inferior de 10
+        // La escena es decorativa: lo que cuenta también está en la tarjeta, los medidores y los anuncios.
+        Escena.Visibility = sinEscena ? Visibility.Collapsed : Visibility.Visible;
 
         // Ancha: los medidores flotan sobre la parte alta de la escena, como el HUD de un videojuego.
         Ubicar(Medidores, fila: 1, columna: 0);
