@@ -67,6 +67,10 @@ Este archivo es para cualquier agente de IA que trabaje en este repositorio. Lé
 - `BaseLunar.Nucleo` es el núcleo sin interfaz, con las mismas reglas, textos y eventos que js/. Nunca cambies una regla o un texto en un solo lado: cambia los dos y deja que las pruebas de paridad lo confirmen.
 - `dotnet test escritorio/BaseLunar.sln` tiene que pasar entero antes de cualquier commit que toque `escritorio/`.
 - La aplicación WPF solo presenta: escucha los eventos del motor y los convierte en animación, sonido, voz y anuncios. Nunca decide reglas.
+- MVVM sin bibliotecas externas. `JuegoVM` sigue el flujo de ui.js y `Presentacion` contiene sus funciones de texto (lineasEfecto, descripcion, textoAyuda…). Si cambias una, cambia también la de ui.js.
+- WPF no dibuja emojis en color (D-39). Los textos llevan sus emojis, como en la web, y `c:Contenido.Texto` los cambia por íconos de `Temas/Iconos.xaml`. Si un texto nuevo usa otro emoji, añádelo a `Iconografia`.
+- Los textos nuevos de pantalla van en `TextosApp`. Si ya existen en index.html, se copian literalmente: `PruebasTextosApp` lo comprueba.
+- Las 3 pruebas de UI Automation abren la ventana del juego unos segundos. Para omitirlas: `--filter "TestCategory!=UIAutomation"`. Las capturas quedan en `escritorio/capturas/` (ignorada por git).
 - Stack cerrado: C# y las bibliotecas de .NET y Windows. Sin paquetes de terceros (solo los oficiales de Microsoft, como MSTest) y sin motores externos.
 - Convenciones de C# (D-35): nombres en español, PascalCase en lo público, camelCase en lo local y `record` inmutables. El núcleo compila sin advertencias.
 - Las reglas de contenido, privacidad y honestidad de este archivo valen igual en escritorio.
