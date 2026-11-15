@@ -12,6 +12,7 @@ internal sealed class ResumenSimulacion
     public int SinSalida { get; set; }
     public int N5SinGanadora { get; set; }
     public int Ayudas { get; set; }
+    public int FueraDeRango { get; set; }
     public bool Perfecta { get; set; }
     public bool ConPerdida { get; set; }
 
@@ -38,6 +39,11 @@ internal static class Simulador
     {
         if (resultado.Eventos.OfType<AyudaActivada>().Any()) resumen.Ayudas++;
         var estado = resultado.Estado;
+        // Sección 10 (F5): ningún medidor sale de 0–100, ni en la partida ni en la foto del nivel.
+        foreach (var medidor in Medidores.Todos)
+        {
+            if (estado.Medidores[medidor] is < 0 or > 100 || estado.Foto[medidor] is < 0 or > 100) resumen.FueraDeRango++;
+        }
         switch (estado.Fase)
         {
             case Fase.Resultado:

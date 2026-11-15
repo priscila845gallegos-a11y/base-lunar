@@ -27,6 +27,11 @@ public sealed class PruebasSimulador
     public void AntibloqueoNuncaSeActiva(bool claseX) => Assert.AreEqual(0, De(claseX).Ayudas);
 
     [TestMethod]
+    [DataRow(false, DisplayName = "Simulador (sin clase X): en ningún estado de ninguna ruta un medidor sale de 0–100")]
+    [DataRow(true, DisplayName = "Simulador (con clase X): en ningún estado de ninguna ruta un medidor sale de 0–100")]
+    public void MedidoresEnRango(bool claseX) => Assert.AreEqual(0, De(claseX).FueraDeRango);
+
+    [TestMethod]
     [DataRow(false, DisplayName = "Simulador (sin clase X): existe una ruta sin perder respaldos")]
     [DataRow(true, DisplayName = "Simulador (con clase X): existe una ruta sin perder respaldos")]
     public void ExisteRutaPerfecta(bool claseX) => Assert.IsTrue(De(claseX).Perfecta);

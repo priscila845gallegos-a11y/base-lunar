@@ -99,6 +99,30 @@ public sealed class PruebasDonki
         Assert.AreEqual("BaseLunar/1.0", servidor.Pedidos[0].Headers.UserAgent.ToString(), "Un nombre de cliente genérico, sin datos personales");
     }
 
+    [TestMethod(DisplayName = "Privacidad: solo pedidos GET a la NASA, sin cuerpo ni cookies; la dirección lleva solo fechas y la clave")]
+    public async Task Privacidad()
+    {
+        var servidor = PorHost(host => host == "api.nasa.gov"
+            ? Servidor.Responder(HttpStatusCode.NotFound)
+            : Servidor.Responder(HttpStatusCode.OK, Lista(Flr("M3.5", "2026-11-05T12:00Z"))));
+        using var cliente = Cliente(servidor);
+        await cliente.ObtenerAsync();
+        Assert.HasCount(2, servidor.Pedidos);
+        foreach (var pedido in servidor.Pedidos)
+        {
+            Assert.AreEqual(HttpMethod.Get, pedido.Method);
+            Assert.IsNull(pedido.Content, "Sin cuerpo: no se envía nada");
+            Assert.IsFalse(pedido.Headers.Contains("Cookie"));
+            Assert.AreEqual("https", pedido.RequestUri!.Scheme);
+            Assert.IsTrue(pedido.RequestUri.Host is "api.nasa.gov" or "ccmc.gsfc.nasa.gov", pedido.RequestUri.Host);
+            var claves = pedido.RequestUri.Query.TrimStart('?').Split('&').Select(p => p.Split('=')[0]).ToArray();
+            Assert.IsTrue(claves.All(c => c is "startDate" or "endDate" or "api_key"), string.Join(",", claves));
+            CollectionAssert.AreEquivalent(new[] { "User-Agent", "Accept" }, pedido.Headers.Select(h => h.Key).ToArray(), "Ninguna cabecera con datos personales");
+            Assert.AreEqual("BaseLunar/1.0", pedido.Headers.UserAgent.ToString());
+            Assert.AreEqual("application/json", pedido.Headers.Accept.ToString());
+        }
+    }
+
     public static IEnumerable<object[]> Fallos() =>
     [
         ["404 y 503", (Func<string, HttpResponseMessage>)(h => Servidor.Responder(h == "api.nasa.gov" ? HttpStatusCode.NotFound : HttpStatusCode.ServiceUnavailable))],

@@ -35,13 +35,21 @@ public sealed class PruebasPantalla
     [DataRow(1280, 720, DisplayName = "Capturas y diseño a 1280×720")]
     [DataRow(1920, 1080, DisplayName = "Capturas y diseño a 1920×1080")]
     [DataRow(784, 561, DisplayName = "Capturas y diseño en la ventana mínima (784×561 de área útil)")]
-    public void CapturasYDiseno(int ancho, int alto) => HiloUI.Ejecutar(() =>
+    // Zoom de Windows (F5): una pantalla de 1920×1080 al 150 % deja 1280×688 DIP útiles (maximizada, 1280×657 de
+    // área útil); al 200 %, 960×516 (maximizada, 960×485). La captura se pinta con los píxeles reales.
+    [DataRow(1280, 657, 144, DisplayName = "Zoom de Windows al 150 % en 1920×1080: ventana maximizada (1280×657 DIP, a 144 ppp)")]
+    [DataRow(960, 485, 192, DisplayName = "Zoom de Windows al 200 % en 1920×1080: ventana maximizada (960×485 DIP, a 192 ppp)")]
+    [DataRow(1093, 545, 120, DisplayName = "Zoom de Windows al 125 % en 1366×768: ventana maximizada (1093×545 DIP, a 120 ppp)")]
+    public void CapturasYDiseno(int ancho, int alto, int ppp = 96) => HiloUI.Ejecutar(() =>
     {
+        var zoom = ppp == 96 ? string.Empty : $"-zoom{ppp * 100 / 96}";
         foreach (var (nombre, pasos) in Fases)
         {
             var juego = Partida.Jugar(pasos);
             var pantalla = Capturas.Montar(juego, ancho, alto);
-            Capturas.Guardar(pantalla, $"{ancho}x{alto}-{nombre}");
+            pantalla.Enfocar(juego.Fase); // como al terminar la transición: la tarjeta muestra el resultado o el respaldo
+            pantalla.UpdateLayout();
+            Capturas.Guardar(pantalla, $"{ancho}x{alto}{zoom}-{nombre}", ppp);
             ComprobarDiseno(pantalla, juego, $"{nombre} a {ancho}×{alto}");
         }
     });
@@ -176,12 +184,15 @@ public sealed class PruebasPantalla
             Assert.IsGreaterThanOrEqualTo(48.0, boton.ActualHeight, $"{caso}: {boton.Name} mide menos de 48 DIP de alto");
             Assert.IsGreaterThanOrEqualTo(120.0, boton.ActualWidth, $"{caso}: {boton.Name} es demasiado estrecho");
         }
-        foreach (var panel in new FrameworkElement[] { pantalla.Estado, pantalla.Medidores, pantalla.Escena, pantalla.Tarjeta })
+        // La escena solo se oculta en la disposición compacta con poca altura (D-59).
+        Assert.AreEqual(!pantalla.EsAncha && pantalla.ActualHeight < PantallaJuego.AltoMinimoConEscena, pantalla.SinEscena, $"{caso}: escena oculta sin motivo");
+        FrameworkElement[] paneles = pantalla.SinEscena ? [pantalla.Estado, pantalla.Medidores, pantalla.Tarjeta] : [pantalla.Estado, pantalla.Medidores, pantalla.Escena, pantalla.Tarjeta];
+        foreach (var panel in paneles)
         {
             Assert.IsTrue(Visible(panel, pantalla), $"{caso}: {panel.Name} no se ve");
             Assert.IsTrue(limites.Contains(Caja(panel, pantalla)), $"{caso}: {panel.Name} se sale de la pantalla");
         }
-        Assert.IsGreaterThanOrEqualTo(100.0, pantalla.Escena.ActualHeight, $"{caso}: la escena queda aplastada");
+        if (!pantalla.SinEscena) Assert.IsGreaterThanOrEqualTo(100.0, pantalla.Escena.ActualHeight, $"{caso}: la escena queda aplastada");
         Assert.IsGreaterThanOrEqualTo(140.0, pantalla.Tarjeta.ActualHeight, $"{caso}: la tarjeta queda aplastada");
     }
 

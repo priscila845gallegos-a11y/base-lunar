@@ -113,7 +113,7 @@ internal static class Capturas
     public static PantallaJuego Montar(JuegoVM juego, double ancho, double alto)
     {
         var pantalla = new PantallaJuego { DataContext = juego, Width = ancho, Height = alto };
-        pantalla.Disponer(ancho);
+        pantalla.Disponer(ancho, alto);
         for (var i = 0; i < 2; i++)
         {
             pantalla.Measure(new Size(ancho, alto));
@@ -124,10 +124,12 @@ internal static class Capturas
         return pantalla;
     }
 
-    public static string Guardar(FrameworkElement elemento, string nombre)
+    /// <summary>Guarda el elemento como PNG; con <paramref name="ppp"/> mayor que 96, como lo pinta Windows con zoom (144 = 150 %).</summary>
+    public static string Guardar(FrameworkElement elemento, string nombre, double ppp = 96)
     {
         elemento.UpdateLayout();
-        var mapa = new RenderTargetBitmap((int)Math.Ceiling(elemento.ActualWidth), (int)Math.Ceiling(elemento.ActualHeight), 96, 96, PixelFormats.Pbgra32);
+        var escala = ppp / 96;
+        var mapa = new RenderTargetBitmap((int)Math.Ceiling(elemento.ActualWidth * escala), (int)Math.Ceiling(elemento.ActualHeight * escala), ppp, ppp, PixelFormats.Pbgra32);
         mapa.Render(elemento);
         var codificador = new PngBitmapEncoder();
         codificador.Frames.Add(BitmapFrame.Create(mapa));
