@@ -4,8 +4,8 @@ Juego educativo de decisiones para niñas y niños de 7 a 12 años, en la web y 
 
 > **Versión 1.0.0** ([nota de versión](docs/NOTAS-DE-VERSION.md)). Hay dos formas de jugar:
 >
-> - **Web**: el acceso por enlace y desde el móvil, sin instalar nada.
-> - **Windows** (C# + WPF): la experiencia completa, con escena animada, sonido, voz, glosario y el dato en vivo de NASA DONKI.
+> - **Web**: el acceso por enlace y desde el móvil, sin instalar nada. **Jugar: <https://priscila845gallegos-a11y.github.io/base-lunar/>**
+> - **Windows** (C# + WPF): la experiencia completa, con escena animada, sonido, voz, glosario y el dato en vivo de NASA DONKI. **Descarga:** `BaseLunar-escritorio-v1.0.0-win-x64.zip` en la [versión v1.0.0](https://github.com/priscila845gallegos-a11y/base-lunar/releases/tag/v1.0.0).
 >
 > La validación (F5) está en [docs/VALIDACION.md](docs/VALIDACION.md). Quedan pendientes la prueba con niños, la escucha con el Narrador y Lighthouse. Ver [Plan y estado](#plan-y-estado).
 
@@ -22,6 +22,7 @@ Juego educativo de decisiones para niñas y niños de 7 a 12 años, en la web y 
 
 Web:
 
+- En línea: <https://priscila845gallegos-a11y.github.io/base-lunar/>. Se publica con GitHub Pages desde `main`, y cada push la actualiza.
 - Sin instalar nada: abre `index.html` con doble clic. Funciona también desde el ZIP del repositorio, sin servidor y sin internet. En el Nivel 4 muestra siempre la llamarada X8.7 real del 14-05-2024, con la etiqueta «HISTÓRICO REAL» (D-55).
 - Con un servidor local (opcional): `python -m http.server 8000` y abre <http://localhost:8000>.
 - Pruebas del motor y simulador de balance: abre `tests/tests.html` en el navegador.
@@ -174,7 +175,7 @@ Sin cuentas, sin cookies y sin analítica. El nombre del certificado solo se mue
 | F3 · Rediseño de escritorio (C# + WPF) | 6:30 | F3.1 núcleo en C# con paridad ✔ · F3.2 estructura jugable ✔ · F3.3 arte, animación y glosario ✔ · F3.4 sonido y voz ✔ · F3.5 NASA DONKI en vivo ✔ | Hecha (aprobada) |
 | F4 · Pulido y finales | 0:45 | Certificado con nombre e «Imprimir», modo demo, alto contraste y «Control de Misión» | Hecha (P4 aprobada) |
 | F5 · Validación | 1:00 | Matriz de P5 con evidencias, web en 3 navegadores, zoom de Windows y protocolos para la prueba con usuarios, el Narrador y Lighthouse | Hecha (P5 en revisión; la prueba con niños, el Narrador y Lighthouse necesitan al equipo) |
-| F6 · Despliegue | 0:30 | Web en GitHub Pages, ZIP portable de escritorio y tag v1.0.0 | En curso (P5 aprobada) |
+| F6 · Despliegue | 0:30 | Web en GitHub Pages, ZIP portable de escritorio y tag v1.0.0 | Hecha (P6 en revisión: falta probar el enlace en un móvil real) |
 
 El rediseño amplía el presupuesto inicial de 8 horas (DECISIONES.md, D-37).
 

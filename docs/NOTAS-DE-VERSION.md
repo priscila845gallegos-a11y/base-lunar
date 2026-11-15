@@ -6,7 +6,7 @@ Primera versión completa de **Base Lunar: El Escudo Cósmico**. Es un juego edu
 
 ### Cómo jugar
 
-- **Web** (enlace y móvil): se abre `index.html`, desde el enlace público o con doble clic en el ZIP del repositorio, sin servidor ni internet. En el Nivel 4 muestra siempre la llamarada X8.7 real del 14-05-2024, con la etiqueta «HISTÓRICO REAL».
+- **Web** (enlace y móvil): <https://priscila845gallegos-a11y.github.io/base-lunar/>. También se puede abrir `index.html` con doble clic en el ZIP del repositorio, sin servidor ni internet. En el Nivel 4 muestra siempre la llamarada X8.7 real del 14-05-2024, con la etiqueta «HISTÓRICO REAL».
 - **Windows** (versión completa): se descomprime `BaseLunar-escritorio-v1.0.0-win-x64.zip` y se abre `BaseLunar.exe`. No hace falta instalar nada.
   - Funciona en Windows 10 u 11 de 64 bits.
   - Windows puede avisar con SmartScreen porque el programa no está firmado: hay que pulsar «Más información» y luego «Ejecutar de todas formas».
