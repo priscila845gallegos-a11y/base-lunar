@@ -1,0 +1,15 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+
+    <!-- Atkinson Hyperlegible embebida (D-12). Si no cargara, WPF usa la fuente del sistema. -->
+    <FontFamily x:Key="Fuente.Principal">pack://application:,,,/BaseLunar.App;component/Temas/Fuentes/#Atkinson Hyperlegible</FontFamily>
+
+    <!-- Tamaños (5.2): base de 18 o más e historia de 20 o más -->
+    <sys:Double x:Key="Tamano.Pequeno">16</sys:Double>
+    <sys:Double x:Key="Tamano.Base">18</sys:Double>
+    <sys:Double x:Key="Tamano.Seccion">20</sys:Double>
+    <sys:Double x:Key="Tamano.Historia">22</sys:Double>
+    <sys:Double x:Key="Tamano.Titulo">28</sys:Double>
+    <sys:Double x:Key="Tamano.Boton">20</sys:Double>
+</ResourceDictionary>

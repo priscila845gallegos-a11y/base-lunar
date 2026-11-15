@@ -1,0 +1,70 @@
+<UserControl x:Class="BaseLunar.App.Vistas.PanelMedidores"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="clr-namespace:BaseLunar.App.Controles"
+             xmlns:vm="clr-namespace:BaseLunar.App.VistaModelos">
+    <!-- Los 3 medidores, en fila: en la disposición ancha flotan sobre la escena -->
+    <Border CornerRadius="18" Background="{StaticResource Pincel.SuperficieTranslucida}"
+            BorderBrush="{StaticResource Pincel.Borde}" BorderThickness="1" Padding="12,6">
+        <ItemsControl ItemsSource="{Binding Medidores}" Focusable="False" AutomationProperties.Name="{x:Static vm:TextosApp.RegionMedidores}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="3" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type vm:MedidorVM}">
+                    <Grid Margin="4,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border Width="40" Height="40" CornerRadius="12" Background="{StaticResource Pincel.Fondo}" VerticalAlignment="Center">
+                            <c:Icono Width="24" Height="24" Geometria="{Binding Icono, Converter={StaticResource IconoDeEmoji}}"
+                                     Foreground="{Binding ClavePincel, Converter={StaticResource Recurso}}" />
+                        </Border>
+                        <Grid Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <DockPanel>
+                                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                    <c:Icono x:Name="AvisoBajo" Width="18" Height="18" Margin="0,0,4,0" Visibility="Collapsed"
+                                             Geometria="{StaticResource Icono.Alerta}" Foreground="{StaticResource Pincel.Acento}" />
+                                    <c:TextoDecorativo x:Name="Numero" Text="{Binding Texto}" FontWeight="Bold" />
+                                </StackPanel>
+                                <c:TextoDecorativo Text="{Binding Nombre}" FontSize="{StaticResource Tamano.Pequeno}" TextTrimming="CharacterEllipsis"
+                                                   Foreground="{StaticResource Pincel.TextoSuave}" VerticalAlignment="Center" />
+                            </DockPanel>
+                            <ProgressBar x:Name="Barra" Grid.Row="1" Margin="0,4,0,0" Style="{StaticResource BarraMedidor}"
+                                         c:Animaciones.ValorSuave="{Binding Valor}"
+                                         c:Animaciones.Pulso="{Binding Bajo}"
+                                         Foreground="{Binding ClavePincel, Converter={StaticResource Recurso}}"
+                                         AutomationProperties.Name="{Binding Nombre}"
+                                         AutomationProperties.HelpText="{Binding TextoAccesible}"
+                                         AutomationProperties.ItemStatus="{Binding TextoAccesible}"
+                                         AutomationProperties.AutomationId="{Binding Clave, StringFormat='Medidor{0}'}" />
+                            <!-- Número flotante («+20 ⚡», «¡Al máximo!»): solo visual, como en la web -->
+                            <c:TextoDecorativo x:Name="Flotante" Grid.RowSpan="2" HorizontalAlignment="Right" VerticalAlignment="Top"
+                                               Margin="0,-26,0,0" Opacity="0" IsHitTestVisible="False" FontWeight="Bold" FontSize="20"
+                                               Foreground="#FFFCA5A5"
+                                               c:Contenido.Texto="{Binding Flotante}"
+                                               c:Animaciones.Flotante="{Binding Disparo}" />
+                        </Grid>
+                    </Grid>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding Bajo}" Value="True">
+                            <Setter TargetName="AvisoBajo" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="Numero" Property="Foreground" Value="{StaticResource Pincel.Acento}" />
+                            <Setter TargetName="Barra" Property="Foreground" Value="{StaticResource Pincel.Acento}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding FlotanteGana}" Value="True">
+                            <Setter TargetName="Flotante" Property="Foreground" Value="{StaticResource Pincel.Exito}" />
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Border>
+</UserControl>

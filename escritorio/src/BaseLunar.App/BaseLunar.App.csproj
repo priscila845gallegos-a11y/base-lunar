@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <RootNamespace>BaseLunar.App</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BaseLunar.Nucleo\BaseLunar.Nucleo.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Atkinson Hyperlegible (Braille Institute, licencia SIL OFL): la licencia viaja con el programa. -->
+    <Resource Include="Temas\Fuentes\*.ttf" />
+    <None Include="Temas\Fuentes\OFL.txt" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,84 @@
+<UserControl x:Class="BaseLunar.App.Vistas.PanelDecisiones"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="clr-namespace:BaseLunar.App.Controles"
+             xmlns:vm="clr-namespace:BaseLunar.App.VistaModelos"
+             AutomationProperties.Name="{x:Static vm:TextosApp.RegionDecisiones}">
+    <UserControl.Resources>
+        <!-- Contenido de un botón de decisión: letra, texto y lo que gana y cuesta -->
+        <DataTemplate x:Key="PlantillaOpcion" DataType="{x:Type vm:OpcionVM}">
+            <DockPanel>
+                <Border Style="{StaticResource LetraOpcion}">
+                    <c:TextoDecorativo Text="{Binding Id}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource Pincel.Texto}"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <StackPanel VerticalAlignment="Center">
+                    <c:TextoDecorativo Text="{Binding Texto}" TextWrapping="Wrap" />
+                    <ItemsControl Focusable="False" IsTabStop="False" ItemsSource="{Binding Efectos}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type vm:EfectoVM}">
+                                <Border Style="{StaticResource Efecto}">
+                                    <c:TextoDecorativo x:Name="TextoEfecto" FontSize="18" Foreground="{StaticResource Pincel.Texto}" c:Contenido.Texto="{Binding Texto}" />
+                                </Border>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Gana}" Value="True">
+                                        <Setter TargetName="TextoEfecto" Property="Foreground" Value="{StaticResource Pincel.Exito}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Gana}" Value="False">
+                                        <Setter TargetName="TextoEfecto" Property="Foreground" Value="#FFFCA5A5" />
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </DockPanel>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid>
+        <!-- Nivel: dos opciones, A y B -->
+        <UniformGrid x:Name="Opciones" Columns="2" Visibility="{Binding EnNivel, Converter={StaticResource Visible}}">
+            <Button x:Name="BotonA" Style="{StaticResource BotonOpcionA}" Margin="0,0,6,0"
+                    Command="{Binding Elegir}" CommandParameter="A"
+                    Content="{Binding OpcionA}" ContentTemplate="{StaticResource PlantillaOpcion}"
+                    AutomationProperties.AutomationId="OpcionA" AutomationProperties.Name="{Binding OpcionA.NombreAccesible}"
+                    AutomationProperties.AcceleratorKey="A, 1" />
+            <Button x:Name="BotonB" Style="{StaticResource BotonOpcionB}" Margin="6,0,0,0"
+                    Command="{Binding Elegir}" CommandParameter="B"
+                    Content="{Binding OpcionB}" ContentTemplate="{StaticResource PlantillaOpcion}"
+                    AutomationProperties.AutomationId="OpcionB" AutomationProperties.Name="{Binding OpcionB.NombreAccesible}"
+                    AutomationProperties.AcceleratorKey="B, 2" />
+        </UniformGrid>
+
+        <!-- Resto de fases: un solo botón principal (D-28) -->
+        <Button x:Name="BotonPrincipal" Style="{StaticResource BotonPrincipal}" Command="{Binding Principal}"
+                Visibility="{Binding EnNivel, Converter={StaticResource Oculto}}"
+                AutomationProperties.AutomationId="BotonPrincipal" AutomationProperties.Name="{Binding TextoBotonPrincipal}"
+                AutomationProperties.AcceleratorKey="Enter">
+            <StackPanel Orientation="Horizontal">
+                <c:TextoDecorativo Text="{Binding TextoBotonPrincipal}" VerticalAlignment="Center" />
+                <c:Icono Width="24" Height="24" Margin="12,0,0,0" Foreground="{StaticResource Pincel.TextoOscuro}">
+                    <c:Icono.Style>
+                        <Style TargetType="c:Icono">
+                            <Setter Property="Geometria" Value="{StaticResource Icono.Avanzar}" />
+                            <Setter Property="Relleno" Value="{StaticResource Pincel.TextoOscuro}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding BotonReinicia}" Value="True">
+                                    <Setter Property="Geometria" Value="{StaticResource Icono.Reiniciar}" />
+                                    <Setter Property="Relleno" Value="{x:Null}" />
+                                    <Setter Property="Grosor" Value="2.6" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </c:Icono.Style>
+                </c:Icono>
+            </StackPanel>
+        </Button>
+    </Grid>
+</UserControl>

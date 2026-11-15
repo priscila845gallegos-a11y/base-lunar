@@ -17,3 +17,6 @@ obj/
 .vs/
 TestResults/
 *.user
+
+# Capturas que generan las pruebas de pantalla (se regeneran con dotnet test)
+escritorio/capturas/

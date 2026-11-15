@@ -1,0 +1,59 @@
+<UserControl x:Class="BaseLunar.App.Vistas.PantallaJuego"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="clr-namespace:BaseLunar.App.Controles"
+             xmlns:v="clr-namespace:BaseLunar.App.Vistas"
+             FontFamily="{StaticResource Fuente.Principal}" FontSize="{StaticResource Tamano.Base}"
+             Foreground="{StaticResource Pincel.Texto}" UseLayoutRounding="True">
+    <!--
+        Pantalla del juego. Dos disposiciones (PantallaJuego.xaml.cs):
+        · Ancha (1000 DIP o más): barra superior; la escena a la izquierda y, a la derecha, medidores, tarjeta y decisiones.
+        · Compacta: barra superior, medidores en fila, escena en franja, tarjeta y decisiones lado a lado.
+    -->
+    <Grid x:Name="Raiz">
+        <Grid.Style>
+            <Style TargetType="Grid">
+                <Setter Property="Background" Value="{StaticResource Pincel.Espacio}" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding Alerta}" Value="True">
+                        <Setter Property="Background" Value="{StaticResource Pincel.CieloAlerta}" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Style>
+        <Rectangle Fill="{StaticResource Pincel.Estrellas}" Opacity="0.5" IsHitTestVisible="False" />
+
+        <Grid x:Name="Rejilla" Margin="12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition x:Name="ColumnaLateral" Width="0" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition x:Name="FilaEscena" Height="3*" MinHeight="110" />
+                <RowDefinition x:Name="FilaTarjeta" Height="5*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <v:PanelEstado x:Name="Estado" Grid.ColumnSpan="2" Margin="0,0,0,10" />
+            <v:PanelMedidores x:Name="Medidores" Grid.Row="1" Margin="0,0,0,10" Panel.ZIndex="1" />
+            <Border x:Name="Escena" Grid.Row="2" Margin="0,0,0,10" CornerRadius="22" c:Animaciones.Radio="22">
+                <Grid>
+                    <v:EscenaNivel Visibility="{Binding EsVistaNivel, Converter={StaticResource Visible}}" />
+                    <v:MapaMision Visibility="{Binding EsVistaNivel, Converter={StaticResource Oculto}}" />
+                </Grid>
+            </Border>
+            <v:TarjetaMision x:Name="Tarjeta" Grid.Row="3" Margin="0,0,0,10" />
+            <v:PanelDecisiones x:Name="Decisiones" Grid.Row="4" />
+        </Grid>
+
+        <!-- Regiones en vivo para el lector de pantalla, como aria-live en la web (5.5) -->
+        <TextBlock x:Name="AnuncioCortes" Width="1" Height="1" Opacity="0" IsHitTestVisible="False"
+                   HorizontalAlignment="Left" VerticalAlignment="Top"
+                   AutomationProperties.LiveSetting="Polite" AutomationProperties.AutomationId="AnuncioCortes" />
+        <TextBlock x:Name="AnuncioUrgente" Width="1" Height="1" Opacity="0" IsHitTestVisible="False"
+                   HorizontalAlignment="Left" VerticalAlignment="Top"
+                   AutomationProperties.LiveSetting="Assertive" AutomationProperties.AutomationId="AnuncioUrgente" />
+    </Grid>
+</UserControl>

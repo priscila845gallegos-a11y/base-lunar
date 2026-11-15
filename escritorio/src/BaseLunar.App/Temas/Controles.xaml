@@ -1,0 +1,326 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:c="clr-namespace:BaseLunar.App.Controles">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Paleta.xaml" />
+        <ResourceDictionary Source="Tipografia.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <!-- Convertidores -->
+    <c:Visible x:Key="Visible" />
+    <c:Visible x:Key="Oculto" Invertir="True" />
+    <c:IconoDeEmoji x:Key="IconoDeEmoji" />
+    <c:Recurso x:Key="Recurso" />
+
+    <!-- Foco de teclado: anillo doble (claro por fuera, oscuro por dentro) visible sobre cualquier fondo -->
+    <Style x:Key="Foco">
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border Margin="-5" CornerRadius="20" BorderBrush="{StaticResource Pincel.Texto}" BorderThickness="3" SnapsToDevicePixels="True">
+                        <Border CornerRadius="17" BorderBrush="{StaticResource Pincel.Fondo}" BorderThickness="2" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ===================== Textos ===================== -->
+    <Style x:Key="Texto.Etiqueta" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource Tamano.Pequeno}" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Foreground" Value="{StaticResource Pincel.TextoSuave}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
+    <Style x:Key="Texto.Titulo" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource Tamano.Titulo}" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <!-- Como tabindex="-1" en la web: recibe el foco al cambiar de pantalla, pero no con Tab -->
+        <Setter Property="Focusable" Value="True" />
+        <Setter Property="KeyboardNavigation.IsTabStop" Value="False" />
+        <Setter Property="AutomationProperties.HeadingLevel" Value="Level2" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Style.Triggers>
+            <Trigger Property="c:Disposicion.Compacta" Value="True">
+                <Setter Property="FontSize" Value="24" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="Texto.Historia" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource Tamano.Historia}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="LineHeight" Value="31" />
+        <Setter Property="Margin" Value="0,14,0,0" />
+        <Style.Triggers>
+            <!-- 5.2: la historia nunca baja de 20 -->
+            <Trigger Property="c:Disposicion.Compacta" Value="True">
+                <Setter Property="FontSize" Value="20" />
+                <Setter Property="LineHeight" Value="28" />
+                <Setter Property="Margin" Value="0,10,0,0" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="Texto.Normal" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource Tamano.Base}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="LineHeight" Value="26" />
+    </Style>
+
+    <Style x:Key="Texto.Nota" TargetType="TextBlock" BasedOn="{StaticResource Texto.Normal}">
+        <Setter Property="FontSize" Value="{StaticResource Tamano.Pequeno}" />
+        <Setter Property="Foreground" Value="{StaticResource Pincel.TextoSuave}" />
+        <Setter Property="LineHeight" Value="23" />
+        <Setter Property="Margin" Value="0,16,0,0" />
+    </Style>
+
+    <Style x:Key="Texto.Seccion" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource Tamano.Seccion}" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="AutomationProperties.HeadingLevel" Value="Level3" />
+    </Style>
+
+    <!--
+        Cabecera de la tarjeta: la etiqueta en píldora («📡 Dato NASA: …») encima del título. En la disposición
+        compacta la píldora pasa a la derecha del título para dejar una línea más a la historia.
+        Se usa dentro de una rejilla de 2 columnas (* y Auto) y 2 filas.
+    -->
+    <Style x:Key="Pildora" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource Pincel.Fondo}" />
+        <Setter Property="BorderBrush" Value="{StaticResource Pincel.Borde}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="14" />
+        <Setter Property="Padding" Value="12,4" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="Grid.ColumnSpan" Value="2" />
+        <Style.Triggers>
+            <Trigger Property="c:Disposicion.Compacta" Value="True">
+                <Setter Property="Grid.Row" Value="1" />
+                <Setter Property="Grid.Column" Value="1" />
+                <Setter Property="Grid.ColumnSpan" Value="1" />
+                <Setter Property="HorizontalAlignment" Value="Right" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Margin" Value="12,0,0,0" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="CabeceraTitulo" TargetType="DockPanel">
+        <Setter Property="Grid.Row" Value="1" />
+        <Setter Property="Grid.ColumnSpan" Value="2" />
+        <Setter Property="Margin" Value="0,14,0,0" />
+        <Style.Triggers>
+            <Trigger Property="c:Disposicion.Compacta" Value="True">
+                <Setter Property="Grid.ColumnSpan" Value="1" />
+                <Setter Property="Margin" Value="0" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Insignia redonda con el ícono del nivel (el ícono la llena con un margen de 13) -->
+    <Style x:Key="Insignia" TargetType="Border">
+        <Setter Property="Width" Value="64" />
+        <Setter Property="Height" Value="64" />
+        <Setter Property="CornerRadius" Value="32" />
+        <Setter Property="Margin" Value="0,0,14,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="BorderBrush" Value="#59FFFFFF" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#6366F1" Offset="0" />
+                    <GradientStop Color="#3B82F6" Offset="1" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="c:Disposicion.Compacta" Value="True">
+                <Setter Property="Width" Value="50" />
+                <Setter Property="Height" Value="50" />
+                <Setter Property="CornerRadius" Value="25" />
+                <Setter Property="Margin" Value="0,0,12,0" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Avisos de la tarjeta: tormenta X, ayuda y respaldo -->
+    <Style x:Key="Aviso" TargetType="Border">
+        <Setter Property="CornerRadius" Value="14" />
+        <Setter Property="Padding" Value="14,12" />
+        <Setter Property="Margin" Value="0,14,0,0" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="Background" Value="{StaticResource Pincel.Fondo}" />
+    </Style>
+
+    <!-- ===================== Botones ===================== -->
+    <!-- Botón de juego en relieve: se hunde al pulsarlo y brilla al pasar el ratón -->
+    <Style x:Key="BotonJuego" TargetType="Button">
+        <Setter Property="Foreground" Value="{StaticResource Pincel.TextoOscuro}" />
+        <Setter Property="Background" Value="{StaticResource Pincel.Acento}" />
+        <Setter Property="FontSize" Value="{StaticResource Tamano.Boton}" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Padding" Value="16,10" />
+        <Setter Property="MinHeight" Value="64" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FocusVisualStyle" Value="{StaticResource Foco}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid x:Name="Raiz" Background="Transparent">
+                        <Border CornerRadius="18" Background="#8C000000" Margin="0,6,0,0" />
+                        <Border x:Name="Cara" CornerRadius="18" Margin="0,0,0,6" Background="{TemplateBinding Background}"
+                                BorderBrush="#4DFFFFFF" BorderThickness="2">
+                            <Grid>
+                                <Border x:Name="Brillo" CornerRadius="16" Background="#26FFFFFF" Opacity="0" />
+                                <ContentPresenter Margin="{TemplateBinding Padding}"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            </Grid>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Brillo" Property="Opacity" Value="1" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Cara" Property="Margin" Value="0,4,0,2" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Raiz" Property="Opacity" Value="0.7" />
+                            <Setter Property="Cursor" Value="Arrow" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="BotonOpcionA" TargetType="Button" BasedOn="{StaticResource BotonJuego}">
+        <Setter Property="Background" Value="{StaticResource Pincel.Primario}" />
+        <Setter Property="MinHeight" Value="88" />
+        <Setter Property="Padding" Value="12,10" />
+    </Style>
+
+    <Style x:Key="BotonOpcionB" TargetType="Button" BasedOn="{StaticResource BotonOpcionA}">
+        <Setter Property="Background" Value="{StaticResource Pincel.Acento}" />
+    </Style>
+
+    <Style x:Key="BotonPrincipal" TargetType="Button" BasedOn="{StaticResource BotonJuego}">
+        <Setter Property="FontSize" Value="22" />
+        <Setter Property="MinHeight" Value="72" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+    </Style>
+
+    <!-- Letra A o B en un círculo oscuro -->
+    <Style x:Key="LetraOpcion" TargetType="Border">
+        <Setter Property="Width" Value="44" />
+        <Setter Property="Height" Value="44" />
+        <Setter Property="CornerRadius" Value="22" />
+        <Setter Property="Background" Value="{StaticResource Pincel.Fondo}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="0,0,12,0" />
+    </Style>
+
+    <!-- Ganancia, costo o requisito dentro del botón -->
+    <Style x:Key="Efecto" TargetType="Border">
+        <Setter Property="Background" Value="#F20F172A" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Padding" Value="8,2" />
+        <Setter Property="Margin" Value="0,6,6,0" />
+    </Style>
+
+    <!-- ===================== Barra de medidor ===================== -->
+    <Style x:Key="BarraMedidor" TargetType="ProgressBar">
+        <Setter Property="Minimum" Value="0" />
+        <Setter Property="Maximum" Value="100" />
+        <Setter Property="Height" Value="16" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ProgressBar">
+                    <Grid>
+                        <Border x:Name="PART_Track" CornerRadius="8" Background="#FF0B1222" BorderBrush="{StaticResource Pincel.Borde}" BorderThickness="1" />
+                        <Border x:Name="PART_Indicator" HorizontalAlignment="Left" CornerRadius="8" Background="{TemplateBinding Foreground}">
+                            <Border VerticalAlignment="Top" Height="5" Margin="5,2,5,0" CornerRadius="3" Background="#59FFFFFF" />
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ===================== Barra de desplazamiento fina ===================== -->
+    <Style x:Key="PulgarBarra" TargetType="Thumb">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Thumb">
+                    <Border CornerRadius="6" Background="{StaticResource Pincel.BordeControl}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ZonaBarra" TargetType="RepeatButton">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RepeatButton">
+                    <Border Background="Transparent" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="ScrollBar">
+        <Style.Triggers>
+            <Trigger Property="Orientation" Value="Vertical">
+                <Setter Property="Width" Value="12" />
+                <Setter Property="MinWidth" Value="12" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ScrollBar">
+                            <Border Background="#40000000" CornerRadius="6" Margin="2,0,0,0">
+                                <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                    <Track.DecreaseRepeatButton>
+                                        <RepeatButton Style="{StaticResource ZonaBarra}" Command="ScrollBar.PageUpCommand" />
+                                    </Track.DecreaseRepeatButton>
+                                    <Track.Thumb>
+                                        <Thumb Style="{StaticResource PulgarBarra}" />
+                                    </Track.Thumb>
+                                    <Track.IncreaseRepeatButton>
+                                        <RepeatButton Style="{StaticResource ZonaBarra}" Command="ScrollBar.PageDownCommand" />
+                                    </Track.IncreaseRepeatButton>
+                                </Track>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- ===================== Enlaces ===================== -->
+    <Style TargetType="Hyperlink">
+        <Setter Property="Foreground" Value="{StaticResource Pincel.Enlace}" />
+        <Setter Property="TextDecorations" Value="Underline" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="{StaticResource Pincel.Texto}" />
+            </Trigger>
+            <Trigger Property="IsKeyboardFocused" Value="True">
+                <Setter Property="Foreground" Value="{StaticResource Pincel.TextoOscuro}" />
+                <Setter Property="Background" Value="{StaticResource Pincel.Enlace}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>

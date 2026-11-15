@@ -1,0 +1,241 @@
+<UserControl x:Class="BaseLunar.App.Vistas.TarjetaMision"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="clr-namespace:BaseLunar.App.Controles"
+             xmlns:vm="clr-namespace:BaseLunar.App.VistaModelos">
+    <UserControl.Resources>
+        <!-- Viñeta de las instrucciones -->
+        <DataTemplate x:Key="Instruccion">
+            <DockPanel Margin="0,8,0,0">
+                <Border Width="10" Height="10" CornerRadius="5" Background="{StaticResource Pincel.Acento}" Margin="2,9,12,0" VerticalAlignment="Top" />
+                <TextBlock Style="{StaticResource Texto.Normal}" c:Contenido.Texto="{Binding}" />
+            </DockPanel>
+        </DataTemplate>
+
+        <!-- Línea con ícono (los medidores del certificado) -->
+        <DataTemplate x:Key="LineaConIcono">
+            <TextBlock Style="{StaticResource Texto.Normal}" Margin="0,4,0,0" c:Contenido.Texto="{Binding}" />
+        </DataTemplate>
+
+        <!-- Un dato aprendido en el certificado: título, texto y fuentes -->
+        <DataTemplate x:Key="DatoAprendido" DataType="{x:Type vm:DatoVM}">
+            <StackPanel Margin="0,12,0,0">
+                <TextBlock Style="{StaticResource Texto.Normal}" FontWeight="Bold" Text="{Binding Titulo}" />
+                <TextBlock Style="{StaticResource Texto.Normal}" Text="{Binding Texto}" />
+                <TextBlock Style="{StaticResource Texto.Nota}" Margin="0,2,0,0" c:Contenido.Fuentes="{Binding}" />
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Border x:Name="Marco" CornerRadius="22" BorderThickness="2" Background="{StaticResource Pincel.SuperficieTranslucida}"
+            c:Animaciones.Temblor="{Binding Temblor}">
+        <Border.Style>
+            <Style TargetType="Border">
+                <Setter Property="BorderBrush" Value="{StaticResource Pincel.Borde}" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding Alerta}" Value="True">
+                        <Setter Property="BorderBrush" Value="{StaticResource Pincel.Acento}" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
+        <ScrollViewer x:Name="Desplazamiento" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                      Focusable="True" IsTabStop="True" FocusVisualStyle="{StaticResource Foco}" Padding="22,16,16,18"
+                      AutomationProperties.Name="{x:Static vm:TextosApp.RegionTarjeta}" AutomationProperties.AutomationId="Tarjeta">
+            <Grid>
+                <!-- ========== Inicio ========== -->
+                <StackPanel x:Name="VistaInicio" Visibility="{Binding EsInicio, Converter={StaticResource Visible}}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Border Style="{StaticResource Pildora}">
+                            <TextBlock Style="{StaticResource Texto.Etiqueta}" c:Contenido.Texto="{x:Static vm:TextosApp+Inicio.Etiqueta}" />
+                        </Border>
+                        <DockPanel Style="{StaticResource CabeceraTitulo}">
+                            <Border Style="{StaticResource Insignia}">
+                                <c:Icono Margin="13" Geometria="{StaticResource Icono.Luna}" Foreground="White" />
+                            </Border>
+                            <TextBlock x:Name="TituloInicio" Style="{StaticResource Texto.Titulo}" Text="{x:Static vm:TextosApp+Inicio.Titulo}"
+                                       AutomationProperties.AutomationId="TituloInicio" />
+                        </DockPanel>
+                    </Grid>
+                    <TextBlock Style="{StaticResource Texto.Historia}" Text="{x:Static vm:TextosApp+Inicio.Historia}" />
+                    <ItemsControl Margin="0,6,0,0" Focusable="False" ItemsSource="{x:Static vm:TextosApp+Inicio.Instrucciones}"
+                                  ItemTemplate="{StaticResource Instruccion}" />
+                    <TextBlock Style="{StaticResource Texto.Nota}" Text="{x:Static vm:TextosApp+Inicio.Nota}" />
+                </StackPanel>
+
+                <!-- ========== Nivel: decisión, resultado y respaldo ========== -->
+                <StackPanel x:Name="VistaNivel" Visibility="{Binding EsVistaNivel, Converter={StaticResource Visible}}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Border Style="{StaticResource Pildora}">
+                            <TextBlock Style="{StaticResource Texto.Etiqueta}" c:Contenido.Texto="{Binding Etiqueta}"
+                                       AutomationProperties.AutomationId="EtiquetaNivel" />
+                        </Border>
+                        <DockPanel Style="{StaticResource CabeceraTitulo}">
+                            <Border>
+                                <Border.Style>
+                                    <Style TargetType="Border" BasedOn="{StaticResource Insignia}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Alerta}" Value="True">
+                                                <Setter Property="Background" Value="{StaticResource Pincel.Acento}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <c:Icono Margin="13" Geometria="{Binding Avatar, Converter={StaticResource IconoDeEmoji}}" Foreground="White" />
+                            </Border>
+                            <TextBlock x:Name="TituloNivel" Style="{StaticResource Texto.Titulo}" Text="{Binding TituloNivel}"
+                                       AutomationProperties.Name="{Binding NombreTituloNivel}" AutomationProperties.AutomationId="TituloNivel" />
+                        </DockPanel>
+                    </Grid>
+                    <TextBlock Style="{StaticResource Texto.Historia}" Text="{Binding Historia}" AutomationProperties.AutomationId="Historia" />
+
+                    <!-- Aviso de llamarada de clase X -->
+                    <Border Style="{StaticResource Aviso}" BorderBrush="{StaticResource Pincel.Acento}"
+                            Visibility="{Binding AvisoX, Converter={StaticResource Visible}}">
+                        <DockPanel>
+                            <c:Icono Width="28" Height="28" Margin="0,0,12,0" VerticalAlignment="Top" Geometria="{StaticResource Icono.Sol}" Foreground="{StaticResource Pincel.Acento}" />
+                            <TextBlock Style="{StaticResource Texto.Normal}" Text="{Binding AvisoX}" AutomationProperties.AutomationId="AvisoX" />
+                        </DockPanel>
+                    </Border>
+
+                    <!-- Ayuda de Control de Misión (antibloqueo) -->
+                    <Border Style="{StaticResource Aviso}" BorderBrush="{StaticResource Pincel.Primario}"
+                            Visibility="{Binding AvisoAyuda, Converter={StaticResource Visible}}">
+                        <DockPanel>
+                            <c:Icono Width="28" Height="28" Margin="0,0,12,0" VerticalAlignment="Top" Geometria="{StaticResource Icono.Antena}" Foreground="{StaticResource Pincel.Enlace}" />
+                            <TextBlock Style="{StaticResource Texto.Normal}" Text="{Binding AvisoAyuda}" AutomationProperties.AutomationId="AvisoAyuda" />
+                        </DockPanel>
+                    </Border>
+
+                    <!-- Protocolo de Respaldo -->
+                    <Border x:Name="AvisoRespaldo" Style="{StaticResource Aviso}" BorderBrush="{StaticResource Pincel.Acento}"
+                            Visibility="{Binding EsRespaldo, Converter={StaticResource Visible}}">
+                        <DockPanel>
+                            <c:Icono Width="32" Height="32" Margin="0,0,12,0" VerticalAlignment="Top" Geometria="{StaticResource Icono.Salvavidas}" Foreground="{StaticResource Pincel.Acento}" />
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource Texto.Normal}" FontWeight="Bold" Text="{Binding MensajeRespaldo}"
+                                           AutomationProperties.AutomationId="MensajeRespaldo" />
+                                <TextBlock Style="{StaticResource Texto.Normal}" Margin="0,8,0,0" Foreground="{StaticResource Pincel.TextoSuave}" Text="{Binding PistaRespaldo}" />
+                            </StackPanel>
+                        </DockPanel>
+                    </Border>
+
+                    <!-- Resultado y 💡 Dato real -->
+                    <StackPanel x:Name="Resultado" Margin="0,14,0,0" Visibility="{Binding EsResultado, Converter={StaticResource Visible}}">
+                        <TextBlock Style="{StaticResource Texto.Normal}" FontSize="20" FontWeight="Bold" Text="{Binding TextoResultado}"
+                                   AutomationProperties.AutomationId="TextoResultado" />
+                        <Border Margin="0,12,0,0" Padding="16,12" CornerRadius="14" Background="{StaticResource Pincel.Fondo}"
+                                BorderBrush="{StaticResource Pincel.Primario}" BorderThickness="5,0,0,0">
+                            <StackPanel DataContext="{Binding Dato}">
+                                <TextBlock Style="{StaticResource Texto.Seccion}" Foreground="{StaticResource Pincel.Estrella}"
+                                           c:Contenido.Texto="{x:Static vm:TextosApp.DatoReal}" />
+                                <TextBlock Style="{StaticResource Texto.Normal}" Margin="0,6,0,0" Text="{Binding Texto}"
+                                           AutomationProperties.AutomationId="TextoDato" />
+                                <ItemsControl Focusable="False" ItemsSource="{Binding Extra}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Style="{StaticResource Texto.Normal}" Margin="0,6,0,0" Text="{Binding}" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <TextBlock Style="{StaticResource Texto.Nota}" Margin="0,8,0,0" c:Contenido.Fuentes="{Binding}" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- ========== Misión Abortada ========== -->
+                <StackPanel x:Name="VistaAbortada" Visibility="{Binding EsAbortada, Converter={StaticResource Visible}}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Border Style="{StaticResource Pildora}">
+                            <TextBlock Style="{StaticResource Texto.Etiqueta}" c:Contenido.Texto="{x:Static vm:TextosApp+Abortada.Etiqueta}" />
+                        </Border>
+                        <DockPanel Style="{StaticResource CabeceraTitulo}">
+                            <Border Style="{StaticResource Insignia}" Background="{StaticResource Pincel.Tierra}" />
+                            <TextBlock x:Name="TituloAbortada" Style="{StaticResource Texto.Titulo}" Text="{x:Static vm:TextosApp+Abortada.Titulo}"
+                                       AutomationProperties.AutomationId="TituloAbortada" />
+                        </DockPanel>
+                    </Grid>
+                    <TextBlock Style="{StaticResource Texto.Historia}" Text="{x:Static vm:TextosApp+Abortada.Historia}" />
+                </StackPanel>
+
+                <!-- ========== Victoria: certificado ========== -->
+                <StackPanel x:Name="VistaVictoria" Visibility="{Binding EsVictoria, Converter={StaticResource Visible}}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Border Style="{StaticResource Pildora}">
+                            <TextBlock Style="{StaticResource Texto.Etiqueta}" c:Contenido.Texto="{x:Static vm:TextosApp+Victoria.Etiqueta}" />
+                        </Border>
+                        <DockPanel Style="{StaticResource CabeceraTitulo}">
+                            <Border Style="{StaticResource Insignia}">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#FDE047" Offset="0" />
+                                        <GradientStop Color="#F97316" Offset="1" />
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <c:Icono Margin="13" Geometria="{StaticResource Icono.Estrella}" Foreground="{StaticResource Pincel.TextoOscuro}" />
+                            </Border>
+                            <TextBlock x:Name="TituloVictoria" Style="{StaticResource Texto.Titulo}" Text="{x:Static vm:TextosApp+Victoria.Titulo}"
+                                       AutomationProperties.AutomationId="TituloVictoria" />
+                        </DockPanel>
+                    </Grid>
+                    <TextBlock Style="{StaticResource Texto.Historia}" Text="{x:Static vm:TextosApp+Victoria.Historia}" />
+                    <TextBlock Style="{StaticResource Texto.Normal}" Margin="0,14,0,0" Text="{Binding FechaCertificado}" />
+                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                        <ItemsControl Focusable="False" ItemsSource="{Binding Estrellas}" VerticalAlignment="Center">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <c:Icono Width="28" Height="28" Margin="0,0,4,0" Geometria="{StaticResource Icono.Estrella}"
+                                             Foreground="{StaticResource Pincel.Estrella}" Relleno="{StaticResource Pincel.Estrella}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock Style="{StaticResource Texto.Normal}" Margin="6,0,0,0" VerticalAlignment="Center" Text="{Binding TextoRespaldosCertificado}"
+                                   AutomationProperties.AutomationId="RespaldosCertificado" />
+                    </StackPanel>
+                    <ItemsControl Margin="0,6,0,0" Focusable="False" ItemsSource="{Binding MedidoresCertificado}" ItemTemplate="{StaticResource LineaConIcono}" />
+                    <TextBlock Style="{StaticResource Texto.Seccion}" Margin="0,18,0,0" Text="{x:Static vm:TextosApp+Victoria.Aprendiste}" />
+                    <ItemsControl Focusable="False" ItemsSource="{Binding DatosCertificado}" ItemTemplate="{StaticResource DatoAprendido}" />
+                    <TextBlock Style="{StaticResource Texto.Nota}" Text="{x:Static vm:TextosApp+Victoria.Nota}" />
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+    </Border>
+</UserControl>
