@@ -10,6 +10,9 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <RootNamespace>BaseLunar.App</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Version>1.0.0</Version>
+    <Product>Base Lunar: El Escudo Cósmico</Product>
+    <AssemblyTitle>Base Lunar: El Escudo Cósmico</AssemblyTitle>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,6 +23,8 @@
     <!-- Atkinson Hyperlegible (Braille Institute, licencia SIL OFL): la licencia viaja con el programa. -->
     <Resource Include="Temas\Fuentes\*.ttf" />
     <None Include="Temas\Fuentes\OFL.txt" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Íconos de Lucide (licencia ISC, y MIT para los derivados de Feather): su licencia también viaja con el programa. -->
+    <None Include="Temas\Lucide-LICENSE.txt" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

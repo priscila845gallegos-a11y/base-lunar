@@ -164,9 +164,14 @@ internal static class Rutas
 
     public static string Escritorio() => Path.Combine(Raiz(), "escritorio");
 
-    /// <summary>El ejecutable del juego: junto a las pruebas o en la salida del proyecto de la aplicación.</summary>
+    /// <summary>
+    /// El ejecutable del juego: el de la variable BASELUNAR_EXE (para probar la versión portable publicada),
+    /// junto a las pruebas o en la salida del proyecto de la aplicación.
+    /// </summary>
     public static string Ejecutable()
     {
+        if (Environment.GetEnvironmentVariable("BASELUNAR_EXE") is { Length: > 0 } elegido)
+            return File.Exists(elegido) ? elegido : throw new FileNotFoundException("BASELUNAR_EXE no apunta a un ejecutable", elegido);
         var junto = Path.Combine(AppContext.BaseDirectory, "BaseLunar.App.exe");
         if (File.Exists(junto)) return junto;
         var configuracion = AppContext.BaseDirectory.Contains($"{Path.DirectorySeparatorChar}Release{Path.DirectorySeparatorChar}") ? "Release" : "Debug";

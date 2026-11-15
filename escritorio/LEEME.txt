@@ -1,0 +1,36 @@
+Base Lunar: El Escudo Cósmico · versión para Windows
+
+Juego educativo de decisiones para niñas y niños de 7 a 12 años. Comandas una base en la Luna
+durante 5 situaciones reales del espacio y aprendes que cada recurso tiene un costo.
+
+CÓMO JUGAR
+1. Descomprime el ZIP (clic derecho sobre el archivo > «Extraer todo»).
+2. Abre la carpeta BaseLunar y haz doble clic en BaseLunar.exe. No hace falta instalar nada.
+3. Si Windows avisa de que protegió el equipo (SmartScreen), pulsa «Más información» y después
+   «Ejecutar de todas formas». El aviso sale porque el programa no tiene firma digital.
+
+Requisitos: Windows 10 u 11 de 64 bits. Para el botón «Escuchar» hace falta una voz de Windows
+en español; si no hay ninguna, el botón no aparece y el resto del juego funciona igual.
+
+Teclado: A/B o 1/2 para elegir, Enter para continuar, F11 para la pantalla completa y Esc para salir de ella.
+
+SIN INTERNET
+El juego funciona completo sin conexión. En el Nivel 4 usa una llamarada solar real guardada
+(«Dato HISTÓRICO REAL»). Con conexión, consulta en NASA DONKI la llamarada más fuerte del último
+mes y la muestra como «Dato EN VIVO».
+
+OPCIONES PARA DEMOSTRACIONES (desde una consola, en esta carpeta)
+  BaseLunar.exe --nivel 4         cada partida empieza en el nivel indicado (1 a 5)
+  BaseLunar.exe --offline         siempre el dato histórico, sin consultar la red
+  BaseLunar.exe --debug           muestra el estado interno para quien prueba
+  BaseLunar.exe --silencio        sin sonido ni voz
+  BaseLunar.exe --alto-contraste  colores de alto contraste (si Windows lo tiene activado, se usa solo)
+
+PRIVACIDAD
+Sin cuentas, sin anuncios y sin analítica. El nombre del certificado solo se muestra en pantalla:
+nunca se guarda, nunca se envía y nunca se lee en voz alta. El juego solo guarda dos archivos en
+%LOCALAPPDATA%\BaseLunar: si los efectos de sonido están encendidos y la última consulta a NASA
+DONKI (durante 6 horas). Solo se conecta a api.nasa.gov y a ccmc.gsfc.nasa.gov.
+
+Juego educativo independiente, con datos reales de NASA y CSA. No tiene respaldo oficial de
+ninguna agencia. Las licencias de la tipografía, los íconos y .NET están en la carpeta «licencias».
